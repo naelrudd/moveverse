@@ -1,6 +1,4 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
@@ -8,15 +6,7 @@ const isProtectedRoute = createRouteMatcher([
   '/test-camera(.*)',
 ]);
 
-export default clerkMiddleware(async (auth, req: NextRequest) => {
-  // Redirect www subdomain → root (Clerk only allows moveverse.my.id)
-  const host = req.headers.get('host') || '';
-  if (host.startsWith('www.')) {
-    const url = req.nextUrl.clone();
-    url.host = host.replace('www.', '');
-    return NextResponse.redirect(url);
-  }
-
+export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) await auth.protect();
 });
 
