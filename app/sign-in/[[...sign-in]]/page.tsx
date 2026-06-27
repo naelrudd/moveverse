@@ -2,8 +2,15 @@ import { SignIn } from "@clerk/nextjs";
 
 export default function SignInPage() {
   return (
-    <div style={{ background: "red", minHeight: "100vh" }}>
-      <h1 style={{ color: "white" }}>TEST PAGE</h1>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "white", // force white dulu
+      }}
+    >
       <SignIn />
     </div>
   );
