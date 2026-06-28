@@ -33,7 +33,11 @@ export default function RootLayout({
               <header className="sticky top-0 z-40 backdrop-blur-md bg-white/70 border-b-4 border-primary/20">
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 md:gap-6">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full gradient-grass flex items-center justify-center text-2xl shadow-sm">🦊</div>
+                    <img
+                      src="/logo.png"
+                      alt="MOVEVERSE"
+                      className="w-10 h-10 rounded-full shadow-sm object-cover ring-2 ring-primary/30"
+                    />
                     <div className="text-xs font-bold">
                       <span className="text-primary">MOVE</span>
                       <span className="text-foreground">VERSE</span>
