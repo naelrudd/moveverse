@@ -10,14 +10,20 @@ const isProtectedRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req) => {
   const host = req.headers.get("host") || "";
 
-  // Redirect www → non-www DULU sebelum apapun
   if (host.startsWith("www.")) {
     const url = req.nextUrl.clone();
     url.host = host.replace("www.", "");
     return NextResponse.redirect(url, 301);
   }
 
-  if (isProtectedRoute(req)) await auth.protect();
+  if (isProtectedRoute(req)) {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.redirect(new URL("/sign-in", req.url));
+    }
+  }
+
+  return NextResponse.next();
 });
 
 export const config = {
