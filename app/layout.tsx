@@ -36,7 +36,7 @@ export default function RootLayout({
                     <img
                       src="/logo.png"
                       alt="MOVEVERSE"
-                      className="w-10 h-10 rounded-full shadow-sm object-cover ring-2 ring-primary/30"
+                      className="h-10 w-auto object-contain"
                     />
                     <div className="text-xs font-bold">
                       <span className="text-primary">MOVE</span>
