@@ -319,12 +319,13 @@ export default function DashboardPage() {
   );
 }
 
-function StatBig({ icon, label, value, tint }: { icon: string; label: string; value: string; tint: string }) {
+function StatBig({ icon, label, value, tint, children }: { icon: string; label: string; value: string; tint: string; children?: React.ReactNode }) {
   return (
-    <div className={`rounded-2xl p-4 text-white ${tint} shadow-soft`}>
-      <div className="text-2xl">{icon}</div>
-      <div className="text-xs font-bold opacity-90">{label}</div>
-      <div className="text-2xl font-extrabold">{value}</div>
+    <div className={`rounded-2xl p-4 text-white ${tint} shadow-soft relative`}>
+      {children}
+      <div className="text-2xl relative z-10">{icon}</div>
+      <div className="text-xs font-bold opacity-90 relative z-10">{label}</div>
+      <div className="text-2xl font-extrabold relative z-10">{value}</div>
     </div>
   );
 }
