@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
-import { Header } from "@/components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,13 +30,7 @@ export default function RootLayout({
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <ConvexClientProvider>
             <div className="min-h-screen flex flex-col">
-              <Header />
-              <main className="flex-1 pb-12">
-                {children}
-              </main>
-              <footer className="text-center text-xs text-muted-foreground py-4">
-                Built with 💙 in the MOVEVERSE &copy; {new Date().getFullYear()}
-              </footer>
+              {children}
             </div>
           </ConvexClientProvider>
         </body>
