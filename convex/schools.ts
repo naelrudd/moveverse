@@ -18,18 +18,25 @@ export const getSchoolBySlug = query({
   },
 });
 
+export const getAllSchools = query({
+  handler: async (ctx) => {
+    return await ctx.db.query("schools").collect();
+  },
+});
+
 export const seedSchool = mutation({
   args: {
     name: v.string(),
     slug: v.string(),
+    address: v.optional(v.string()),
   },
-  handler: async (ctx, { name, slug }) => {
+  handler: async (ctx, { name, slug, address }) => {
     const existing = await ctx.db
       .query("schools")
       .withIndex("by_slug", (q) => q.eq("slug", slug))
       .first();
 
     if (existing) return existing._id;
-    return await ctx.db.insert("schools", { name, slug });
+    return await ctx.db.insert("schools", { name, slug, address });
   },
 });
