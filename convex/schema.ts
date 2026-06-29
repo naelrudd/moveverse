@@ -2,6 +2,20 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
+  schools: defineTable({
+    name: v.string(),
+    slug: v.string(),
+    address: v.optional(v.string()),
+  })
+    .index("by_slug", ["slug"]),
+
+  classes: defineTable({
+    schoolId: v.id("schools"),
+    name: v.string(),
+    grade: v.number(),
+  })
+    .index("by_schoolId", ["schoolId"]),
+
   users: defineTable({
     clerkId: v.string(),
     name: v.string(),
@@ -11,10 +25,17 @@ export default defineSchema({
     coins: v.number(),
     level: v.number(),
     pets: v.array(v.string()),
+    role: v.union(v.literal("student"), v.literal("parent"), v.literal("teacher"), v.literal("admin")),
+    schoolId: v.id("schools"),
+    classId: v.optional(v.id("classes")),
+    childIds: v.optional(v.array(v.id("users"))),
+    parentIds: v.optional(v.array(v.id("users"))),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index("by_clerkId", ["clerkId"])
+    .index("by_schoolId", ["schoolId"])
+    .index("by_classId", ["classId"])
     .index("by_createdAt", ["createdAt"]),
 
   quests: defineTable({

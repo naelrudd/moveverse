@@ -2,19 +2,44 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { UserButton } from '@clerk/nextjs';
+import { useAuth, UserButton as ClerkUserButton } from '@clerk/nextjs';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 
-const navItems = [
-  { label: 'Dashboard', href: '/dashboard' },
-  { label: 'Worlds', href: '/worlds' },
-  { label: 'AI Coach', href: '/assessment' },
-  { label: 'Parents', href: '/parent' },
-  { label: 'Teachers', href: '/teacher' },
-  { label: 'Schools', href: '/school' },
-];
+const navByRole: Record<string, { label: string; href: string }[]> = {
+  student: [
+    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Worlds', href: '/worlds' },
+    { label: 'AI Coach', href: '/assessment' },
+    { label: 'School', href: '/school' },
+  ],
+  parent: [
+    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'School', href: '/school' },
+    { label: 'Report', href: '/parent' },
+  ],
+  teacher: [
+    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Worlds', href: '/worlds' },
+    { label: 'AI Coach', href: '/assessment' },
+    { label: 'Teacher', href: '/teacher' },
+    { label: 'School', href: '/school' },
+  ],
+  admin: [
+    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Worlds', href: '/worlds' },
+    { label: 'AI Coach', href: '/assessment' },
+    { label: 'Teacher', href: '/teacher' },
+    { label: 'School', href: '/school' },
+  ],
+};
 
 export function Header() {
   const pathname = usePathname();
+  const { userId } = useAuth();
+  const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
+  const role = userData?.role || 'student';
+  const navItems = navByRole[role] || navByRole.student;
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-white/70 border-b-4 border-primary/20">
@@ -28,7 +53,7 @@ export function Header() {
         </Link>
         <nav className="flex-1 flex items-center gap-1 overflow-x-auto no-scrollbar justify-end md:justify-center">
           {navItems.map((item) => {
-            const isActive = pathname.startsWith(item.href);
+            const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
             return (
               <Link
                 key={item.href}
@@ -44,19 +69,28 @@ export function Header() {
             );
           })}
         </nav>
-        <div className="shrink-0 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-sunny/30 flex items-center justify-center text-xs font-bold">
-            1,240
-          </div>
-          <UserButton
-            appearance={{
-              elements: {
-                avatarBox: 'w-8 h-8',
-              },
-            }}
-          />
-        </div>
+        <UserButton />
       </div>
     </header>
+  );
+}
+
+function UserButton() {
+  const { userId } = useAuth();
+  if (!userId) return null;
+
+  return (
+    <div className="shrink-0 flex items-center gap-2">
+      <Link href="/onboarding" className="text-xs font-bold px-3 py-1 rounded-full gradient-sunny/30 text-foreground hover:bg-sunny/50 transition-colors">
+        Profile
+      </Link>
+      <ClerkUserButton
+        appearance={{
+          elements: {
+            avatarBox: 'w-8 h-8',
+          },
+        }}
+      />
+    </div>
   );
 }

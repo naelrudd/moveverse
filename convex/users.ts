@@ -18,14 +18,28 @@ export const getUserById = query({
   },
 });
 
+export const getUsersByClass = query({
+  args: { classId: v.id("classes") },
+  handler: async (ctx, { classId }) => {
+    return await ctx.db
+      .query("users")
+      .withIndex("by_classId", (q) => q.eq("classId", classId))
+      .collect();
+  },
+});
+
 export const createUser = mutation({
   args: {
     clerkId: v.string(),
     name: v.string(),
     grade: v.union(v.literal("1"), v.literal("2")),
     avatar: v.string(),
+    role: v.union(v.literal("student"), v.literal("parent"), v.literal("teacher"), v.literal("admin")),
+    schoolId: v.id("schools"),
+    classId: v.optional(v.id("classes")),
+    childIds: v.optional(v.array(v.id("users"))),
   },
-  handler: async (ctx, { clerkId, name, grade, avatar }) => {
+  handler: async (ctx, { clerkId, name, grade, avatar, role, schoolId, classId, childIds }) => {
     const existing = await ctx.db
       .query("users")
       .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
@@ -38,6 +52,10 @@ export const createUser = mutation({
       name,
       grade,
       avatar,
+      role,
+      schoolId,
+      classId,
+      childIds: childIds || [],
       xp: 0,
       coins: 0,
       level: 1,
