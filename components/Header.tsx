@@ -15,22 +15,21 @@ const navByRole: Record<string, { label: string; href: string }[]> = {
   ],
   parent: [
     { label: 'Dashboard', href: '/dashboard' },
-    { label: 'School', href: '/school' },
     { label: 'Report', href: '/parent' },
+    { label: 'School', href: '/school' },
   ],
   teacher: [
     { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Worlds', href: '/worlds' },
-    { label: 'AI Coach', href: '/assessment' },
     { label: 'Teacher', href: '/teacher' },
     { label: 'School', href: '/school' },
+    { label: 'AI Coach', href: '/assessment' },
   ],
   admin: [
     { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Worlds', href: '/worlds' },
-    { label: 'AI Coach', href: '/assessment' },
     { label: 'Teacher', href: '/teacher' },
     { label: 'School', href: '/school' },
+    { label: 'Worlds', href: '/worlds' },
+    { label: 'AI Coach', href: '/assessment' },
   ],
 };
 
@@ -38,12 +37,13 @@ export function Header() {
   const pathname = usePathname();
   const { userId } = useAuth();
   const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
-  const role = userData?.role || 'student';
-  const navItems = navByRole[role] || navByRole.student;
+  const role = userData?.role ?? null;
+  const navItems = role ? (navByRole[role] ?? navByRole.student) : [];
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-white/70 border-b-4 border-primary/20">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 md:gap-6">
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <img src="/logo.png" alt="MOVEVERSE" className="h-10 w-auto object-contain" />
           <div className="text-xs font-bold hidden sm:block">
@@ -51,7 +51,9 @@ export function Header() {
             <span className="text-foreground">VERSE</span>
           </div>
         </Link>
-        <nav className="flex-1 flex items-center gap-1 overflow-x-auto no-scrollbar justify-end md:justify-center">
+
+        {/* Nav items - role based */}
+        <nav className="flex-1 flex items-center gap-1 overflow-x-auto no-scrollbar">
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
             return (
@@ -69,28 +71,28 @@ export function Header() {
             );
           })}
         </nav>
-        <UserButton />
+
+        {/* Right side: coins + profile */}
+        <div className="shrink-0 flex items-center gap-2">
+          {userData?.role === 'student' && (
+            <div className="flex items-center gap-1 bg-sunny/30 px-3 py-1 rounded-full">
+              <span className="text-sm">🪙</span>
+              <span className="text-xs font-extrabold">{userData.coins.toLocaleString()}</span>
+            </div>
+          )}
+          <Link
+            href="/profile"
+            className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-bold border-2 transition-all ${
+              pathname === '/profile'
+                ? 'bg-primary text-primary-foreground border-transparent'
+                : 'border-border hover:border-primary/40 text-foreground'
+            }`}
+          >
+            Profile
+          </Link>
+          <ClerkUserButton appearance={{ elements: { avatarBox: 'w-8 h-8' } }} />
+        </div>
       </div>
     </header>
-  );
-}
-
-function UserButton() {
-  const { userId } = useAuth();
-  if (!userId) return null;
-
-  return (
-    <div className="shrink-0 flex items-center gap-2">
-      <Link href="/onboarding" className="text-xs font-bold px-3 py-1 rounded-full gradient-sunny/30 text-foreground hover:bg-sunny/50 transition-colors">
-        Profile
-      </Link>
-      <ClerkUserButton
-        appearance={{
-          elements: {
-            avatarBox: 'w-8 h-8',
-          },
-        }}
-      />
-    </div>
   );
 }
