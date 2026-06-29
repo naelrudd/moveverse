@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { UserButton } from '@clerk/nextjs';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard' },
@@ -43,10 +44,17 @@ export function Header() {
             );
           })}
         </nav>
-        <div className="shrink-0">
+        <div className="shrink-0 flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-sunny/30 flex items-center justify-center text-xs font-bold">
             1,240
           </div>
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: 'w-8 h-8',
+              },
+            }}
+          />
         </div>
       </div>
     </header>
