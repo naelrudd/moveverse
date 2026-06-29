@@ -6,14 +6,12 @@ export const seedAll = mutation({
     const existing = await ctx.db.query("schools").first();
     if (existing) return "Already seeded";
 
-    // Create school
     const schoolId = await ctx.db.insert("schools", {
       name: "SD MOVEVERSE Academy",
       slug: "moveverse-academy",
       address: "Jl. Merdeka No. 1, Malang",
     });
 
-    // Create classes
     const classData = [
       { name: "1A", grade: 1 }, { name: "1B", grade: 1 },
       { name: "2A", grade: 2 }, { name: "2B", grade: 2 },
@@ -28,5 +26,15 @@ export const seedAll = mutation({
     }
 
     return `Seeded school + ${classData.length} classes`;
+  },
+});
+
+export const clearUsers = mutation({
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").collect();
+    for (const user of users) {
+      await ctx.db.delete(user._id);
+    }
+    return `Deleted ${users.length} users`;
   },
 });

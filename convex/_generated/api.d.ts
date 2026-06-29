@@ -8,9 +8,12 @@
  * @module
  */
 
+import type * as classes from "../classes.js";
 import type * as movements from "../movements.js";
 import type * as physical_literacy from "../physical_literacy.js";
 import type * as quests from "../quests.js";
+import type * as schools from "../schools.js";
+import type * as seed from "../seed.js";
 import type * as users from "../users.js";
 
 import type {
@@ -20,9 +23,12 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  classes: typeof classes;
   movements: typeof movements;
   physical_literacy: typeof physical_literacy;
   quests: typeof quests;
+  schools: typeof schools;
+  seed: typeof seed;
   users: typeof users;
 }>;
 

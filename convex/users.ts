@@ -32,14 +32,15 @@ export const createUser = mutation({
   args: {
     clerkId: v.string(),
     name: v.string(),
-    grade: v.union(v.literal("1"), v.literal("2")),
+    nis: v.optional(v.string()),
+    phone: v.optional(v.string()),
     avatar: v.string(),
     role: v.union(v.literal("student"), v.literal("parent"), v.literal("teacher"), v.literal("admin")),
     schoolId: v.id("schools"),
     classId: v.optional(v.id("classes")),
     childIds: v.optional(v.array(v.id("users"))),
   },
-  handler: async (ctx, { clerkId, name, grade, avatar, role, schoolId, classId, childIds }) => {
+  handler: async (ctx, { clerkId, name, nis, phone, avatar, role, schoolId, classId, childIds }) => {
     const existing = await ctx.db
       .query("users")
       .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
@@ -50,7 +51,8 @@ export const createUser = mutation({
     return await ctx.db.insert("users", {
       clerkId,
       name,
-      grade,
+      nis,
+      phone,
       avatar,
       role,
       schoolId,

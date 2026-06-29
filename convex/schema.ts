@@ -19,14 +19,15 @@ export default defineSchema({
   users: defineTable({
     clerkId: v.string(),
     name: v.string(),
-    grade: v.union(v.literal("1"), v.literal("2")),
+    nis: v.optional(v.string()),
+    phone: v.optional(v.string()),
     avatar: v.string(),
     xp: v.number(),
     coins: v.number(),
     level: v.number(),
     pets: v.array(v.string()),
-    role: v.union(v.literal("student"), v.literal("parent"), v.literal("teacher"), v.literal("admin")),
-    schoolId: v.id("schools"),
+    role: v.optional(v.union(v.literal("student"), v.literal("parent"), v.literal("teacher"), v.literal("admin"))),
+    schoolId: v.optional(v.id("schools")),
     classId: v.optional(v.id("classes")),
     childIds: v.optional(v.array(v.id("users"))),
     parentIds: v.optional(v.array(v.id("users"))),
@@ -36,6 +37,7 @@ export default defineSchema({
     .index("by_clerkId", ["clerkId"])
     .index("by_schoolId", ["schoolId"])
     .index("by_classId", ["classId"])
+    .index("by_nis", ["nis"])
     .index("by_createdAt", ["createdAt"]),
 
   quests: defineTable({
