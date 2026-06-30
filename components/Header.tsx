@@ -13,12 +13,10 @@ const navByRole: Record<string, { label: string; href: string }[]> = {
     { label: 'AI Coach', href: '/assessment' },
   ],
   parent: [
-    { label: 'Report', href: '/parent' },
-    { label: 'School', href: '/school' },
+    { label: 'Anakku', href: '/parent' },
   ],
   teacher: [
-    { label: 'Dashboard', href: '/teacher' },
-    { label: 'School', href: '/school' },
+    { label: 'Kelas', href: '/teacher' },
     { label: 'AI Coach', href: '/assessment' },
   ],
   admin: [
