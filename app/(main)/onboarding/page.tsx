@@ -62,7 +62,7 @@ export default function OnboardingPage() {
         teacher: '/teacher',
         admin: '/school',
       };
-      router.replace(roleRedirect[userRole] || '/dashboard/student');
+      router.replace(roleRedirect[role] || '/dashboard/student');
     } catch (err) {
       console.error(err);
       setSubmitting(false);
