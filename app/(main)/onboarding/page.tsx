@@ -178,11 +178,16 @@ export default function OnboardingPage() {
                     Memuat daftar kelas...
                   </div>
                 ) : classes.length === 0 ? (
-                  <div className="text-center py-8">
-                    <div className="text-2xl mb-2">📚</div>
-                    <p className="text-sm font-bold">Belum ada kelas di sekolah ini.</p>
-                    <p className="text-xs text-muted-foreground mt-1">Hubungi admin untuk tambah kelas.</p>
-                  </div>
+                  <>
+                    <div className="text-center py-8">
+                      <div className="text-2xl mb-2">📚</div>
+                      <p className="text-sm font-bold">Belum ada kelas di sekolah ini.</p>
+                      <p className="text-xs text-muted-foreground mt-1">Hubungi admin untuk tambah kelas.</p>
+                    </div>
+                    <div className="text-xs text-muted-foreground text-center p-2 bg-red-50 rounded-xl">
+                      DEBUG: schools={schools?.length ?? 0}, schoolId="{schoolId}", classes={classes?.length ?? 0}
+                    </div>
+                  </>
                 ) : (
                   <div className="grid grid-cols-3 gap-2">
                     {classes.map((cls) => (
