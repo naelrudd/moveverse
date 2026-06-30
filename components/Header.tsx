@@ -14,6 +14,8 @@ const navByRole: Record<string, { label: string; href: string }[]> = {
   ],
   parent: [
     { label: 'Anakku', href: '/parent' },
+    { label: 'Aktivitas', href: '/parent/child' },
+    { label: 'Worlds', href: '/worlds' },
   ],
   teacher: [
     { label: 'Kelas', href: '/teacher' },
