@@ -10,6 +10,7 @@
 
 import type * as classes from "../classes.js";
 import type * as movements from "../movements.js";
+import type * as parent from "../parent.js";
 import type * as physical_literacy from "../physical_literacy.js";
 import type * as quests from "../quests.js";
 import type * as schools from "../schools.js";
@@ -25,6 +26,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   classes: typeof classes;
   movements: typeof movements;
+  parent: typeof parent;
   physical_literacy: typeof physical_literacy;
   quests: typeof quests;
   schools: typeof schools;

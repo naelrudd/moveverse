@@ -18,6 +18,40 @@ export const getUserById = query({
   },
 });
 
+export const linkChild = mutation({
+  args: {
+    parentId: v.id("users"),
+    childNis: v.string(),
+  },
+  handler: async (ctx, { parentId, childNis }) => {
+    const child = await ctx.db
+      .query("users")
+      .withIndex("by_nis", (q) => q.eq("nis", childNis))
+      .first();
+    if (!child) return null;
+
+    const parent = await ctx.db.get(parentId);
+    if (!parent) return null;
+
+    const currentChildren = parent.childIds ?? [];
+    if (!currentChildren.includes(child._id)) {
+      await ctx.db.patch(parentId, {
+        childIds: [...currentChildren, child._id],
+        updatedAt: Date.now(),
+      });
+      // Also set parentIds on child
+      const currentParents = child.parentIds ?? [];
+      if (!currentParents.includes(parentId)) {
+        await ctx.db.patch(child._id, {
+          parentIds: [...currentParents, parentId],
+          updatedAt: Date.now(),
+        });
+      }
+    }
+    return child._id;
+  },
+});
+
 export const getUsersByClass = query({
   args: { classId: v.id("classes") },
   handler: async (ctx, { classId }) => {

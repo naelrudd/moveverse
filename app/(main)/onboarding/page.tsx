@@ -32,7 +32,14 @@ export default function OnboardingPage() {
   const createUser = useMutation(api.users.createUser);
 
   useEffect(() => {
-    if (existingUser) router.replace('/dashboard');
+    if (!existingUser) return;
+    const roleRedirect: Record<string, string> = {
+      student: '/dashboard/student',
+      parent: '/parent',
+      teacher: '/teacher',
+      admin: '/school',
+    };
+    router.replace(roleRedirect[existingUser.role ?? 'student'] || '/dashboard/student');
   }, [existingUser, router]);
 
   const handleSubmit = async () => {
@@ -49,7 +56,13 @@ export default function OnboardingPage() {
         nis: nis || undefined,
         phone: phone || undefined,
       });
-      router.replace('/dashboard');
+      const roleRedirect: Record<string, string> = {
+        student: '/dashboard/student',
+        parent: '/parent',
+        teacher: '/teacher',
+        admin: '/school',
+      };
+      router.replace(roleRedirect[userRole] || '/dashboard/student');
     } catch (err) {
       console.error(err);
       setSubmitting(false);

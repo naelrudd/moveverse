@@ -8,28 +8,23 @@ import { api } from '@/convex/_generated/api';
 
 const navByRole: Record<string, { label: string; href: string }[]> = {
   student: [
-    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Dashboard', href: '/dashboard/student' },
     { label: 'Worlds', href: '/worlds' },
     { label: 'AI Coach', href: '/assessment' },
-    { label: 'School', href: '/school' },
   ],
   parent: [
-    { label: 'Dashboard', href: '/dashboard' },
     { label: 'Report', href: '/parent' },
     { label: 'School', href: '/school' },
   ],
   teacher: [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Teacher', href: '/teacher' },
+    { label: 'Dashboard', href: '/teacher' },
     { label: 'School', href: '/school' },
     { label: 'AI Coach', href: '/assessment' },
   ],
   admin: [
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Teacher', href: '/teacher' },
     { label: 'School', href: '/school' },
+    { label: 'Teacher', href: '/teacher' },
     { label: 'Worlds', href: '/worlds' },
-    { label: 'AI Coach', href: '/assessment' },
   ],
 };
 
