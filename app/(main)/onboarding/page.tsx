@@ -172,17 +172,32 @@ export default function OnboardingPage() {
             {role === 'student' && (
               <>
                 <p className="text-sm font-bold text-foreground">Pilih kelas</p>
-                <div className="grid grid-cols-3 gap-2">
-                  {classes?.map((cls) => (
-                    <button
-                      key={cls._id}
-                      onClick={() => setClassId(cls._id)}
-                      className={`py-3 rounded-2xl font-extrabold border-2 transition-all ${classId === cls._id ? 'gradient-sky text-white border-transparent' : 'border-border hover:border-primary/40'}`}
-                    >
-                      {cls.name}
-                    </button>
-                  ))}
-                </div>
+                {classes === undefined ? (
+                  <div className="text-center py-8 text-muted-foreground text-sm">
+                    <div className="animate-bounce text-2xl mb-2">⏳</div>
+                    Memuat daftar kelas...
+                  </div>
+                ) : classes.length === 0 ? (
+                  <div className="text-center py-8">
+                    <div className="text-2xl mb-2">📚</div>
+                    <p className="text-sm font-bold">Belum ada kelas di sekolah ini.</p>
+                    <p className="text-xs text-muted-foreground mt-1">Hubungi admin untuk tambah kelas.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2">
+                    {classes.map((cls) => (
+                      <button
+                        key={cls._id}
+                        onClick={() => setClassId(cls._id)}
+                        className={`py-3 rounded-2xl font-extrabold border-2 transition-all ${
+                          classId === cls._id ? 'gradient-sky text-white border-transparent' : 'border-border hover:border-primary/40'
+                        }`}
+                      >
+                        {cls.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </>
             )}
 
