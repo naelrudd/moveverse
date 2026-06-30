@@ -9,16 +9,19 @@ import { api } from '@/convex/_generated/api';
 const navByRole: Record<string, { label: string; href: string }[]> = {
   student: [
     { label: 'Dashboard', href: '/dashboard/student' },
+    { label: 'Statistik', href: '/dashboard/stats' },
     { label: 'Worlds', href: '/worlds' },
     { label: 'AI Coach', href: '/assessment' },
   ],
   parent: [
     { label: 'Anakku', href: '/parent' },
     { label: 'Aktivitas', href: '/parent/child' },
+    { label: 'Leaderboard', href: '/parent/leaderboard' },
     { label: 'Worlds', href: '/worlds' },
   ],
   teacher: [
     { label: 'Kelas', href: '/teacher' },
+    { label: 'Leaderboard', href: '/teacher/leaderboard' },
     { label: 'AI Coach', href: '/assessment' },
   ],
   admin: [
@@ -38,7 +41,6 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-white/70 border-b-4 border-primary/20">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 md:gap-6">
-        {/* Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <img src="/logo.png" alt="MOVEVERSE" className="h-10 w-auto object-contain" />
           <div className="text-xs font-bold hidden sm:block">
@@ -47,7 +49,6 @@ export function Header() {
           </div>
         </Link>
 
-        {/* Nav items - role based */}
         <nav className="flex-1 flex items-center gap-1 overflow-x-auto no-scrollbar">
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -67,7 +68,6 @@ export function Header() {
           })}
         </nav>
 
-        {/* Right side: coins + profile */}
         <div className="shrink-0 flex items-center gap-2">
           {userData?.role === 'student' && (
             <div className="flex items-center gap-1 bg-sunny/30 px-3 py-1 rounded-full">
