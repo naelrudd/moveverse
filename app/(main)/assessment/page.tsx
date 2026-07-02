@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -17,6 +17,14 @@ const scores = [
 ];
 
 export default function AssessmentPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center"><span className="text-sm font-bold text-muted-foreground">Memuat...</span></div>}>
+      <AssessmentContent />
+    </Suspense>
+  );
+}
+
+function AssessmentContent() {
   const { userId } = useAuth();
   const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
   const role = userData?.role;
