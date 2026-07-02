@@ -20,45 +20,44 @@ export default function WorldsPage() {
         <p className="text-muted-foreground mt-2">Kuasai 6 gerakan dasar dan kumpulkan semua badge!</p>
       </div>
 
-      {/* Single World Card */}
       <Link href={`/worlds/${world.id}`} className="block group">
-        <div className={`relative rounded-[2rem] overflow-hidden ${world.gradient} text-white shadow-pop border-4 border-white hover:scale-[1.01] transition-transform p-8`}>
-          <div className="absolute inset-0 bg-white/10" />
-          <div className="relative">
-            <div className="flex items-start justify-between">
-              <div className="text-8xl drop-shadow-md">{world.emoji}</div>
-              <div className="bg-white/20 rounded-full px-4 py-2 text-sm font-bold">
+        <div className="relative rounded-[2rem] overflow-hidden text-white shadow-pop border-4 border-white hover:scale-[1.01] transition-transform" style={{ minHeight: '340px' }}>
+          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/world-map.jpg')" }} />
+          <div className={`absolute inset-0 ${world.gradient} opacity-70`} />
+          <div className="absolute inset-0 frosted-overlay" />
+          <div className="relative p-8 flex flex-col justify-end min-h-[340px]">
+            <div className="flex items-start justify-between absolute top-6 left-8 right-8">
+              <div className="text-8xl drop-shadow-md animate-float">{world.emoji}</div>
+              <div className="bg-white/25 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-bold border border-white/30">
                 {earnedCount}/{world.activities.length} Badge
               </div>
             </div>
-            <h2 className="text-4xl font-extrabold mt-4">{world.name}</h2>
-            <p className="text-lg opacity-95 mt-1">{world.tagline}</p>
-
-            {/* Progress */}
-            <div className="mt-6">
-              <div className="h-3 bg-black/20 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-white rounded-full transition-all"
-                  style={{ width: `${(earnedCount / world.activities.length) * 100}%` }}
-                />
+            <div className="mt-auto">
+              <h2 className="text-4xl font-extrabold mt-4 drop-shadow-md">{world.name}</h2>
+              <p className="text-lg opacity-95 mt-1 drop-shadow-sm">{world.tagline}</p>
+              <div className="mt-6">
+                <div className="h-3 bg-black/20 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-white rounded-full transition-all"
+                    style={{ width: `${(earnedCount / world.activities.length) * 100}%` }}
+                  />
+                </div>
+                <div className="text-sm font-bold mt-2 opacity-90">
+                  {Math.round((earnedCount / world.activities.length) * 100)}% selesai
+                </div>
               </div>
-              <div className="text-sm font-bold mt-2 opacity-90">
-                {Math.round((earnedCount / world.activities.length) * 100)}% selesai
+              <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-6">
+                {world.activities.map((a) => {
+                  const earned = badges.includes(a.badgeId);
+                  return (
+                    <div key={a.id} className={`bg-white/20 backdrop-blur-sm rounded-2xl p-3 text-center border border-white/20 ${earned ? 'ring-2 ring-white' : 'opacity-60'}`}>
+                      <div className="text-2xl">{a.icon}</div>
+                      <div className="text-xs font-bold mt-1">{a.name}</div>
+                      {earned && <div className="text-[10px] mt-0.5">✓</div>}
+                    </div>
+                  );
+                })}
               </div>
-            </div>
-
-            {/* Activities preview */}
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-6">
-              {world.activities.map((a) => {
-                const earned = badges.includes(a.badgeId);
-                return (
-                  <div key={a.id} className={`bg-white/20 rounded-2xl p-3 text-center ${earned ? 'ring-2 ring-white' : 'opacity-60'}`}>
-                    <div className="text-2xl">{a.icon}</div>
-                    <div className="text-xs font-bold mt-1">{a.name}</div>
-                    {earned && <div className="text-[10px] mt-0.5">✓</div>}
-                  </div>
-                );
-              })}
             </div>
           </div>
         </div>

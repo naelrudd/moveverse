@@ -36,10 +36,12 @@
   --gradient-magic: linear-gradient(135deg, oklch(0.65 0.22 310), oklch(0.7 0.18 235));
   --gradient-gold: linear-gradient(135deg, oklch(0.9 0.18 95), oklch(0.78 0.18 60));
 
-  /* Shadows */
-  --shadow-pop: 0 10px 0 0 oklch(0.7 0.18 235 / 0.25), 0 20px 40px -10px oklch(0.5 0.15 260 / 0.3);
-  --shadow-soft: 0 8px 30px -8px oklch(0.5 0.1 260 / 0.25);
+  /* Shadows — chunky solid drop-shadows (neo-brutalism / toy-like) */
+  --shadow-pop: 4px 4px 0 oklch(0.7 0.18 235), 0 12px 0 0 oklch(0.7 0.18 235 / 0.18), 0 20px 40px -10px oklch(0.5 0.15 260 / 0.25);
+  --shadow-soft: 3px 3px 0 oklch(0.5 0.1 260 / 0.18), 0 10px 24px -6px oklch(0.5 0.1 260 / 0.18);
   --shadow-glow: 0 0 40px oklch(0.78 0.18 60 / 0.5);
+  --shadow-chunky: 4px 4px 0 oklch(0.25 0.08 260 / 0.12);
+  --shadow-inner: inset 0 2px 0 0 oklch(1 0 0 / 0.6), inset 0 -1px 0 0 oklch(0.25 0.08 260 / 0.06);
 
   /* Border Radius */
   --radius: 1.25rem;
@@ -88,9 +90,22 @@
   --radius-4xl: var(--radius-4xl);
 }
 
-/* Base Styles */
+/* Base Styles — subtle playful pattern background */
 body {
-  background: var(--gradient-sky);
+  background:
+    /* tiny cloud puffs */
+    radial-gradient(circle 18px at 10% 15%, oklch(1 0 0 / 0.45) 0%, transparent 100%),
+    radial-gradient(circle 12px at 25% 8%, oklch(1 0 0 / 0.35) 0%, transparent 100%),
+    radial-gradient(circle 22px at 70% 12%, oklch(1 0 0 / 0.4) 0%, transparent 100%),
+    radial-gradient(circle 14px at 85% 20%, oklch(1 0 0 / 0.3) 0%, transparent 100%),
+    /* geometric dots */
+    radial-gradient(circle 3px at 15% 45%, oklch(0.7 0.18 235 / 0.07) 0%, transparent 100%),
+    radial-gradient(circle 3px at 55% 35%, oklch(0.82 0.2 145 / 0.07) 0%, transparent 100%),
+    radial-gradient(circle 3px at 80% 55%, oklch(0.78 0.18 60 / 0.07) 0%, transparent 100%),
+    radial-gradient(circle 2px at 35% 70%, oklch(0.65 0.22 310 / 0.06) 0%, transparent 100%),
+    radial-gradient(circle 2px at 65% 80%, oklch(0.7 0.18 235 / 0.06) 0%, transparent 100%),
+    /* base gradient */
+    var(--gradient-sky);
   background-attachment: fixed;
   color: var(--foreground);
   font-family: "Nunito", "Baloo 2", system-ui, sans-serif;
@@ -113,6 +128,21 @@ h1, h2, h3, h4 {
 .shadow-pop { box-shadow: var(--shadow-pop); }
 .shadow-soft { box-shadow: var(--shadow-soft); }
 .shadow-glow { box-shadow: var(--shadow-glow); }
+.shadow-chunky { box-shadow: var(--shadow-chunky); }
+.shadow-inner { box-shadow: var(--shadow-inner); }
+
+/* Neo-brutalism card — inner border for tactile feel */
+.card-chunky {
+  border: 3px solid oklch(0.25 0.08 260 / 0.08);
+  box-shadow: var(--shadow-chunky), var(--shadow-inner);
+}
+
+/* Frosted glass overlay — for world biome cards */
+.frosted-overlay {
+  background: linear-gradient(0deg, oklch(0.15 0.05 260 / 0.85) 0%, oklch(0.15 0.05 260 / 0.4) 60%, transparent 100%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
 
 .text-stroke {
   -webkit-text-stroke: 2px oklch(0.25 0.08 260);
