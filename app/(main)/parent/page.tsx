@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import { ACTIVITIES } from '@/lib/worlds';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip,
@@ -16,13 +17,6 @@ const dummyChildren = [
   { _id: '1', name: 'Adi', avatar: '🧒', level: 3, xp: 2450, coins: 320, classId: '3A' },
   { _id: '2', name: 'Sari', avatar: '👧', level: 2, xp: 1800, coins: 250, classId: '2B' },
 ];
-
-  const sportRecommendations = [
-    { sport: 'Basket', icon: '🏀', match: 92, reason: 'Lompatan & koordinasi excellent' },
-    { sport: 'Renang', icon: '🏊', match: 85, reason: 'Fleksibilitas & keseimbangan kuat' },
-    { sport: 'Senam', icon: '🤸', match: 78, reason: 'Agilitas & kekuatan bagus' },
-    { sport: 'Sepak Bola', icon: '⚽', match: 74, reason: 'Lari & koordinasi berkembang' },
-  ];
 
 export default function ParentDashboard() {
   const { userId } = useAuth();
@@ -46,13 +40,13 @@ export default function ParentDashboard() {
   ];
 
   const weeklyActivity = [
-    { d: 'Mon', school: 45, home: 30 },
-    { d: 'Tue', school: 60, home: 20 },
-    { d: 'Wed', school: 50, home: 45 },
-    { d: 'Thu', school: 40, home: 35 },
-    { d: 'Fri', school: 55, home: 25 },
-    { d: 'Sat', school: 0, home: 60 },
-    { d: 'Sun', school: 0, home: 50 },
+    { d: 'Sen', school: 45, home: 30 },
+    { d: 'Sel', school: 60, home: 20 },
+    { d: 'Rab', school: 50, home: 45 },
+    { d: 'Kam', school: 40, home: 35 },
+    { d: 'Jum', school: 55, home: 25 },
+    { d: 'Sab', school: 0, home: 60 },
+    { d: 'Min', school: 0, home: 50 },
   ];
 
   const homeQuests = [
@@ -75,7 +69,7 @@ export default function ParentDashboard() {
         <div className="flex items-center gap-4">
           <div className="text-5xl animate-float">👨‍👩‍👧</div>
           <div className="flex-1">
-            <div className="text-xs font-bold text-muted-foreground">Parent Dashboard</div>
+            <div className="text-xs font-bold text-muted-foreground">Dashboard Orang Tua</div>
             <h1 className="text-3xl font-extrabold">Pantau Aktivitas Anak</h1>
             <p className="text-sm text-foreground/70">Lihat perkembangan gerak non-lokomotor dan aktivitas anak</p>
           </div>
@@ -168,10 +162,10 @@ export default function ParentDashboard() {
             <h3 className="font-extrabold text-lg mb-4">📹 Hasil Rekaman AI</h3>
             <div className="space-y-3">
               {[
-                { date: '2026-06-28', type: 'Jumping Jacks', score: 82, duration: '1:23' },
-                { date: '2026-06-27', type: 'Tes Keseimbangan', score: 75, duration: '0:58' },
-                { date: '2026-06-25', type: 'Running Form', score: 68, duration: '2:01' },
-                { date: '2026-06-22', type: 'Throw & Catch', score: 90, duration: '1:45' },
+                { date: '2026-06-28', type: 'Meliuk', score: 82, duration: '1:23' },
+                { date: '2026-06-27', type: 'Menekuk', score: 75, duration: '0:58' },
+                { date: '2026-06-25', type: 'Memutar', score: 68, duration: '2:01' },
+                { date: '2026-06-22', type: 'Mengayun', score: 90, duration: '1:45' },
               ].map((rec, i) => (
                 <div key={i} className="flex items-center justify-between p-3 bg-muted/50 rounded-2xl hover:bg-muted/80 transition-all cursor-pointer">
                   <div className="flex items-center gap-3">
@@ -194,25 +188,23 @@ export default function ParentDashboard() {
         </div>
       </section>
 
-      {/* Rekomendasi Cabang Olahraga */}
+      {/* Aktivitas Non-Lokomotor */}
       <section>
         <div className="bg-white rounded-3xl p-6 shadow-soft">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-extrabold text-lg">🏆 Rekomendasi Olahraga</h3>
-            <span className="text-xs font-bold px-3 py-1 rounded-full gradient-magic text-white">Otomatis AI</span>
+            <h3 className="font-extrabold text-lg">🌟 Aktivitas Gerak Non-Lokomotor</h3>
+            <span className="text-xs font-bold px-3 py-1 rounded-full gradient-grass text-white">6 Aktivitas</span>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {sportRecommendations.map((s) => (
-              <div key={s.sport} className="bg-muted/40 rounded-3xl p-5 hover:shadow-soft transition-all border-2 border-transparent hover:border-primary/20">
-                <div className="text-4xl mb-2">{s.icon}</div>
-                <div className="font-extrabold text-lg">{s.sport}</div>
-                <div className="flex items-center gap-1 mt-1 mb-2">
-                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                    <div className="h-full gradient-grass rounded-full" style={{ width: `${s.match}%` }} />
-                  </div>
-                  <span className="text-sm font-bold">{s.match}%</span>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {ACTIVITIES.map((a) => (
+              <div key={a.id} className="bg-muted/40 rounded-3xl p-5 hover:shadow-soft transition-all border-2 border-transparent hover:border-primary/20">
+                <div className="text-4xl mb-2">{a.icon}</div>
+                <div className="font-extrabold text-lg">{a.name}</div>
+                <div className="text-xs text-muted-foreground mt-1">{a.description}</div>
+                <div className="flex items-center justify-between mt-3">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">{a.badgeName}</span>
+                  <span className="text-xs font-bold text-accent">+{a.xpReward} XP</span>
                 </div>
-                <div className="text-xs text-muted-foreground">{s.reason}</div>
               </div>
             ))}
           </div>
