@@ -39,7 +39,6 @@ export const linkChild = mutation({
         childIds: [...currentChildren, child._id],
         updatedAt: Date.now(),
       });
-      // Also set parentIds on child
       const currentParents = child.parentIds ?? [];
       if (!currentParents.includes(parentId)) {
         await ctx.db.patch(child._id, {
@@ -59,6 +58,29 @@ export const getUsersByClass = query({
       .query("users")
       .withIndex("by_classId", (q) => q.eq("classId", classId))
       .collect();
+  },
+});
+
+export const getLeaderboardByClass = query({
+  args: { classId: v.id("classes") },
+  handler: async (ctx, { classId }) => {
+    const students = await ctx.db
+      .query("users")
+      .withIndex("by_classId", (q) => q.eq("classId", classId))
+      .collect();
+    return students
+      .filter((s) => s.role === "student")
+      .sort((a, b) => b.xp - a.xp)
+      .map((s, i) => ({
+        rank: i + 1,
+        _id: s._id,
+        name: s.name,
+        avatar: s.avatar,
+        level: s.level,
+        xp: s.xp,
+        coins: s.coins,
+        badges: s.badges,
+      }));
   },
 });
 
@@ -95,7 +117,7 @@ export const createUser = mutation({
       xp: 0,
       coins: 0,
       level: 1,
-      pets: [],
+      badges: [],
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
@@ -109,7 +131,7 @@ export const updateXP = mutation({
     if (!user) throw new Error("User not found");
 
     const newXP = user.xp + xpGain;
-    const newLevel = Math.floor(newXP / 100) + 1;
+    const newLevel = Math.min(Math.floor(newXP / 100) + 1, 10);
     const coinsGain = Math.floor(xpGain / 10);
 
     await ctx.db.patch(userId, {
@@ -123,19 +145,20 @@ export const updateXP = mutation({
   },
 });
 
-export const unlockPet = mutation({
-  args: { userId: v.id("users"), petId: v.string() },
-  handler: async (ctx, { userId, petId }) => {
+export const earnBadge = mutation({
+  args: { userId: v.id("users"), badgeId: v.string() },
+  handler: async (ctx, { userId, badgeId }) => {
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
-    if (!user.pets.includes(petId)) {
+    const currentBadges = user.badges ?? [];
+    if (!currentBadges.includes(badgeId)) {
       await ctx.db.patch(userId, {
-        pets: [...user.pets, petId],
+        badges: [...currentBadges, badgeId],
         updatedAt: Date.now(),
       });
     }
 
-    return user.pets;
+    return currentBadges;
   },
 });

@@ -1,93 +1,91 @@
-export type World = {
+export type Activity = {
   id: string;
-  number: number;
   name: string;
-  theme: string;
-  tagline: string;
-  activities: string[];
-  boss: string;
-  skills: string[];
-  rewards: { badge: string; coins: number; crystal: string };
-  gradient: string;
-  emoji: string;
-  unlocked: boolean;
-  progress: number;
+  description: string;
+  badgeId: string;
+  badgeName: string;
+  xpReward: number;
+  icon: string;
 };
 
-export const worlds: World[] = [
+export type World = {
+  id: string;
+  name: string;
+  tagline: string;
+  activities: Activity[];
+  gradient: string;
+  emoji: string;
+};
+
+export const ACTIVITIES: Activity[] = [
   {
-    id: "jumping-jungle",
-    number: 1,
-    name: "Jumping Jungle",
-    theme: "Tropical Forest",
-    tagline: "Leap through vines and waterfalls!",
-    activities: ["Jump Challenge", "Landing Challenge", "Balance Bridge"],
-    boss: "Giant Frog Jump",
-    skills: ["Jumping", "Landing", "Balance"],
-    rewards: { badge: "Forest Explorer", coins: 100, crystal: "Movement Crystal" },
-    gradient: "gradient-grass",
-    emoji: "🌴",
-    unlocked: true,
-    progress: 100,
+    id: 'meliuk',
+    name: 'Meliuk',
+    description: 'Gerakan meliuk tubuh ke kiri dan kanan',
+    badgeId: 'badge_meliuk',
+    badgeName: 'Si Liuk Lincah',
+    xpReward: 20,
+    icon: '🌊',
   },
   {
-    id: "running-valley",
-    number: 2,
-    name: "Running Valley",
-    theme: "Mountain Valley",
-    tagline: "Race the wind through alpine trails!",
-    activities: ["Sprint Run", "Zig-Zag Run", "Obstacle Run"],
-    boss: "Speed Hawk Race",
-    skills: ["Speed", "Agility", "Running"],
-    rewards: { badge: "Speed Runner", coins: 150, crystal: "Speed Crystal" },
-    gradient: "gradient-sky",
-    emoji: "⛰️",
-    unlocked: true,
-    progress: 60,
+    id: 'menekuk',
+    name: 'Menekuk',
+    description: 'Gerakan menekuk tangan dan kaki',
+    badgeId: 'badge_menekuk',
+    badgeName: 'Si Tekuk Tangkas',
+    xpReward: 20,
+    icon: '🦩',
   },
   {
-    id: "throwing-mountain",
-    number: 3,
-    name: "Throwing Mountain",
-    theme: "Volcano Sports Arena",
-    tagline: "Aim true at the volcano arena!",
-    activities: ["Throw Challenge", "Catch Challenge", "Precision Challenge"],
-    boss: "Dragon Throw Challenge",
-    skills: ["Throwing", "Catching", "Coordination"],
-    rewards: { badge: "Accuracy Master", coins: 200, crystal: "Confidence Crystal" },
-    gradient: "gradient-sunset",
-    emoji: "🌋",
-    unlocked: true,
-    progress: 25,
+    id: 'memutar',
+    name: 'Memutar',
+    description: 'Gerakan memutar tangan, kepala, dan pinggang',
+    badgeId: 'badge_memutar',
+    badgeName: 'Si Putar Cepat',
+    xpReward: 25,
+    icon: '🌀',
   },
   {
-    id: "balance-island",
-    number: 4,
-    name: "Balance Island",
-    theme: "Floating Sky Island",
-    tagline: "Walk the rainbow bridges in the sky!",
-    activities: ["Beam Walk", "One-Leg Stand", "Dynamic Balance"],
-    boss: "Sky Bridge Challenge",
-    skills: ["Stability", "Balance", "Body Control"],
-    rewards: { badge: "Balance Hero", coins: 250, crystal: "Balance Crystal" },
-    gradient: "gradient-magic",
-    emoji: "🏝️",
-    unlocked: false,
-    progress: 0,
+    id: 'mengayun',
+    name: 'Mengayun',
+    description: 'Gerakan mengayunkan tangan dan kaki',
+    badgeId: 'badge_mengayun',
+    badgeName: 'Si Ayun Kuat',
+    xpReward: 25,
+    icon: '🎪',
   },
   {
-    id: "champion-arena",
-    number: 5,
-    name: "Champion Arena",
-    theme: "Futuristic Mega Stadium",
-    tagline: "Become a Future Athlete!",
-    activities: ["All movement skills combined"],
-    boss: "Future Athlete Tournament",
-    skills: ["All-Around Champion"],
-    rewards: { badge: "Champion Trophy", coins: 500, crystal: "Champion Crystal" },
-    gradient: "gradient-gold",
-    emoji: "🏟️",
-    unlocked: false,
-    progress: 0,
+    id: 'membungkuk',
+    name: 'Membungkuk',
+    description: 'Gerakan membungkuk dan meregang',
+    badgeId: 'badge_membungkuk',
+    badgeName: 'Si Bungkuk Fleksibel',
+    xpReward: 30,
+    icon: '🧘',
+  },
+  {
+    id: 'mendorong',
+    name: 'Mendorong & Menarik',
+    description: 'Gerakan mendorong dan menarik benda',
+    badgeId: 'badge_mendorong',
+    badgeName: 'Si Dorong Hebat',
+    xpReward: 30,
+    icon: '💪',
   },
 ];
+
+export const world: World = {
+  id: 'non-lokomotor',
+  name: 'Dunia Gerak Non-Lokomotor',
+  tagline: 'Kuasai 6 gerakan dasar tubuhmu!',
+  activities: ACTIVITIES,
+  gradient: 'gradient-grass',
+  emoji: '🌟',
+};
+
+export const BADGE_LIST = ACTIVITIES.map((a) => ({
+  id: a.badgeId,
+  name: a.badgeName,
+  activityId: a.id,
+  icon: a.icon,
+}));

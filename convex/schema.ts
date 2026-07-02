@@ -25,7 +25,8 @@ export default defineSchema({
     xp: v.number(),
     coins: v.number(),
     level: v.number(),
-    pets: v.array(v.string()),
+    badges: v.optional(v.array(v.string())),
+    pets: v.optional(v.array(v.string())),
     role: v.optional(v.union(v.literal("student"), v.literal("parent"), v.literal("teacher"), v.literal("admin"))),
     schoolId: v.optional(v.id("schools")),
     classId: v.optional(v.id("classes")),
@@ -43,9 +44,12 @@ export default defineSchema({
   quests: defineTable({
     userId: v.id("users"),
     type: v.union(
-      v.literal("jumping"),
-      v.literal("running"),
-      v.literal("balance")
+      v.literal("meliuk"),
+      v.literal("menekuk"),
+      v.literal("memutar"),
+      v.literal("mengayun"),
+      v.literal("membungkuk"),
+      v.literal("mendorong")
     ),
     target: v.number(),
     completed: v.number(),
@@ -60,27 +64,33 @@ export default defineSchema({
   movements: defineTable({
     userId: v.id("users"),
     questId: v.id("quests"),
-    landmarks: v.object({
-      data: v.array(
-        v.object({
-          x: v.number(),
-          y: v.number(),
-          z: v.number(),
-          visibility: v.number(),
-          presence: v.number(),
-        })
-      ),
-    }),
-    fmsScore: v.object({
-      squatDepth: v.number(),
-      landingBalance: v.number(),
-      jumpValid: v.boolean(),
-    }),
+    activityId: v.string(),
+    score: v.number(),
+    duration: v.number(),
     timestamp: v.number(),
   })
     .index("by_userId", ["userId"])
     .index("by_questId", ["questId"])
+    .index("by_activityId", ["activityId"])
     .index("by_timestamp", ["timestamp"]),
+
+  daily_quests: defineTable({
+    userId: v.id("users"),
+    date: v.string(),
+    tasks: v.array(
+      v.object({
+        activityId: v.string(),
+        label: v.string(),
+        target: v.number(),
+        completed: v.number(),
+        xp: v.number(),
+      })
+    ),
+    totalXpEarned: v.number(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_date", ["date"])
+    .index("by_user_date", ["userId", "date"]),
 
   physical_literacy: defineTable({
     userId: v.id("users"),

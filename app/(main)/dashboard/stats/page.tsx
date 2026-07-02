@@ -20,11 +20,11 @@ const weeklyPL = [
 ];
 
 const skillBreakdown = [
-  { skill: 'Balance', score: 73, avg: 65, change: '+8' },
-  { skill: 'Agility', score: 68, avg: 60, change: '+8' },
-  { skill: 'Strength', score: 71, avg: 62, change: '+9' },
-  { skill: 'Coordination', score: 65, avg: 58, change: '+7' },
-  { skill: 'Flexibility', score: 62, avg: 55, change: '+7' },
+  { skill: 'Keseimbangan', score: 73, avg: 65, change: '+8' },
+  { skill: 'Kelincahan', score: 68, avg: 60, change: '+8' },
+  { skill: 'Kekuatan', score: 71, avg: 62, change: '+9' },
+  { skill: 'Koordinasi', score: 65, avg: 58, change: '+7' },
+  { skill: 'Fleksibilitas', score: 62, avg: 55, change: '+7' },
 ];
 
 const gameStats = [
@@ -70,7 +70,7 @@ export default function StudentStatsPage() {
           { l: 'Total XP', v: (userData?.xp ?? 2450).toLocaleString(), c: 'from-purple-500 to-pink-600' },
           { l: 'PL Score', v: '71', c: 'from-blue-500 to-cyan-600' },
           { l: 'Quest Selesai', v: '94/108', c: 'from-green-500 to-emerald-600' },
-          { l: 'Days Active', v: '23', c: 'from-amber-500 to-orange-600' },
+          { l: 'Hari Aktif', v: '23', c: 'from-amber-500 to-orange-600' },
         ].map((s, i) => (
           <div key={i} className={`bg-gradient-to-br ${s.c} text-white rounded-2xl p-4 shadow-soft text-center`}>
             <div className="text-2xl font-extrabold">{s.v}</div>
@@ -91,8 +91,8 @@ export default function StudentStatsPage() {
                 <YAxis domain={[50, 90]} tick={{ fontSize: 10 }} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="pl" stroke="#6366f1" strokeWidth={3} dot={{ r: 4 }} name="PL Score" />
-                <Line type="monotone" dataKey="balance" stroke="#22d3ee" strokeWidth={2} strokeDasharray="5 5" name="Balance" />
+                <Line type="monotone" dataKey="pl" stroke="#6366f1" strokeWidth={3} dot={{ r: 4 }} name="Skor PL" />
+                <Line type="monotone" dataKey="balance" stroke="#22d3ee" strokeWidth={2} strokeDasharray="5 5" name="Keseimbangan" />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -100,7 +100,7 @@ export default function StudentStatsPage() {
 
         {/* Skill breakdown */}
         <div className="bg-white rounded-3xl p-5 shadow-soft">
-          <h3 className="font-extrabold text-sm mb-4">🎯 Breakdown per Skill</h3>
+          <h3 className="font-extrabold text-sm mb-4">🎯 Rincian per Skill</h3>
           <div className="space-y-3">
             {skillBreakdown.map((s) => (
               <div key={s.skill} className="flex items-center gap-3">
@@ -135,11 +135,11 @@ export default function StudentStatsPage() {
                 <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-lg">🎮</div>
                 <div className="flex-1">
                   <div className="font-bold text-sm">{g.name}</div>
-                  <div className="text-xs text-muted-foreground">Main {g.played}x · Best: {g.best}</div>
+                  <div className="text-xs text-muted-foreground">Main {g.played}x · Terbaik: {g.best}</div>
                 </div>
                 <div className="text-right">
                   <div className="font-extrabold">{g.avgScore}</div>
-                  <div className="text-[10px] text-muted-foreground">avg score</div>
+                  <div className="text-[10px] text-muted-foreground">rata-rata</div>
                 </div>
               </div>
             ))}
@@ -156,7 +156,7 @@ export default function StudentStatsPage() {
                 <YAxis tick={{ fontSize: 10 }} />
                 <Tooltip />
                 <Bar dataKey="completed" name="Selesai" fill="#22c55e" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="missed" name="Missed" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="missed" name="Terlewat" fill="#ef4444" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

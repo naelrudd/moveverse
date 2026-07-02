@@ -26,9 +26,12 @@ export const createQuest = mutation({
   args: {
     userId: v.id("users"),
     type: v.union(
-      v.literal("jumping"),
-      v.literal("running"),
-      v.literal("balance")
+      v.literal("meliuk"),
+      v.literal("menekuk"),
+      v.literal("memutar"),
+      v.literal("mengayun"),
+      v.literal("membungkuk"),
+      v.literal("mendorong")
     ),
     target: v.number(),
   },

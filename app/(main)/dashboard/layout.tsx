@@ -22,7 +22,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-bounce text-4xl mb-4">🦊</div>
-          <p className="text-lg font-bold text-muted-foreground">Loading...</p>
+          <p className="text-lg font-bold text-muted-foreground">Memuat...</p>
         </div>
       </div>
     );

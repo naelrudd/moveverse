@@ -17,12 +17,12 @@ const dummyChildren = [
   { _id: '2', name: 'Sari', avatar: '👧', level: 2, xp: 1800, coins: 250, classId: '2B' },
 ];
 
-const sportRecommendations = [
-  { sport: 'Basketball', icon: '🏀', match: 92, reason: 'Excellent jumping & coordination' },
-  { sport: 'Swimming', icon: '🏊', match: 85, reason: 'Strong flexibility & balance' },
-  { sport: 'Gymnastics', icon: '🤸', match: 78, reason: 'Good agility & strength' },
-  { sport: 'Soccer', icon: '⚽', match: 74, reason: 'Developing running & coordination' },
-];
+  const sportRecommendations = [
+    { sport: 'Basket', icon: '🏀', match: 92, reason: 'Lompatan & koordinasi excellent' },
+    { sport: 'Renang', icon: '🏊', match: 85, reason: 'Fleksibilitas & keseimbangan kuat' },
+    { sport: 'Senam', icon: '🤸', match: 78, reason: 'Agilitas & kekuatan bagus' },
+    { sport: 'Sepak Bola', icon: '⚽', match: 74, reason: 'Lari & koordinasi berkembang' },
+  ];
 
 export default function ParentDashboard() {
   const { userId } = useAuth();
@@ -37,11 +37,11 @@ export default function ParentDashboard() {
   const childData = children.find((c) => c._id === activeChild);
 
   const motorikData = [
-    { skill: 'Balance', value: 78, avg: 65, prev: 72 },
-    { skill: 'Coordination', value: 65, avg: 58, prev: 60 },
-    { skill: 'Agility', value: 72, avg: 63, prev: 68 },
-    { skill: 'Strength', value: 60, avg: 55, prev: 55 },
-    { skill: 'Flexibility', value: 55, avg: 52, prev: 50 },
+    { skill: 'Keseimbangan', value: 78, avg: 65, prev: 72 },
+    { skill: 'Koordinasi', value: 65, avg: 58, prev: 60 },
+    { skill: 'Kelincahan', value: 72, avg: 63, prev: 68 },
+    { skill: 'Kekuatan', value: 60, avg: 55, prev: 55 },
+    { skill: 'Fleksibilitas', value: 55, avg: 52, prev: 50 },
     { skill: 'Confidence', value: 85, avg: 70, prev: 80 },
   ];
 
@@ -56,10 +56,10 @@ export default function ParentDashboard() {
   ];
 
   const homeQuests = [
-    { icon: '🦘', title: '10 Jumping Jacks', reward: '+50 XP', done: true },
-    { icon: '🧘', title: 'Balance 20s one leg', reward: '+30 XP', done: true },
-    { icon: '🏃', title: 'Run in place 1 min', reward: '+40 XP', done: false },
-    { icon: '🎯', title: 'Throw & catch 5x', reward: '+60 XP', done: false },
+    { icon: '🌊', title: 'Meliuk 5 kali', reward: '+20 XP', done: true },
+    { icon: '🦩', title: 'Menekuk tangan 10 kali', reward: '+20 XP', done: true },
+    { icon: '🌀', title: 'Memutar kepala 5 kali', reward: '+25 XP', done: false },
+    { icon: '🎪', title: 'Mengayun kaki 10 kali', reward: '+25 XP', done: false },
   ];
 
   const linkChild = async () => {
@@ -76,8 +76,8 @@ export default function ParentDashboard() {
           <div className="text-5xl animate-float">👨‍👩‍👧</div>
           <div className="flex-1">
             <div className="text-xs font-bold text-muted-foreground">Parent Dashboard</div>
-            <h1 className="text-3xl font-extrabold">Pantau & Dampingi Buah Hatimu</h1>
-            <p className="text-sm text-foreground/70">Lihat perkembangan motorik, aktivitas sekolah, dan quest di rumah</p>
+            <h1 className="text-3xl font-extrabold">Pantau Aktivitas Anak</h1>
+            <p className="text-sm text-foreground/70">Lihat perkembangan gerak non-lokomotor dan aktivitas anak</p>
           </div>
           {/* Child selector */}
           <div className="flex gap-2">
@@ -130,7 +130,7 @@ export default function ParentDashboard() {
       <section>
         <div className="grid lg:grid-cols-2 gap-5">
           <div className="bg-white rounded-3xl p-6 shadow-soft">
-            <h3 className="font-extrabold text-lg mb-4">Perkembangan Motorik Detail</h3>
+            <h3 className="font-extrabold text-lg mb-4">📊 Detail Perkembangan Motorik</h3>
             <div className="h-72">
               <ResponsiveContainer>
                 <RadarChart data={motorikData}>
@@ -169,7 +169,7 @@ export default function ParentDashboard() {
             <div className="space-y-3">
               {[
                 { date: '2026-06-28', type: 'Jumping Jacks', score: 82, duration: '1:23' },
-                { date: '2026-06-27', type: 'Balance Test', score: 75, duration: '0:58' },
+                { date: '2026-06-27', type: 'Tes Keseimbangan', score: 75, duration: '0:58' },
                 { date: '2026-06-25', type: 'Running Form', score: 68, duration: '2:01' },
                 { date: '2026-06-22', type: 'Throw & Catch', score: 90, duration: '1:45' },
               ].map((rec, i) => (
@@ -198,8 +198,8 @@ export default function ParentDashboard() {
       <section>
         <div className="bg-white rounded-3xl p-6 shadow-soft">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-extrabold text-lg">🏆 Rekomendasi Cabang Olahraga</h3>
-            <span className="text-xs font-bold px-3 py-1 rounded-full gradient-magic text-white">AI-Generated</span>
+            <h3 className="font-extrabold text-lg">🏆 Rekomendasi Olahraga</h3>
+            <span className="text-xs font-bold px-3 py-1 rounded-full gradient-magic text-white">Otomatis AI</span>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {sportRecommendations.map((s) => (
@@ -259,7 +259,7 @@ export default function ParentDashboard() {
               ))}
             </div>
             <button className="w-full mt-3 py-2 rounded-full font-bold gradient-sunset text-white text-sm">
-              + Assign New Quest
+              + Tambah Quest Baru
             </button>
           </div>
         </div>

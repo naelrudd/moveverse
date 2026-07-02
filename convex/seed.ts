@@ -61,8 +61,7 @@ export const seedDummyPL = mutation({
       count++;
     }
 
-    // Seed sample quests
-    const questTypes = ["jumping", "running", "balance"] as const;
+    const questTypes = ["meliuk", "menekuk", "memutar"] as const;
     for (const u of users) {
       if (u.role !== "student") continue;
       const existingQuests = await ctx.db
@@ -90,7 +89,7 @@ export const seedDummyPL = mutation({
 
 export const clearAll = mutation({
   handler: async (ctx) => {
-    const tables = ["users", "classes", "schools", "physical_literacy", "quests", "movements"] as const;
+    const tables = ["users", "classes", "schools", "physical_literacy", "quests", "movements", "daily_quests"] as const;
     for (const t of tables) {
       const items = await ctx.db.query(t).collect();
       for (const i of items) await ctx.db.delete(i._id);
@@ -122,26 +121,16 @@ export const seedMovementSamples = mutation({
       .first();
     if (existing) return "Already have movement data";
 
+    const activityIds = ["meliuk", "menekuk", "memutar", "mengayun", "membungkuk", "mendorong"];
     let count = 0;
     for (const q of quests) {
       for (let i = 0; i < 3; i++) {
         await ctx.db.insert("movements", {
           userId,
           questId: q._id,
-          landmarks: {
-            data: Array.from({ length: 33 }, () => ({
-              x: Math.random(),
-              y: Math.random(),
-              z: Math.random() * 2 - 1,
-              visibility: 0.8 + Math.random() * 0.2,
-              presence: 0.7 + Math.random() * 0.3,
-            })),
-          },
-          fmsScore: {
-            squatDepth: 30 + Math.floor(Math.random() * 60),
-            landingBalance: 40 + Math.floor(Math.random() * 50),
-            jumpValid: Math.random() > 0.3,
-          },
+          activityId: activityIds[Math.floor(Math.random() * activityIds.length)],
+          score: 50 + Math.floor(Math.random() * 50),
+          duration: 30 + Math.floor(Math.random() * 120),
           timestamp: Date.now() - i * 86400000,
         });
         count++;

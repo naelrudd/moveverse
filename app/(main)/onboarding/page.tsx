@@ -6,6 +6,7 @@ import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useRouter } from 'next/navigation';
 import { Id } from '@/convex/_generated/dataModel';
+import AvatarPicker from '@/components/AvatarPicker';
 
 const ROLES = [
   { value: 'student' as const, emoji: '🧒', label: 'Siswa', desc: 'Aku ingin bermain dan belajar!' },
@@ -20,6 +21,7 @@ export default function OnboardingPage() {
 
   const [step, setStep] = useState(1);
   const [role, setRole] = useState<'student' | 'parent' | 'teacher' | ''>('');
+  const [avatar, setAvatar] = useState('🦊');
   const [schoolId, setSchoolId] = useState<Id<'schools'> | ''>('');
   const [classId, setClassId] = useState<Id<'classes'> | ''>('');
   const [nis, setNis] = useState('');
@@ -48,8 +50,8 @@ export default function OnboardingPage() {
     try {
       await createUser({
         clerkId: userId,
-        name: user?.firstName || user?.username || 'Explorer',
-        avatar: '🦊',
+        name: user?.firstName || user?.username || 'Petualang',
+        avatar,
         role,
         schoolId,
         classId: classId || undefined,
@@ -88,7 +90,7 @@ export default function OnboardingPage() {
 
         {/* Step indicators */}
         <div className="flex justify-center gap-2 mb-8">
-          {[1, 2, 3].map((s) => (
+          {[1, 2, 3, 4].map((s) => (
             <div key={s} className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${step >= s ? 'gradient-sky text-white' : 'bg-muted text-muted-foreground'}`}>
               {s}
             </div>
@@ -115,8 +117,26 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* Step 2: School + extra fields */}
+        {/* Step 2: Avatar */}
         {step === 2 && (
+          <div className="space-y-4 animate-pop-in">
+            <p className="text-sm font-bold text-foreground">Pilih avatar hewanmu!</p>
+            <p className="text-xs text-muted-foreground">Pilih hewan yang kamu suka sebagai karaktermu.</p>
+            <AvatarPicker selected={avatar} onSelect={setAvatar} />
+            <div className="flex justify-center mt-2">
+              <div className="text-6xl animate-float">{avatar}</div>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <button onClick={() => setStep(1)} className="px-5 py-2 rounded-full font-bold border-2 border-border">Kembali</button>
+              <button onClick={() => setStep(3)} className="flex-1 py-2 rounded-full font-bold gradient-sky text-white">
+                Selanjutnya →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: School + extra fields */}
+        {step === 3 && (
           <div className="space-y-4 animate-pop-in">
             <p className="text-sm font-bold text-foreground">Pilih sekolah</p>
             <select
@@ -154,9 +174,9 @@ export default function OnboardingPage() {
             )}
 
             <div className="flex gap-2 pt-2">
-              <button onClick={() => setStep(1)} className="px-5 py-2 rounded-full font-bold border-2 border-border">Kembali</button>
+              <button onClick={() => setStep(2)} className="px-5 py-2 rounded-full font-bold border-2 border-border">Kembali</button>
               <button
-                onClick={() => setStep(3)}
+                onClick={() => setStep(4)}
                 disabled={!schoolId}
                 className="flex-1 py-2 rounded-full font-bold gradient-sky text-white disabled:opacity-50"
               >
@@ -166,8 +186,8 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* Step 3: Class (student only) or confirm */}
-        {step === 3 && (
+        {/* Step 4: Class (student only) or confirm */}
+        {step === 4 && (
           <div className="space-y-4 animate-pop-in">
             {role === 'student' && (
               <>
@@ -178,16 +198,11 @@ export default function OnboardingPage() {
                     Memuat daftar kelas...
                   </div>
                 ) : classes.length === 0 ? (
-                  <>
-                    <div className="text-center py-8">
-                      <div className="text-2xl mb-2">📚</div>
-                      <p className="text-sm font-bold">Belum ada kelas di sekolah ini.</p>
-                      <p className="text-xs text-muted-foreground mt-1">Hubungi admin untuk tambah kelas.</p>
-                    </div>
-                    <div className="text-xs text-muted-foreground text-center p-2 bg-red-50 rounded-xl">
-                      DEBUG: schools={schools?.length ?? 0}, schoolId="{schoolId}", classes={classes?.length ?? 0}
-                    </div>
-                  </>
+                  <div className="text-center py-8">
+                    <div className="text-2xl mb-2">📚</div>
+                    <p className="text-sm font-bold">Belum ada kelas di sekolah ini.</p>
+                    <p className="text-xs text-muted-foreground mt-1">Hubungi admin untuk tambah kelas.</p>
+                  </div>
                 ) : (
                   <div className="grid grid-cols-3 gap-2">
                     {classes.map((cls) => (
@@ -208,7 +223,7 @@ export default function OnboardingPage() {
 
             {role === 'parent' && (
               <div className="p-4 bg-primary/5 rounded-2xl text-sm font-bold text-foreground">
-                ✅ Kamu bisa link ke anak setelah daftar melalui halaman School
+                ✅ Kamu bisa link ke anak setelah daftar melalui halaman Aktivitas
               </div>
             )}
 
@@ -219,7 +234,7 @@ export default function OnboardingPage() {
             )}
 
             <div className="flex gap-2 pt-2">
-              <button onClick={() => setStep(2)} className="px-5 py-2 rounded-full font-bold border-2 border-border">Kembali</button>
+              <button onClick={() => setStep(3)} className="px-5 py-2 rounded-full font-bold border-2 border-border">Kembali</button>
               <button
                 onClick={handleSubmit}
                 disabled={submitting || (role === 'student' && !classId)}

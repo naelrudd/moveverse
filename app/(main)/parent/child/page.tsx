@@ -20,14 +20,14 @@ const dummyChildren = [
     quests: [
       { icon: '🏃', title: 'Lari 100m', progress: 80, xp: 40, done: false },
       { icon: '🦘', title: 'Jumping Jacks', progress: 100, xp: 50, done: true },
-      { icon: '🧘', title: 'Balance 30s', progress: 45, xp: 30, done: false },
+      { icon: '🧘', title: 'Keseimbangan 30s', progress: 45, xp: 30, done: false },
     ],
     motorik: [
-      { skill: 'Balance', val: 78 },
-      { skill: 'Coordination', val: 65 },
-      { skill: 'Agility', val: 72 },
-      { skill: 'Strength', val: 60 },
-      { skill: 'Flexibility', val: 55 },
+      { skill: 'Keseimbangan', val: 78 },
+      { skill: 'Koordinasi', val: 65 },
+      { skill: 'Kelincahan', val: 72 },
+      { skill: 'Kekuatan', val: 60 },
+      { skill: 'Fleksibilitas', val: 55 },
     ],
     games: [
       { name: 'Move Dash', icon: '🏃‍♂️', emoji: '🐆', color: 'from-green-400 to-emerald-600', xp: '+80 XP', desc: 'Lari & hindari rintangan' },
@@ -45,11 +45,11 @@ const dummyChildren = [
       { icon: '🎯', title: 'Lempar Tangkap', progress: 30, xp: 60, done: false },
     ],
     motorik: [
-      { skill: 'Balance', val: 82 },
-      { skill: 'Coordination', val: 70 },
-      { skill: 'Agility', val: 68 },
-      { skill: 'Strength', val: 55 },
-      { skill: 'Flexibility', val: 62 },
+      { skill: 'Keseimbangan', val: 82 },
+      { skill: 'Koordinasi', val: 70 },
+      { skill: 'Kelincahan', val: 68 },
+      { skill: 'Kekuatan', val: 55 },
+      { skill: 'Fleksibilitas', val: 62 },
     ],
     games: [
       { name: 'Move Dash', icon: '🏃‍♂️', emoji: '🐆', color: 'from-green-400 to-emerald-600', xp: '+80 XP', desc: 'Lari & hindari rintangan' },
@@ -70,11 +70,11 @@ const weeklyActivity = [
 
 const badges = [
   { name: 'Pelari Cepat', icon: '🏅', desc: 'Lari 100m dalam 15s', unlocked: true },
-  { name: 'Balance Master', icon: '🎯', desc: 'Balance 30 detik', unlocked: true },
-  { name: 'Jump King', icon: '👑', desc: 'Lompat 50x', unlocked: true },
-  { name: 'Team Player', icon: '🤝', desc: 'Main 5 game grup', unlocked: false },
+  { name: 'Ahli Keseimbangan', icon: '🎯', desc: 'Keseimbangan 30 detik', unlocked: true },
+  { name: 'Raja Lompat', icon: '👑', desc: 'Lompat 50x', unlocked: true },
+  { name: 'Pemain Tim', icon: '🤝', desc: 'Main 5 game grup', unlocked: false },
   { name: 'Streak 7', icon: '🔥', desc: '7 hari berturut-turut', unlocked: true },
-  { name: 'Flexibility Pro', icon: '🧘', desc: 'Skor fleksibilitas 80+', unlocked: false },
+  { name: 'Fleksibilitas Pro', icon: '🧘', desc: 'Skor fleksibilitas 80+', unlocked: false },
 ];
 
 export default function ParentChildDashboard() {
@@ -120,7 +120,7 @@ export default function ParentChildDashboard() {
           { l: 'XP', v: child.xp.toLocaleString(), c: 'from-purple-500 to-pink-600', i: '✨' },
           { l: '🪙', v: child.coins.toLocaleString(), c: 'from-amber-500 to-orange-600', i: '' },
           { l: '🔥 Streak', v: `${child.streak} hari`, c: 'from-red-500 to-rose-600', i: '' },
-          { l: 'Badges', v: `${child.badges}/6`, c: 'from-green-500 to-emerald-600', i: '🏅' },
+          { l: 'Lencana', v: `${child.badges}/6`, c: 'from-green-500 to-emerald-600', i: '🏅' },
         ].map((s, i) => (
           <div key={i} className={`bg-gradient-to-br ${s.c} text-white rounded-2xl p-3 shadow-soft text-center`}>
             {s.i && <div className="text-lg">{s.i}</div>}
@@ -222,7 +222,7 @@ export default function ParentChildDashboard() {
 
           {/* Badges */}
           <div className="bg-white rounded-3xl p-5 shadow-soft">
-            <h3 className="font-extrabold text-sm mb-3">🏆 Badges</h3>
+            <h3 className="font-extrabold text-sm mb-3">🏆 Lencana</h3>
             <div className="grid grid-cols-3 gap-2">
               {badges.map((b, i) => (
                 <div

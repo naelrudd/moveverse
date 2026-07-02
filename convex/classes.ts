@@ -26,7 +26,7 @@ export const seedClasses = mutation({
       .withIndex("by_schoolId", (q) => q.eq("schoolId", schoolId))
       .first();
 
-    if (existing) return; // Already seeded
+    if (existing) return;
 
     const classes = [
       { name: "1A", grade: 1 },
@@ -46,5 +46,36 @@ export const seedClasses = mutation({
     }
 
     return "Classes seeded";
+  },
+});
+
+export const createClass = mutation({
+  args: {
+    schoolId: v.id("schools"),
+    name: v.string(),
+    grade: v.number(),
+  },
+  handler: async (ctx, { schoolId, name, grade }) => {
+    return await ctx.db.insert("classes", { schoolId, name, grade });
+  },
+});
+
+export const updateClass = mutation({
+  args: {
+    classId: v.id("classes"),
+    name: v.string(),
+    grade: v.number(),
+  },
+  handler: async (ctx, { classId, name, grade }) => {
+    await ctx.db.patch(classId, { name, grade });
+    return classId;
+  },
+});
+
+export const deleteClass = mutation({
+  args: { classId: v.id("classes") },
+  handler: async (ctx, { classId }) => {
+    await ctx.db.delete(classId);
+    return classId;
   },
 });

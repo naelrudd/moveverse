@@ -22,9 +22,9 @@ const byGender = [
 ];
 
 const gradeStats = [
-  { grade: 'Grade 1-2', total: 128, avgPL: 71, active: 120, trend: 5 },
-  { grade: 'Grade 3-4', total: 156, avgPL: 78, active: 148, trend: 8 },
-  { grade: 'Grade 5-6', total: 132, avgPL: 82, active: 125, trend: 6 },
+  { grade: 'Kelas 1-2', total: 128, avgPL: 71, active: 120, trend: 5 },
+  { grade: 'Kelas 3-4', total: 156, avgPL: 78, active: 148, trend: 8 },
+  { grade: 'Kelas 5-6', total: 132, avgPL: 82, active: 125, trend: 6 },
 ];
 
 const classesManaged = [
@@ -43,11 +43,11 @@ const classesManaged = [
 ];
 
 const plBySkill = [
-  { skill: 'Balance', school: 76, national: 68 },
-  { skill: 'Coordination', school: 70, national: 62 },
-  { skill: 'Agility', school: 74, national: 65 },
-  { skill: 'Strength', school: 65, national: 60 },
-  { skill: 'Flexibility', school: 62, national: 58 },
+  { skill: 'Keseimbangan', school: 76, national: 68 },
+  { skill: 'Koordinasi', school: 70, national: 62 },
+  { skill: 'Kelincahan', school: 74, national: 65 },
+  { skill: 'Kekuatan', school: 65, national: 60 },
+  { skill: 'Fleksibilitas', school: 62, national: 58 },
 ];
 
 export default function SchoolDashboard() {
@@ -68,7 +68,7 @@ export default function SchoolDashboard() {
         <div className="flex items-center gap-4">
           <div className="text-5xl">🏫</div>
           <div>
-            <div className="text-xs font-bold text-muted-foreground">School Analytics</div>
+            <div className="text-xs font-bold text-muted-foreground">Analitik Sekolah</div>
             <h1 className="text-3xl font-extrabold">{userData?.name || 'SDN Moveverse Academy'}</h1>
             <p className="text-sm text-foreground/70">Laporan performa PJOK seluruh sekolah · Evaluasi program berskala besar</p>
           </div>
@@ -116,7 +116,7 @@ export default function SchoolDashboard() {
           </div>
         </div>
         <div className="bg-white rounded-3xl p-6 shadow-soft">
-          <h3 className="font-extrabold text-lg mb-4">Gender Distribution</h3>
+          <h3 className="font-extrabold text-lg mb-4">Distribusi Jenis Kelamin</h3>
           <div className="h-48">
             <ResponsiveContainer>
               <PieChart>
@@ -139,7 +139,7 @@ export default function SchoolDashboard() {
 
       {/* PL vs National benchmark */}
       <div className="bg-white rounded-3xl p-6 shadow-soft">
-        <h3 className="font-extrabold text-lg mb-4">📊 PL Score vs National Benchmark</h3>
+        <h3 className="font-extrabold text-lg mb-4">📊 Skor PL vs Benchmark Nasional</h3>
         <div className="h-52">
           <ResponsiveContainer>
             <BarChart data={plBySkill}>
@@ -147,13 +147,13 @@ export default function SchoolDashboard() {
               <YAxis domain={[0, 100]} />
               <Tooltip />
               <Bar dataKey="school" name="Sekolah" radius={[6, 6, 0, 0]} fill="#3b82f6" />
-              <Bar dataKey="national" name="National" radius={[6, 6, 0, 0]} fill="#cbd5e1" />
+              <Bar dataKey="national" name="Nasional" radius={[6, 6, 0, 0]} fill="#cbd5e1" />
             </BarChart>
           </ResponsiveContainer>
         </div>
         <div className="flex gap-4 justify-center text-xs font-bold mt-2">
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-500"></span> Sekolah</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-slate-300"></span> National Avg</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-slate-300"></span> Rata-rata Nasional</span>
         </div>
       </div>
 
@@ -163,7 +163,7 @@ export default function SchoolDashboard() {
           <div key={g.grade} className="bg-white rounded-3xl p-5 shadow-soft">
             <div className="text-sm font-bold text-muted-foreground">{g.grade}</div>
             <div className="text-3xl font-extrabold mt-1">{g.avgPL}</div>
-            <div className="text-xs text-secondary-foreground font-bold mt-1">▲ +{g.trend}% vs last term</div>
+            <div className="text-xs text-secondary-foreground font-bold mt-1">▲ +{g.trend}% vs semester lalu</div>
             <div className="text-xs text-muted-foreground mt-2">{g.active}/{g.total} siswa aktif</div>
           </div>
         ))}
@@ -203,7 +203,7 @@ export default function SchoolDashboard() {
                 selectedGrade === g ? 'gradient-sunset text-white' : 'bg-muted/60 hover:bg-muted'
               }`}
             >
-              Grade {g}
+              Kelas {g}
             </button>
           ))}
         </div>

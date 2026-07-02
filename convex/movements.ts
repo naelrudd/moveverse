@@ -5,29 +5,17 @@ export const logMovement = mutation({
   args: {
     userId: v.id("users"),
     questId: v.id("quests"),
-    landmarks: v.object({
-      data: v.array(
-        v.object({
-          x: v.number(),
-          y: v.number(),
-          z: v.number(),
-          visibility: v.number(),
-          presence: v.number(),
-        })
-      ),
-    }),
-    fmsScore: v.object({
-      squatDepth: v.number(),
-      landingBalance: v.number(),
-      jumpValid: v.boolean(),
-    }),
+    activityId: v.string(),
+    score: v.number(),
+    duration: v.number(),
   },
-  handler: async (ctx, { userId, questId, landmarks, fmsScore }) => {
+  handler: async (ctx, { userId, questId, activityId, score, duration }) => {
     return await ctx.db.insert("movements", {
       userId,
       questId,
-      landmarks,
-      fmsScore,
+      activityId,
+      score,
+      duration,
       timestamp: Date.now(),
     });
   },
@@ -55,33 +43,26 @@ export const getUserMovements = query({
 });
 
 export const getMovementStats = query({
-  args: { questId: v.id("quests") },
-  handler: async (ctx, { questId }) => {
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
     const movements = await ctx.db
       .query("movements")
-      .withIndex("by_questId", (q) => q.eq("questId", questId))
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
       .collect();
 
     if (movements.length === 0) {
-      return {
-        totalMovements: 0,
-        avgSquatDepth: 0,
-        avgLandingBalance: 0,
-        validJumps: 0,
-      };
+      return { totalMovements: 0, avgScore: 0, activities: {} as Record<string, number> };
     }
 
-    const totalValid = movements.filter((m) => m.fmsScore.jumpValid).length;
-    const avgDepth =
-      movements.reduce((sum, m) => sum + m.fmsScore.squatDepth, 0) / movements.length;
-    const avgBalance =
-      movements.reduce((sum, m) => sum + m.fmsScore.landingBalance, 0) / movements.length;
+    const avgScore = Math.round(
+      movements.reduce((sum, m) => sum + m.score, 0) / movements.length
+    );
 
-    return {
-      totalMovements: movements.length,
-      avgSquatDepth: Math.round(avgDepth),
-      avgLandingBalance: Math.round(avgBalance),
-      validJumps: totalValid,
-    };
+    const activities: Record<string, number> = {};
+    for (const m of movements) {
+      activities[m.activityId] = (activities[m.activityId] || 0) + 1;
+    }
+
+    return { totalMovements: movements.length, avgScore, activities };
   },
 });
