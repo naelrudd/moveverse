@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { ACTIVITIES } from '@/lib/worlds';
+import { worlds } from '@/lib/worlds';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip,
@@ -188,22 +188,23 @@ export default function ParentDashboard() {
         </div>
       </section>
 
-      {/* Aktivitas Non-Lokomotor */}
+      {/* Dunia Gerak */}
       <section>
         <div className="bg-white rounded-3xl p-6 shadow-soft">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-extrabold text-lg">🌟 Aktivitas Gerak Non-Lokomotor</h3>
-            <span className="text-xs font-bold px-3 py-1 rounded-full gradient-grass text-white">6 Aktivitas</span>
+            <h3 className="font-extrabold text-lg">🌍 Dunia Gerak</h3>
+            <span className="text-xs font-bold px-3 py-1 rounded-full gradient-grass text-white">3 Dunia</span>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {ACTIVITIES.map((a) => (
-              <div key={a.id} className="bg-muted/40 rounded-3xl p-5 hover:shadow-soft transition-all border-2 border-transparent hover:border-primary/20">
-                <div className="text-4xl mb-2">{a.icon}</div>
-                <div className="font-extrabold text-lg">{a.name}</div>
-                <div className="text-xs text-muted-foreground mt-1">{a.description}</div>
-                <div className="flex items-center justify-between mt-3">
-                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">{a.badgeName}</span>
-                  <span className="text-xs font-bold text-accent">+{a.xpReward} XP</span>
+          <div className="grid sm:grid-cols-3 gap-4">
+            {worlds.map((w) => (
+              <div key={w.id} className={`relative rounded-2xl p-5 text-white ${w.gradient} hover:shadow-soft transition-all border-2 border-white/30`}>
+                <div className="text-4xl mb-2">{w.emoji}</div>
+                <div className="font-extrabold text-lg">{w.name}</div>
+                <div className="text-xs opacity-80 mt-1">{w.tagline}</div>
+                <div className="mt-3 flex flex-wrap gap-1">
+                  {w.activities.map((a) => (
+                    <span key={a.id} className="text-[10px] font-bold bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">{a.icon} {a.name}</span>
+                  ))}
                 </div>
               </div>
             ))}

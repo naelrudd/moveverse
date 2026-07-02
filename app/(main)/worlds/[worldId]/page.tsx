@@ -5,7 +5,7 @@ import { useParams, notFound } from 'next/navigation';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { world } from '@/lib/worlds';
+import { worlds } from '@/lib/worlds';
 import { ArrowLeft, Trophy, Sparkles } from 'lucide-react';
 
 export default function WorldDetailPage() {
@@ -14,7 +14,8 @@ export default function WorldDetailPage() {
   const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
   const badges = userData?.badges ?? [];
 
-  if (params.worldId !== world.id) return notFound();
+  const world = worlds.find((w) => w.id === params.worldId);
+  if (!world) return notFound();
 
   return (
     <div className={`min-h-[80vh] ${world.gradient} relative overflow-hidden`}>
@@ -65,7 +66,7 @@ export default function WorldDetailPage() {
         <div className="grid md:grid-cols-2 gap-5">
           <div className="bg-white text-foreground rounded-3xl p-6 shadow-pop">
             <div className="flex items-center gap-2 text-accent font-bold uppercase text-xs">
-              <Trophy className="w-4 h-4" /> Badge Collection
+              <Trophy className="w-4 h-4" /> Koleksi Badge
             </div>
             <div className="grid grid-cols-3 gap-3 mt-4">
               {world.activities.map((a) => {
@@ -82,16 +83,13 @@ export default function WorldDetailPage() {
 
           <div className="bg-foreground/90 text-white rounded-3xl p-6 shadow-pop">
             <div className="flex items-center gap-2 text-sunny font-bold uppercase text-xs">
-              🎯 Skill Non-Lokomotor
+              🎯 {world.name}
             </div>
             <h3 className="text-2xl font-extrabold mt-1">Yang Akan Kamu Kuasai</h3>
             <ul className="mt-3 space-y-2 font-bold text-sm">
-              <li>🌊 Meliuk — fleksibilitas tubuh</li>
-              <li>🦩 Menekuk — kekuatan sendi</li>
-              <li>🌀 Memutar — koordinasi tubuh</li>
-              <li>🎪 Mengayun — keseimbangan</li>
-              <li>🧘 Membungkuk — peregangan</li>
-              <li>💪 Mendorong/Menarik — kekuatan otot</li>
+              {world.activities.map((a) => (
+                <li key={a.id}>{a.icon} {a.name} — {a.description}</li>
+              ))}
             </ul>
           </div>
         </div>
