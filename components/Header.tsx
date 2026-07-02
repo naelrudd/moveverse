@@ -10,13 +10,12 @@ const navByRole: Record<string, { label: string; href: string }[]> = {
   student: [
     { label: 'Dashboard', href: '/dashboard/student' },
     { label: 'Statistik', href: '/dashboard/stats' },
-    { label: 'Worlds', href: '/worlds' },
+    { label: 'Dunia', href: '/worlds' },
     { label: 'AI Coach', href: '/assessment' },
   ],
   parent: [
     { label: 'Aktivitas', href: '/parent' },
     { label: 'Leaderboard', href: '/parent/leaderboard' },
-    { label: 'AI Coach', href: '/assessment' },
   ],
   teacher: [
     { label: 'Kelas', href: '/teacher' },
@@ -24,9 +23,9 @@ const navByRole: Record<string, { label: string; href: string }[]> = {
     { label: 'AI Coach', href: '/assessment' },
   ],
   admin: [
-    { label: 'School', href: '/school' },
-    { label: 'Teacher', href: '/teacher' },
-    { label: 'Worlds', href: '/worlds' },
+    { label: 'Sekolah', href: '/school' },
+    { label: 'Guru', href: '/teacher' },
+    { label: 'Dunia', href: '/worlds' },
   ],
 };
 
@@ -82,7 +81,7 @@ export function Header() {
                 : 'border-border hover:border-primary/40 text-foreground'
             }`}
           >
-            Profile
+            Profil
           </Link>
           <ClerkUserButton appearance={{ elements: { avatarBox: 'w-8 h-8' } }} />
         </div>

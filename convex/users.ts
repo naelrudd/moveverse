@@ -18,6 +18,16 @@ export const getUserById = query({
   },
 });
 
+export const getChildren = query({
+  args: { parentId: v.id("users") },
+  handler: async (ctx, { parentId }) => {
+    const parent = await ctx.db.get(parentId);
+    if (!parent?.childIds?.length) return [];
+    const children = await Promise.all(parent.childIds.map((id) => ctx.db.get(id)));
+    return children.filter(Boolean);
+  },
+});
+
 export const linkChild = mutation({
   args: {
     parentId: v.id("users"),
