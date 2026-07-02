@@ -122,7 +122,7 @@ export default function ParentLeaderboardPage() {
           <div>
             <div className="font-extrabold text-lg">Khusus untuk orang tua</div>
             <p className="text-sm opacity-80">
-              Bantu {child?.name} naik rank dengan rutin latihan gerak non-lokomotor di rumah.
+              Bantu {child?.name} naik rank dengan rutin latihan gerak di rumah.
             </p>
           </div>
         </div>

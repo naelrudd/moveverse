@@ -85,7 +85,7 @@ export default function ParentDashboard() {
           <div className="flex-1">
             <div className="text-xs font-bold text-muted-foreground">Dashboard Orang Tua</div>
             <h1 className="text-3xl font-extrabold">Pantau Aktivitas Anak</h1>
-            <p className="text-sm text-foreground/70">Lihat perkembangan gerak non-lokomotor dan aktivitas anak</p>
+            <p className="text-sm text-foreground/70">Lihat perkembangan gerak dan aktivitas anak</p>
           </div>
           {/* Child selector */}
           <div className="flex gap-2">

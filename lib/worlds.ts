@@ -18,7 +18,8 @@ export type World = {
   emoji: string;
 };
 
-const NON_LOKOMOTOR: Activity[] = [
+// ── Pulau Naga (Non-Lokomotor) ──
+const PULAU_NAGA: Activity[] = [
   { id: 'meliuk', name: 'Meliuk', description: 'Gerakan meliuk tubuh ke kiri dan kanan', objective: 'Melatih fleksibilitas tulang belakang dan otot pinggang', badgeId: 'badge_meliuk', badgeName: 'Si Liuk Lincah', xpReward: 20, icon: '🌊' },
   { id: 'menekuk', name: 'Menekuk', description: 'Gerakan menekuk tangan dan kaki', objective: 'Menguatkan sendi lutut dan siku', badgeId: 'badge_menekuk', badgeName: 'Si Tekuk Tangkas', xpReward: 20, icon: '🦩' },
   { id: 'memutar', name: 'Memutar', description: 'Gerakan memutar tangan, kepala, dan pinggang', objective: 'Meningkatkan koordinasi dan fleksibilitas tubuh', badgeId: 'badge_memutar', badgeName: 'Si Putar Cepat', xpReward: 25, icon: '🌀' },
@@ -27,7 +28,8 @@ const NON_LOKOMOTOR: Activity[] = [
   { id: 'mendorong', name: 'Mendorong & Menarik', description: 'Gerakan mendorong dan menarik benda', objective: 'Menguatkan otot lengan dan daya tahan', badgeId: 'badge_mendorong', badgeName: 'Si Dorong Hebat', xpReward: 30, icon: '💪' },
 ];
 
-const LOKOMOTOR: Activity[] = [
+// ── Hutan Harimau (Lokomotor) ──
+const HUTAN_HARIMAU: Activity[] = [
   { id: 'berjalan', name: 'Berjalan', description: 'Berjalan dengan ritme dan postur benar', objective: 'Membangun kebiasaan berjalan sehat dan postur tubuh', badgeId: 'badge_berjalan', badgeName: 'Si Jalan Pantang Lelah', xpReward: 20, icon: '🚶' },
   { id: 'berlari', name: 'Berlari', description: 'Berlari dengan teknik yang benar', objective: 'Meningkatkan daya tahan kardiovaskular', badgeId: 'badge_berlari', badgeName: 'Si Lari Kencang', xpReward: 20, icon: '🏃' },
   { id: 'melompat', name: 'Melompat', description: 'Melompat dengan satu atau dua kaki', objective: 'Melatih kekuatan otot kaki dan keseimbangan', badgeId: 'badge_melompat', badgeName: 'Si Lompat Jauh', xpReward: 25, icon: '🦘' },
@@ -36,7 +38,8 @@ const LOKOMOTOR: Activity[] = [
   { id: 'menghindar', name: 'Menghindar', description: 'Menghindari rintangan', objective: 'Meningkatkan awareness dan koordinasi mata-kaki', badgeId: 'badge_menghindar', badgeName: 'Si Hindar Lincah', xpReward: 30, icon: '🛡️' },
 ];
 
-const MANIPULATIF: Activity[] = [
+// ── Gunung Elang (Manipulatif) ──
+const GUNUNG_ELANG: Activity[] = [
   { id: 'melempar', name: 'Melempar', description: 'Melempar bola dengan akurasi', objective: 'Melatih koordinasi mata-tangan dan kekuatan lengan', badgeId: 'badge_melempar', badgeName: 'Si Lempar Jitu', xpReward: 20, icon: '🤾' },
   { id: 'menangkap', name: 'Menangkap', description: 'Menangkap bola dengan tepat', objective: 'Meningkatkan refleks dan koordinasi', badgeId: 'badge_menangkap', badgeName: 'Si Tangkap Mahir', xpReward: 20, icon: '🤲' },
   { id: 'menendang', name: 'Menendang', description: 'Menendang bola dengan kuat', objective: 'Menguatkan otot kaki dan akurasi', badgeId: 'badge_menendang', badgeName: 'Si Tendang Dasyat', xpReward: 25, icon: '⚽' },
@@ -46,9 +49,9 @@ const MANIPULATIF: Activity[] = [
 ];
 
 export const worlds: World[] = [
-  { id: 'non-lokomotor', name: 'Non-Lokomotor', tagline: 'Gerakan tubuh tanpa berpindah tempat', activities: NON_LOKOMOTOR, gradient: 'gradient-grass', emoji: '🌟' },
-  { id: 'lokomotor', name: 'Lokomotor', tagline: 'Gerakan berpindah tempat', activities: LOKOMOTOR, gradient: 'gradient-sky', emoji: '🚀' },
-  { id: 'manipulatif', name: 'Manipulatif', tagline: 'Gerakan mengontrol objek', activities: MANIPULATIF, gradient: 'gradient-magic', emoji: '🎯' },
+  { id: 'pulau-naga', name: 'Pulau Naga', tagline: 'Gerakkan tubuhmu seperti naga!', activities: PULAU_NAGA, gradient: 'gradient-grass', emoji: '🐉' },
+  { id: 'hutan-harimau', name: 'Hutan Harimau', tagline: 'Bergerak cepat seperti harimau!', activities: HUTAN_HARIMAU, gradient: 'gradient-sky', emoji: '🐯' },
+  { id: 'gunung-elang', name: 'Gunung Elang', tagline: 'Tangkap dan lempar seperti elang!', activities: GUNUNG_ELANG, gradient: 'gradient-magic', emoji: '🦅' },
 ];
 
 export const world = worlds[0];

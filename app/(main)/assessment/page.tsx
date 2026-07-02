@@ -56,7 +56,7 @@ export default function AssessmentPage() {
           {role === 'teacher'
             ? 'Pilih siswa, lalu mulai AI Coach untuk merekam satu per satu.'
             : role === 'parent'
-            ? 'Lihat hasil analisis gerak non-lokomotor anak kamu.'
+            ? 'Lihat hasil analisis gerak anak kamu.'
             : 'AI melacak kerangka tubuh dan kualitas gerakmu secara real time.'}
         </p>
       </div>
