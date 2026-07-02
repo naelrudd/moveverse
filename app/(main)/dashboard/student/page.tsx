@@ -45,7 +45,7 @@ export default function StudentDashboard() {
         ))}
       </div>
 
-      {/* Level Progress */}
+      {/* Level Progress + Completion Stats */}
       <div className="bg-white rounded-3xl p-5 shadow-soft">
         <div className="flex items-center justify-between mb-2">
           <span className="font-extrabold">⭐ Level {userData?.level || 1}</span>
@@ -59,12 +59,17 @@ export default function StudentDashboard() {
             style={{ width: `${Math.min(((userData?.xp || 0) % 100), 100)}%` }}
           />
         </div>
-        <div className="text-xs text-muted-foreground mt-1 font-bold">
-          {(userData?.level || 0) >= 10 ? 'Max Level! 🎉' : `${100 - ((userData?.xp || 0) % 100)} XP lagi ke level berikutnya`}
+        <div className="flex items-center justify-between mt-2">
+          <div className="text-xs text-muted-foreground font-bold">
+            {(userData?.level || 0) >= 10 ? 'Max Level! 🎉' : `${100 - ((userData?.xp || 0) % 100)} XP lagi ke level berikutnya`}
+          </div>
+          <div className="text-xs font-bold text-primary bg-primary/5 px-3 py-1 rounded-full">
+            🏅 {badges.length}/{totalBadges} aktivitas selesai
+          </div>
         </div>
       </div>
 
-      {/* Dunia Gerak */}
+      {/* Aktivitas per Dunia */}
       {worlds.map((w) => {
         const worldBadges = w.activities.filter((a) => badges.includes(a.badgeId)).length;
         return (
@@ -96,6 +101,36 @@ export default function StudentDashboard() {
           </section>
         );
       })}
+
+      {/* Side Quest di Rumah */}
+      <section>
+        <div className="bg-white rounded-3xl p-6 shadow-soft">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-extrabold text-xl">🎯 Side Quest di Rumah</h2>
+            <span className="text-xs font-bold px-3 py-1 rounded-full gradient-sunset text-white">Tambahan</span>
+          </div>
+          <p className="text-xs text-muted-foreground mb-3">Tugas tambahan dari orang tua — selesaikan untuk poin ekstra!</p>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {[
+              { icon: '🧹', tugas: 'Bantu sapu rumah 10 menit', poin: 15, selesai: false },
+              { icon: '🫶', tugas: 'Cuci piring sendiri', poin: 15, selesai: true },
+              { icon: '🛏️', tugas: 'Rapikan tempat tidur', poin: 10, selesai: false },
+              { icon: '🌿', tugas: 'Siram tanaman 5 pot', poin: 10, selesai: false },
+            ].map((q, i) => (
+              <div key={i} className={`p-3 rounded-2xl flex items-center gap-3 ${q.selesai ? 'bg-green-50 border border-green-200' : 'bg-muted/40'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${q.selesai ? 'gradient-grass text-white' : 'bg-white'}`}>
+                  {q.selesai ? '✓' : q.icon}
+                </div>
+                <div className="flex-1">
+                  <div className={`text-sm font-bold ${q.selesai ? 'line-through text-muted-foreground' : ''}`}>{q.tugas}</div>
+                  <div className="text-xs text-accent font-bold">+{q.poin} XP</div>
+                </div>
+                {!q.selesai && <button className="px-3 py-1 text-xs font-bold rounded-full bg-primary text-white">Selesai</button>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Badge Koleksiku */}
       <section>

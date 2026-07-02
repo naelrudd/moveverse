@@ -245,6 +245,42 @@ export default function ParentDashboard() {
         </div>
       </section>
 
+      {/* Side Quest di Rumah — pengawasan ortu */}
+      <section>
+        <div className="bg-white rounded-3xl p-6 shadow-soft">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-extrabold text-lg">🎯 Side Quest di Rumah</h3>
+            <span className="text-xs font-bold px-3 py-1 rounded-full gradient-sunset text-white">Tambahan Poin</span>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">Bantu anak nambah poin dengan tugas tambahan di rumah!</p>
+          <div className="space-y-3">
+            {[
+              { icon: '🧹', tugas: 'Bantu sapu rumah 10 menit', poin: 15, selesai: false },
+              { icon: '🫶', tugas: 'Cuci piring sendiri', poin: 15, selesai: true },
+              { icon: '🛏️', tugas: 'Rapikan tempat tidur', poin: 10, selesai: false },
+              { icon: '🌿', tugas: 'Siram tanaman 5 pot', poin: 10, selesai: false },
+            ].map((q, i) => (
+              <div key={i} className={`p-4 rounded-2xl flex items-center gap-3 ${q.selesai ? 'bg-green-50 border border-green-200' : 'bg-muted/40'}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${q.selesai ? 'gradient-grass text-white' : 'bg-white'}`}>
+                  {q.selesai ? '✓' : q.icon}
+                </div>
+                <div className="flex-1">
+                  <div className={`font-bold ${q.selesai ? 'line-through text-muted-foreground' : ''}`}>{q.tugas}</div>
+                  <div className="text-xs text-accent font-bold">+{q.poin} XP</div>
+                </div>
+                {!q.selesai && (
+                  <button className="px-3 py-1.5 rounded-full font-bold text-xs gradient-grass text-white">Tandai ✓</button>
+                )}
+                {q.selesai && <span className="text-xs font-bold text-green-600">Selesai!</span>}
+              </div>
+            ))}
+          </div>
+          <button className="w-full mt-4 py-3 rounded-full font-bold gradient-sunset text-white text-sm shadow-soft hover:shadow-pop transition-all">
+            + Tambah Side Quest Baru
+          </button>
+        </div>
+      </section>
+
       {/* Aktivitas Mingguan */}
       <section>
         <div className="bg-white rounded-3xl p-6 shadow-soft">

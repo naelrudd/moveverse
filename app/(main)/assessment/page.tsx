@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Camera, Upload, Video, Sparkles } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 const scores = [
   { label: 'Meliuk', value: 84, color: 'gradient-grass' },
@@ -19,6 +20,10 @@ export default function AssessmentPage() {
   const { userId } = useAuth();
   const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
   const role = userData?.role;
+  const searchParams = useSearchParams();
+  const activityObjective = searchParams?.get('objective') ?? null;
+  const activityName = searchParams?.get('activity') ?? null;
+  const worldName = searchParams?.get('world') ?? null;
 
   const classes = useQuery(
     api.classes.getClassesBySchool,
@@ -121,6 +126,19 @@ export default function AssessmentPage() {
           <span className="text-sm font-bold bg-primary/10 text-primary px-4 py-1 rounded-full">
             {role === 'teacher' ? '🎯 Siswa: ' : role === 'parent' ? '👶 Anak: ' : ''}{targetName}
           </span>
+        </div>
+      )}
+
+      {/* Learning objective banner — from world detail */}
+      {activityObjective && (
+        <div className="mb-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl border-2 border-green-200 animate-pop-in">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🎯</span>
+            <div>
+              <div className="font-extrabold text-sm">{worldName ? `Dunia ${worldName}` : 'Aktivitas'} — {activityName}</div>
+              <div className="text-xs text-muted-foreground mt-0.5">{activityObjective}</div>
+            </div>
+          </div>
         </div>
       )}
 

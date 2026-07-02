@@ -7,6 +7,7 @@ import { useAuth } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import Link from 'next/link';
+import { ALL_ACTIVITIES } from '@/lib/worlds';
 
 export default function TeacherDashboard() {
   const { userId } = useAuth();
@@ -241,15 +242,63 @@ export default function TeacherDashboard() {
             </div>
             <div className="gradient-magic text-white rounded-3xl p-4 shadow-soft text-center">
               <div className="text-xs font-bold opacity-90">Badge</div>
-              <div className="text-3xl font-extrabold">{selectedStudent.badges?.length ?? 0}/6</div>
+              <div className="text-3xl font-extrabold">{selectedStudent.badges?.length ?? 0}/{ALL_ACTIVITIES.length}</div>
             </div>
           </div>
+          {/* Aktivitas Belum Selesai */}
+          <div className="mt-4 p-4 bg-amber-50 rounded-2xl border border-amber-200">
+            <div className="font-bold text-sm mb-2">📋 Aktivitas Belum Selesai</div>
+            <div className="flex flex-wrap gap-2">
+              {ALL_ACTIVITIES.filter((a) => !selectedStudent.badges?.includes(a.badgeId)).map((a) => (
+                <span key={a.id} className="text-xs font-bold bg-white px-3 py-1 rounded-full border border-amber-200">{a.icon} {a.name}</span>
+              ))}
+            </div>
+          </div>
+          {/* Contact Parent */}
+          {(selectedStudent as any).phone && (
+            <div className="mt-3 p-3 bg-blue-50 rounded-2xl border border-blue-200 flex items-center gap-3">
+              <span className="text-lg">📞</span>
+              <div>
+                <div className="font-bold text-sm">Hubungi Orang Tua</div>
+                <a href={`tel:${selectedStudent.phone}`} className="text-sm text-blue-600 font-bold underline">{(selectedStudent as any).phone}</a>
+              </div>
+            </div>
+          )}
           <div className="mt-4 p-3 bg-primary/5 rounded-2xl text-sm font-bold">
             💡 <b>AI Coach:</b> Mulai sesi AI Coach untuk {selectedStudent.name}{' '}
             <Link href="/assessment" className="text-primary underline">di sini</Link>
           </div>
         </div>
       )}
+
+      {/* RPP — Lesson Plan Documents */}
+      <section>
+        <div className="bg-white rounded-3xl p-6 shadow-soft">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-extrabold text-lg">📚 RPP & Materi Ajar</h3>
+            <span className="text-xs font-bold px-3 py-1 rounded-full gradient-sky text-white">Dokumen</span>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">Rencana Pelaksanaan Pembelajaran (RPP) untuk setiap dunia gerak.</p>
+          <div className="grid sm:grid-cols-3 gap-4">
+            {[
+              { dunia: 'Pulau Naga', icon: '🐉', materi: 'Gerak Non-Lokomotor (di tempat)', durasi: '2 JP', rincian: 'Meliuk, menekuk, memutar, mengayun, membungkuk, mendorong' },
+              { dunia: 'Hutan Harimau', icon: '🐯', materi: 'Gerak Lokomotor (berpindah)', durasi: '2 JP', rincian: 'Berjalan, berlari, melompat, meloncat, mengejar, menghindar' },
+              { dunia: 'Gunung Elang', icon: '🦅', materi: 'Gerak Manipulatif (dengan objek)', durasi: '2 JP', rincian: 'Melempar, menangkap, menendang, memukul, menggiring, mengoper' },
+            ].map((rpp, i) => (
+              <div key={i} className="bg-muted/40 rounded-2xl p-5 hover:shadow-soft transition-all border-2 border-transparent hover:border-primary/20">
+                <div className="text-3xl mb-2">{rpp.icon}</div>
+                <div className="font-extrabold">{rpp.dunia}</div>
+                <div className="text-xs text-primary font-bold mt-1">{rpp.materi}</div>
+                <div className="text-xs text-muted-foreground mt-2">{rpp.rincian}</div>
+                <div className="flex items-center justify-between mt-3">
+                  <span className="text-[10px] font-bold text-muted-foreground">{rpp.durasi}</span>
+                  <button className="text-xs font-bold px-3 py-1 rounded-full gradient-sky text-white">Lihat RPP</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
