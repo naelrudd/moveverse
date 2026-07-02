@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -197,7 +198,7 @@ export default function ParentDashboard() {
           </div>
           <div className="grid sm:grid-cols-3 gap-4">
             {worlds.map((w) => (
-              <div key={w.id} className={`relative rounded-2xl p-5 text-white ${w.gradient} hover:shadow-soft transition-all border-2 border-white/30`}>
+              <Link key={w.id} href={`/worlds/${w.id}`} className={`relative rounded-2xl p-5 text-white ${w.gradient} hover:shadow-soft transition-all border-2 border-white/30 block`}>
                 <div className="text-4xl mb-2">{w.emoji}</div>
                 <div className="font-extrabold text-lg">{w.name}</div>
                 <div className="text-xs opacity-80 mt-1">{w.tagline}</div>
@@ -206,7 +207,7 @@ export default function ParentDashboard() {
                     <span key={a.id} className="text-[10px] font-bold bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">{a.icon} {a.name}</span>
                   ))}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
