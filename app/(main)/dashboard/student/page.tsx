@@ -6,7 +6,7 @@ import { useAuth } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import Link from 'next/link';
-import { worlds, getLevelInfo, ALL_ACTIVITIES } from '@/lib/worlds';
+import { worlds, ALL_ACTIVITIES } from '@/lib/worlds';
 // ponytail: useState/useEffect not needed; removed
 
 /* ── Inline confetti burst component ── */
@@ -63,14 +63,20 @@ export default function StudentDashboard() {
   const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
   const badges = userData?.badges ?? [];
   const totalBadges = ALL_ACTIVITIES.length;
-  const levelInfo = getLevelInfo(badges, userData?.xp ?? 0);
+  const levelStatus = useQuery(api.users.getLevelStatus, userData?._id ? { userId: userData._id } : 'skip');
   const sideQuests = useQuery(
     api.sideQuests.getByChildActive,
     userData?._id ? { childId: userData._id } : 'skip'
   );
   const markQuestComplete = useMutation(api.sideQuests.markComplete);
 
-  const xpPercent = Math.min(((userData?.xp || 0) % 100) || 0, 100);
+  const xp = userData?.xp ?? 0;
+  const currentLevel = levelStatus?.level ?? userData?.level ?? 1;
+  const needsTutor = levelStatus?.needsTutor ?? false;
+  const nextTarget = levelStatus?.nextLevelXp ?? 50;
+  const xpToFull = levelStatus?.xpToFull ?? 0;
+  const xpToCond = levelStatus?.xpToCond ?? 0;
+  const xpPercent = Math.min(nextTarget > 0 ? (xp / nextTarget) * 100 : 100, 100);
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
@@ -132,8 +138,8 @@ export default function StudentDashboard() {
           ══════════════════════════════════════════ */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { icon: '⭐', l: 'Level', v: `Lv ${levelInfo.level}`, gradient: 'linear-gradient(135deg, #a78bfa, #818cf8, #6366f1)', border: 'border-violet-300' },
-          { icon: '✨', l: 'XP', v: (userData?.xp || 0).toLocaleString(), gradient: 'linear-gradient(135deg, #fb923c, #f97316, #ea580c)', border: 'border-orange-300' },
+          { icon: '⭐', l: 'Level', v: `Lv ${currentLevel}`, gradient: 'linear-gradient(135deg, #a78bfa, #818cf8, #6366f1)', border: 'border-violet-300' },
+          { icon: '✨', l: 'XP', v: xp.toLocaleString(), gradient: 'linear-gradient(135deg, #fb923c, #f97316, #ea580c)', border: 'border-orange-300' },
           { icon: '🪙', l: 'Koin', v: (userData?.coins || 0).toLocaleString(), gradient: 'linear-gradient(135deg, #facc15, #eab308, #ca8a04)', border: 'border-yellow-300' },
           { icon: '🏅', l: 'Badge', v: `${badges.length}/${totalBadges}`, gradient: 'linear-gradient(135deg, #4ade80, #22c55e, #16a34a)', border: 'border-green-300' },
         ].map((s, i) => (
@@ -160,9 +166,9 @@ export default function StudentDashboard() {
       </div>
 
       {/* ══════════════════════════════════════════
-          LEVEL PROGRESS — Energy bar
+          LEVEL PROGRESS — Moveverse leveling
           ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-3xl p-5 shadow-pop border-2 border-primary/10 relative overflow-hidden">
+      <div className={`bg-white rounded-3xl p-5 shadow-pop border-2 relative overflow-hidden ${needsTutor ? 'border-amber-300' : 'border-primary/10'}`}>
         {/* Stars background decoration */}
         <div className="absolute inset-0 pointer-events-none opacity-20">
           {['⭐', '✨', '💫', '⭐', '✨'].map((s, i) => (
@@ -171,19 +177,21 @@ export default function StudentDashboard() {
         </div>
 
         <div className="flex items-center justify-between mb-3 relative z-10">
-          <span className="font-extrabold text-lg">⭐ Level {levelInfo.level}</span>
+          <span className="font-extrabold text-lg">⭐ Level {currentLevel}</span>
           <span className="text-xs font-extrabold text-primary bg-primary/10 px-3 py-1 rounded-full">
-            {userData?.xp || 0} / {Math.max(levelInfo.level * 100, 100)} XP
+            {xp} / {nextTarget} XP
           </span>
         </div>
 
         {/* Energy bar with glow */}
         <div className="relative w-full h-7 bg-muted rounded-full overflow-hidden shadow-inner border-2 border-primary/5">
           <div
-            className="h-full rounded-full transition-all duration-700 relative overflow-hidden animate-pulse-glow"
+            className={`h-full rounded-full transition-all duration-700 relative overflow-hidden ${needsTutor ? '' : 'animate-pulse-glow'}`}
             style={{
               width: `${xpPercent}%`,
-              background: 'linear-gradient(90deg, #6366f1, #a78bfa, #c084fc, #e879f9)',
+              background: needsTutor
+                ? 'linear-gradient(90deg, #f59e0b, #fbbf24, #fcd34d)'
+                : 'linear-gradient(90deg, #6366f1, #a78bfa, #c084fc, #e879f9)',
             }}
           >
             {/* Animated shine */}
@@ -199,20 +207,28 @@ export default function StudentDashboard() {
 
         <div className="flex items-center justify-between mt-3 relative z-10">
           <div className="text-xs font-bold text-foreground/60">
-            {levelInfo.level >= 10 ? (
-              <span className="text-amber-500">🏆 Max Level! Kamu hebat!</span>
+            {currentLevel >= 5 ? (
+              <span className="text-amber-500">🏆 Max Level tercapai! Kamu hebat!</span>
             ) : (
-              <span>🔥 {levelInfo.xpForNext - (userData?.xp || 0)} XP lagi ke level berikutnya!</span>
+              <span>🔥 {xpToFull} XP lagi untuk Lulus Penuh ke Level {currentLevel + 1}!</span>
             )}
           </div>
-          <div className="text-xs font-extrabold text-primary bg-primary/10 px-3 py-1 rounded-full" title={`Butuh ${levelInfo.badgesForNextLevel} badge lagi untuk naik ke level ${Math.min(levelInfo.level + 1, 10)}`}>
+          <div className="text-xs font-extrabold text-primary bg-primary/10 px-3 py-1 rounded-full">
             🏅 {badges.length}/{totalBadges} selesai
           </div>
         </div>
 
-        {levelInfo.isBadgeCapped && (
+        {/* Conditional pass warning */}
+        {needsTutor && (
           <div className="mt-3 p-3 bg-amber-50 rounded-2xl border-2 border-amber-200 text-xs font-bold text-amber-700 flex items-center gap-2 animate-wiggle">
-            🔒 Selesaikan {levelInfo.badgesForNextLevel} aktivitas lagi untuk naik ke level {Math.min(levelInfo.level + 1, 10)}! 💪
+            ⚠️ Kamu naik Level {currentLevel} dengan jalur Dampingan Guru — kurang {xpToFull} poin dari target penuh ({nextTarget}). Ayo kejar lagi! 💪
+          </div>
+        )}
+
+        {/* Next level threshold info */}
+        {currentLevel < 5 && !needsTutor && (
+          <div className="mt-2 text-[10px] font-bold text-muted-foreground/50 text-center">
+            Jalur Dampingan: {xpToCond} XP lagi (Level {currentLevel + 1})
           </div>
         )}
       </div>

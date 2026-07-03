@@ -26,6 +26,7 @@ export default defineSchema({
     coins: v.number(),
     level: v.number(),
     badges: v.optional(v.array(v.string())),
+    needsTutor: v.optional(v.boolean()),
     pets: v.optional(v.array(v.string())),
     role: v.optional(v.union(v.literal("student"), v.literal("parent"), v.literal("teacher"), v.literal("admin"))),
     schoolId: v.optional(v.id("schools")),

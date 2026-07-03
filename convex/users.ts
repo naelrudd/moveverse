@@ -140,18 +140,56 @@ export const updateXP = mutation({
     const user = await ctx.db.get(userId);
     if (!user) throw new Error("User not found");
 
-    const newXP = user.xp + xpGain;
-    const newLevel = Math.min(Math.floor(newXP / 100) + 1, 10);
+    const newXp = user.xp + xpGain;
     const coinsGain = Math.floor(xpGain / 10);
 
+    // Level table: [fullPassMin, condMin, condMax]
+    const TABLE: [number, number, number][] = [
+      [50,  40,  49],   // Lv2
+      [100, 85,  99],   // Lv3
+      [160, 140, 159],  // Lv4
+      [250, 220, 249],  // Lv5
+    ];
+
+    let newLevel = 1;
+    let needsTutor = false;
+
+    for (let i = TABLE.length - 1; i >= 0; i--) {
+      const [full, condMin, condMax] = TABLE[i];
+      if (newXp >= full) {
+        newLevel = i + 2;
+        needsTutor = false;
+        break;
+      }
+      if (newXp >= condMin && newXp <= condMax) {
+        newLevel = i + 2;
+        needsTutor = true;
+        break;
+      }
+    }
+
+    // If already at higher level from conditional, keep level but mark tutor
+    if (newLevel < user.level) {
+      newLevel = user.level;
+      // Re-evaluate tutor flag for current level
+      const idx = user.level - 2;
+      if (idx >= 0 && idx < TABLE.length) {
+        const [full, condMin, condMax] = TABLE[idx];
+        if (newXp >= full) needsTutor = false;
+        else if (newXp >= condMin && newXp <= condMax) needsTutor = true;
+        else needsTutor = false; // shouldn't happen if level was granted
+      }
+    }
+
     await ctx.db.patch(userId, {
-      xp: newXP,
+      xp: newXp,
       coins: user.coins + coinsGain,
       level: newLevel,
+      needsTutor,
       updatedAt: Date.now(),
     });
 
-    return { newXP, newLevel, coinsGain };
+    return { newXp, newLevel, coinsGain, needsTutor };
   },
 });
 
@@ -170,5 +208,54 @@ export const earnBadge = mutation({
     }
 
     return currentBadges;
+  },
+});
+
+export const getLevelStatus = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    const user = await ctx.db.get(userId);
+    if (!user) return null;
+
+    const TABLE: [number, number, number][] = [
+      [50,  40,  49],
+      [100, 85,  99],
+      [160, 140, 159],
+      [250, 220, 249],
+    ];
+
+    const level = user.level;
+    const xp = user.xp;
+
+    if (level >= 5) {
+      const [, , condMax] = TABLE[3];
+      return {
+        level: 5,
+        xp,
+        needsTutor: user.needsTutor ?? false,
+        nextLevelXp: null,
+        xpToFull: 0,
+        xpToCond: 0,
+        status: xp >= 250 ? "lulus_penuh" : "maksimal",
+      };
+    }
+
+    const idx = level - 1; // 0-indexed into TABLE
+    if (idx < 0 || idx >= TABLE.length) {
+      return { level, xp, needsTutor: false, nextLevelXp: TABLE[0]?.[0] ?? 50, xpToFull: 50, xpToCond: 40, status: "active" };
+    }
+
+    const [fullMin, condMin, condMax] = TABLE[idx];
+    const nextFull = TABLE[idx + 1]?.[0] ?? fullMin + 50;
+
+    return {
+      level,
+      xp,
+      needsTutor: user.needsTutor ?? false,
+      nextLevelXp: level < 5 ? TABLE[level - 1]?.[0] ?? 50 : null,
+      xpToFull: Math.max(0, fullMin - xp),
+      xpToCond: Math.max(0, condMin - xp),
+      status: user.needsTutor ? "butuh_dampingan" : "active",
+    };
   },
 });
