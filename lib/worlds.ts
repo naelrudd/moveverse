@@ -28,6 +28,7 @@ const PULAU_NAGA: Activity[] = [
   { id: 'mengayun', name: 'Mengayun', description: 'Gerakan mengayunkan tangan dan kaki', objective: 'Melatih keseimbangan dan ritme gerak', badgeId: 'badge_mengayun', badgeName: 'Si Ayun Kuat', xpReward: 25, icon: '🎪', maxLevel: 5, levelNames: ['Pemula', 'Ayunan', 'Ritmis', 'Harmonis', 'Si Ayun'] },
   { id: 'membungkuk', name: 'Membungkuk', description: 'Gerakan membungkuk dan meregang', objective: 'Memperpanjang otot punggung dan hamstring', badgeId: 'badge_membungkuk', badgeName: 'Si Bungkuk Fleksibel', xpReward: 30, icon: '🧘', maxLevel: 5, levelNames: ['Pemula', 'Meregang', 'Fleksibel', 'Pilates', 'Si Lentur'] },
   { id: 'mendorong', name: 'Mendorong & Menarik', description: 'Gerakan mendorong dan menarik benda', objective: 'Menguatkan otot lengan dan daya tahan', badgeId: 'badge_mendorong', badgeName: 'Si Dorong Hebat', xpReward: 30, icon: '💪', maxLevel: 5, levelNames: ['Pemula', 'Dorongan', 'Kuat', 'Power', 'Si Kuat'] },
+  { id: 'keseimbangan', name: 'Keseimbangan', description: 'Menjaga keseimbangan tubuh dalam berbagai posisi', objective: 'Melatih stabilitas tubuh, fokus, dan koordinasi otot inti', badgeId: 'badge_keseimbangan', badgeName: 'Si Patung Tangguh', xpReward: 25, icon: '🧍', maxLevel: 5, levelNames: ['Patung Duduk', 'Patung Berdiri', 'Patung Satu Kaki', 'Patung Tangan Terbuka', 'Patung Master'] },
 ];
 
 // ── Hutan Harimau (Lokomotor) 🐅 ──
