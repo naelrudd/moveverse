@@ -217,45 +217,47 @@ export const getLevelStatus = query({
     const user = await ctx.db.get(userId);
     if (!user) return null;
 
+    // Level table: [fullPassMin, condMin, condMax]
     const TABLE: [number, number, number][] = [
-      [50,  40,  49],
-      [100, 85,  99],
-      [160, 140, 159],
-      [250, 220, 249],
+      [50,  40,  49],   // Lv2
+      [100, 85,  99],   // Lv3
+      [160, 140, 159],  // Lv4
+      [250, 220, 249],  // Lv5
     ];
 
-    const level = user.level;
-    const xp = user.xp;
+    const level = Math.max(user.level ?? 1, 1);
+    const xp = user.xp ?? 0;
+    const needsTutor = user.needsTutor === true;
 
+    // Max level
     if (level >= 5) {
-      const [, , condMax] = TABLE[3];
       return {
         level: 5,
         xp,
-        needsTutor: user.needsTutor ?? false,
+        needsTutor,
         nextLevelXp: null,
-        xpToFull: 0,
+        xpToFull: Math.max(0, 250 - xp),
         xpToCond: 0,
-        status: xp >= 250 ? "lulus_penuh" : "maksimal",
+        status: "maksimal",
       };
     }
 
-    const idx = level - 1; // 0-indexed into TABLE
+    // idx into TABLE for the NEXT level's requirements
+    const idx = level - 1;
     if (idx < 0 || idx >= TABLE.length) {
-      return { level, xp, needsTutor: false, nextLevelXp: TABLE[0]?.[0] ?? 50, xpToFull: 50, xpToCond: 40, status: "active" };
+      return { level: 1, xp, needsTutor: false, nextLevelXp: 50, xpToFull: 50, xpToCond: 40, status: "active" };
     }
 
-    const [fullMin, condMin, condMax] = TABLE[idx];
-    const nextFull = TABLE[idx + 1]?.[0] ?? fullMin + 50;
+    const [fullMin, condMin] = TABLE[idx];
 
     return {
       level,
       xp,
-      needsTutor: user.needsTutor ?? false,
-      nextLevelXp: level < 5 ? TABLE[level - 1]?.[0] ?? 50 : null,
+      needsTutor,
+      nextLevelXp: TABLE[idx][0],
       xpToFull: Math.max(0, fullMin - xp),
       xpToCond: Math.max(0, condMin - xp),
-      status: user.needsTutor ? "butuh_dampingan" : "active",
+      status: needsTutor ? "butuh_dampingan" : "active",
     };
   },
 });
