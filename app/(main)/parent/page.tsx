@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { worlds } from '@/lib/worlds';
+import { worlds, ALL_ACTIVITIES } from '@/lib/worlds';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip,
@@ -20,10 +20,23 @@ export default function ParentDashboard() {
   const linkChildMut = useMutation(api.users.linkChild);
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [nisInput, setNisInput] = useState('');
+  const [linkError, setLinkError] = useState<string | null>(null);
+  const [extraChildren, setExtraChildren] = useState<{ _id: string; name: string; avatar: string; level: number; xp: number; coins: number; badges?: string[] }[]>([]);
 
-  const childList = (children ?? []).filter((c): c is NonNullable<typeof c> => c !== null);
+  const childList = [...((children ?? []).filter((c): c is NonNullable<typeof c> => c !== null)), ...extraChildren];
   const activeChildId = selectedChildId || childList[0]?._id || null;
   const activeChild = childList.find((c) => c && c._id === activeChildId);
+
+  const sideQuests = useQuery(
+    api.sideQuests.getByParentAndChild,
+    activeChildId && userData?._id ? { parentId: userData._id, childId: activeChildId as any } : 'skip'
+  );
+  const createSideQuest = useMutation(api.sideQuests.create);
+  const markQuestComplete = useMutation(api.sideQuests.markCompleteByParent);
+  const removeQuest = useMutation(api.sideQuests.remove);
+  const [newQuestTitle, setNewQuestTitle] = useState('');
+  const [newQuestXp, setNewQuestXp] = useState(15);
+  const [showQuestForm, setShowQuestForm] = useState(false);
 
   const motorikData = [
     { skill: 'Keseimbangan', value: 78, avg: 65, prev: 72 },
@@ -69,10 +82,17 @@ export default function ParentDashboard() {
 
   const linkChild = async () => {
     if (!nisInput.trim() || !userData?._id) return;
+    setLinkError(null);
     const child = await linkChildMut({ parentId: userData._id, childNis: nisInput.trim() });
     if (child) {
+      const alreadyInList = childList.some((c) => c._id === child._id);
+      if (!alreadyInList) {
+        setExtraChildren((prev) => [child, ...prev]);
+      }
       setNisInput('');
-      setSelectedChildId(null);
+      setSelectedChildId(child._id);
+    } else {
+      setLinkError('NIS tidak ditemukan. Pastikan NIS sudah terdaftar.');
     }
   };
 
@@ -103,17 +123,30 @@ export default function ParentDashboard() {
           </div>
         </div>
         {/* Link child by NIS */}
-        <div className="mt-4 flex gap-2 items-center bg-sunny/20 rounded-2xl p-3">
-          <span className="text-sm font-bold">Tambah Anak:</span>
-          <input
-            value={nisInput}
-            onChange={(e) => setNisInput(e.target.value)}
-            placeholder="Masukkan NIS anak..."
-            className="flex-1 p-2 rounded-xl border-2 border-border font-bold text-sm"
-          />
-          <button onClick={linkChild} className="px-4 py-2 rounded-full font-bold gradient-grass text-white text-sm">
-            Tambah
-          </button>
+        <div className="mt-4 p-3 bg-sunny/20 rounded-2xl">
+          <div className="flex gap-2 items-center">
+            <span className="text-sm font-bold">Tambah Anak:</span>
+            <input
+              value={nisInput}
+              onChange={(e) => { setNisInput(e.target.value); setLinkError(null); }}
+              onKeyDown={(e) => e.key === 'Enter' && linkChild()}
+              placeholder="Masukkan NIS anak..."
+              className="flex-1 p-2 rounded-xl border-2 border-border font-bold text-sm"
+            />
+            <button onClick={linkChild} className="px-4 py-2 rounded-full font-bold gradient-grass text-white text-sm">
+              Tambah
+            </button>
+          </div>
+          {linkError && (
+            <div className="mt-2 text-xs font-bold text-red-500 flex items-center gap-1">
+              ⚠️ {linkError}
+            </div>
+          )}
+          {childList.length === 0 && (
+            <div className="mt-2 text-xs text-muted-foreground font-bold">
+              💡 Masukkan NIS anak yang sudah terdaftar di sekolah.
+            </div>
+          )}
         </div>
       </div>
 
@@ -122,7 +155,7 @@ export default function ParentDashboard() {
         {[
           { l: 'Level', v: `Level ${activeChild?.level ?? 0}`, t: 'gradient-sky' },
           { l: 'XP Total', v: (activeChild?.xp ?? 0).toLocaleString(), t: 'gradient-sunset' },
-          { l: 'Badge', v: `${(activeChild as any)?.badges?.length ?? 0}/18`, t: 'gradient-grass' },
+          { l: 'Badge', v: `${(activeChild as any)?.badges?.length ?? 0}/${ALL_ACTIVITIES.length}`, t: 'gradient-grass' },
           { l: 'Dunia', v: '3 Dunia', t: 'gradient-magic' },
         ].map((s) => (
           <div key={s.l} className={`${s.t} text-white rounded-3xl p-5 shadow-soft`}>
@@ -132,26 +165,56 @@ export default function ParentDashboard() {
         ))}
       </div>
 
-      {/* Dunia Gerak — klik ke detail */}
+      {/* Dunia Gerak — match worlds page design */}
       <section>
         <div className="bg-white rounded-3xl p-6 shadow-soft">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-extrabold text-lg">🌍 Dunia Gerak</h3>
             <span className="text-xs font-bold px-3 py-1 rounded-full gradient-grass text-white">3 Dunia</span>
           </div>
-          <div className="grid sm:grid-cols-3 gap-4">
-            {worlds.map((w) => (
-              <Link key={w.id} href={`/worlds/${w.id}`} className={`relative rounded-2xl p-5 text-white ${w.gradient} hover:shadow-soft hover:scale-[1.02] transition-all border-2 border-white/30 block`}>
-                <div className="text-4xl mb-2">{w.emoji}</div>
-                <div className="font-extrabold text-lg">{w.name}</div>
-                <div className="text-xs opacity-80 mt-1">{w.tagline}</div>
-                <div className="mt-3 flex flex-wrap gap-1">
-                  {w.activities.map((a) => (
-                    <span key={a.id} className="text-[10px] font-bold bg-white/20 backdrop-blur-sm rounded-full px-2 py-0.5">{a.icon} {a.name}</span>
-                  ))}
-                </div>
-              </Link>
-            ))}
+          <div className="grid md:grid-cols-3 gap-5">
+            {worlds.map((w) => {
+              const earnedCount = activeChild?.badges ? w.activities.filter((a) => (activeChild as any)?.badges?.includes(a.badgeId)).length : 0;
+              const pct = Math.round((earnedCount / w.activities.length) * 100);
+              return (
+                <Link key={w.id} href={`/worlds/${w.id}`} className="block group">
+                  <div className="relative rounded-[2rem] overflow-hidden text-white shadow-soft hover:shadow-pop border-4 border-white hover:scale-[1.02] transition-all" style={{ minHeight: '300px' }}>
+                    <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/world-map.jpg')" }} />
+                    <div className={`absolute inset-0 ${w.gradient} opacity-70`} />
+                    <div className="absolute inset-0 frosted-overlay" />
+                    <div className="relative p-5 flex flex-col justify-end min-h-[300px]">
+                      <div className="flex items-start justify-between absolute top-4 left-5 right-5">
+                        <div className="text-5xl drop-shadow-md animate-float">{w.emoji}</div>
+                        <div className="bg-white/25 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-bold border border-white/30">
+                          {earnedCount}/{w.activities.length} Badge
+                        </div>
+                      </div>
+                      <div className="mt-auto">
+                        <h3 className="text-2xl font-extrabold drop-shadow-md">{w.name}</h3>
+                        <p className="text-xs opacity-90 mt-0.5 drop-shadow-sm">{w.tagline}</p>
+                        <div className="mt-3">
+                          <div className="h-2 bg-black/20 rounded-full overflow-hidden">
+                            <div className="h-full bg-white rounded-full transition-all" style={{ width: `${pct}%` }} />
+                          </div>
+                          <div className="text-[10px] font-bold mt-1 opacity-80">{pct}% selesai</div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-1.5 mt-3">
+                          {w.activities.map((a) => {
+                            const earned = (activeChild as any)?.badges?.includes(a.badgeId);
+                            return (
+                              <div key={a.id} className={`bg-white/20 backdrop-blur-sm rounded-xl p-1.5 text-center border border-white/20 ${earned ? 'ring-2 ring-white' : 'opacity-60'}`}>
+                                <div className="text-base">{a.icon}</div>
+                                <div className="text-[9px] font-bold mt-0.5 leading-tight">{a.name}</div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -252,30 +315,103 @@ export default function ParentDashboard() {
             <h3 className="font-extrabold text-lg">🎯 Side Quest di Rumah</h3>
             <span className="text-xs font-bold px-3 py-1 rounded-full gradient-sunset text-white">Tambahan Poin</span>
           </div>
-          <p className="text-sm text-muted-foreground mb-4">Bantu anak nambah poin dengan tugas tambahan di rumah!</p>
+          <p className="text-sm text-muted-foreground mb-4">Bantu {activeChild?.name || 'anak'} nambah poin dengan tugas tambahan di rumah!</p>
           <div className="space-y-3">
-            {[
-              { icon: '🧹', tugas: 'Bantu sapu rumah 10 menit', poin: 15, selesai: false },
-              { icon: '🫶', tugas: 'Cuci piring sendiri', poin: 15, selesai: true },
-              { icon: '🛏️', tugas: 'Rapikan tempat tidur', poin: 10, selesai: false },
-              { icon: '🌿', tugas: 'Siram tanaman 5 pot', poin: 10, selesai: false },
-            ].map((q, i) => (
-              <div key={i} className={`p-4 rounded-2xl flex items-center gap-3 ${q.selesai ? 'bg-green-50 border border-green-200' : 'bg-muted/40'}`}>
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${q.selesai ? 'gradient-grass text-white' : 'bg-white'}`}>
-                  {q.selesai ? '✓' : q.icon}
+            {(sideQuests ?? []).length === 0 && (
+              <div className="p-6 text-center bg-muted/30 rounded-2xl">
+                <div className="text-3xl mb-2">📋</div>
+                <div className="font-bold text-sm text-muted-foreground">Belum ada side quest. Yuk buat tugas baru!</div>
+              </div>
+            )}
+            {(sideQuests ?? []).map((q) => (
+              <div key={q._id} className={`p-4 rounded-2xl flex items-center gap-3 ${q.completed ? 'bg-green-50 border border-green-200' : 'bg-muted/40'}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${q.completed ? 'gradient-grass text-white' : 'bg-white'}`}>
+                  {q.completed ? '✓' : q.icon}
                 </div>
                 <div className="flex-1">
-                  <div className={`font-bold ${q.selesai ? 'line-through text-muted-foreground' : ''}`}>{q.tugas}</div>
-                  <div className="text-xs text-accent font-bold">+{q.poin} XP</div>
+                  <div className={`font-bold ${q.completed ? 'line-through text-muted-foreground' : ''}`}>{q.title}</div>
+                  <div className="text-xs text-accent font-bold">+{q.xpReward} XP</div>
                 </div>
-                {!q.selesai && (
-                  <button className="px-3 py-1.5 rounded-full font-bold text-xs gradient-grass text-white">Tandai ✓</button>
+                {!q.completed && (
+                  <button
+                    onClick={async () => {
+                      if (!userData) return;
+                      if (activeChildId) await markQuestComplete({ questId: q._id, parentId: userData._id });
+                    }}
+                    className="px-3 py-1.5 rounded-full font-bold text-xs gradient-grass text-white"
+                  >
+                    Tandai ✓
+                  </button>
                 )}
-                {q.selesai && <span className="text-xs font-bold text-green-600">Selesai!</span>}
+                {q.completed && <span className="text-xs font-bold text-green-600">Selesai!</span>}
+                {!q.completed && (
+                  <button
+                    onClick={async () => {
+                      if (!userData) return;
+                      await removeQuest({ questId: q._id, parentId: userData._id });
+                    }}
+                    className="text-xs text-red-400 hover:text-red-600 font-bold px-2"
+                  >
+                    ✕
+                  </button>
+                )}
               </div>
             ))}
           </div>
-          <button className="w-full mt-4 py-3 rounded-full font-bold gradient-sunset text-white text-sm shadow-soft hover:shadow-pop transition-all">
+
+          {/* Create new quest form */}
+          {showQuestForm && activeChildId && (
+            <div className="mt-4 p-4 bg-muted/30 rounded-2xl space-y-3 animate-pop-in">
+              <input
+                value={newQuestTitle}
+                onChange={(e) => setNewQuestTitle(e.target.value)}
+                placeholder="Nama tugas (e.g. Bantu cuci piring)"
+                className="w-full p-3 rounded-xl border-2 border-border font-bold text-sm"
+              />
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-bold">XP Reward:</span>
+                <input
+                  type="number"
+                  min={5}
+                  max={50}
+                  value={newQuestXp}
+                  onChange={(e) => setNewQuestXp(Number(e.target.value))}
+                  className="w-20 p-2 rounded-xl border-2 border-border font-bold text-sm text-center"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={async () => {
+                    if (!newQuestTitle.trim() || !activeChildId || !userData?._id) return;
+                    const iconList = ['🧹', '🫶', '🛏️', '🌿', '📚', '🎒', '👟', '💪'];
+                    const icon = iconList[Math.floor(Math.random() * iconList.length)];
+                    await createSideQuest({
+                      parentId: userData._id,
+                      childId: activeChildId as any,
+                      title: newQuestTitle.trim(),
+                      icon,
+                      xpReward: newQuestXp,
+                    });
+                    setNewQuestTitle('');
+                    setNewQuestXp(15);
+                    setShowQuestForm(false);
+                  }}
+                  disabled={!newQuestTitle.trim()}
+                  className="flex-1 py-3 rounded-full font-bold gradient-grass text-white text-sm shadow-soft"
+                >
+                  Simpan Tugas
+                </button>
+                <button onClick={() => setShowQuestForm(false)} className="px-4 py-3 rounded-full font-bold bg-muted text-sm">
+                  Batal
+                </button>
+              </div>
+            </div>
+          )}
+
+          <button
+            onClick={() => setShowQuestForm(true)}
+            className="w-full mt-4 py-3 rounded-full font-bold gradient-sunset text-white text-sm shadow-soft hover:shadow-pop transition-all"
+          >
             + Tambah Side Quest Baru
           </button>
         </div>

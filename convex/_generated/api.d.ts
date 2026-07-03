@@ -16,6 +16,7 @@ import type * as physical_literacy from "../physical_literacy.js";
 import type * as quests from "../quests.js";
 import type * as schools from "../schools.js";
 import type * as seed from "../seed.js";
+import type * as sideQuests from "../sideQuests.js";
 import type * as users from "../users.js";
 
 import type {
@@ -33,6 +34,7 @@ declare const fullApi: ApiFromModules<{
   quests: typeof quests;
   schools: typeof schools;
   seed: typeof seed;
+  sideQuests: typeof sideQuests;
   users: typeof users;
 }>;
 

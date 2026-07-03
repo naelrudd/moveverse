@@ -58,3 +58,52 @@ export const world = worlds[0];
 export const ALL_ACTIVITIES = worlds.flatMap((w) => w.activities);
 export const ACTIVITIES = ALL_ACTIVITIES;
 export const BADGE_LIST = ALL_ACTIVITIES.map((a) => ({ id: a.badgeId, name: a.badgeName, activityId: a.id, icon: a.icon }));
+
+/**
+ * Level cap system:
+ * - XP determines raw level (100 XP per level, max 10)
+ * - Badge count caps max level — student must complete activities to level up
+ * - First level needs 1 badge, then 2 badges per subsequent level
+ * - 0 badges = level 0, 18 badges = level 10
+ */
+export function getLevelInfo(badges: string[], xp: number) {
+  const badgeCount = badges.length;
+
+  // XP-based level (raw)
+  const xpLevel = Math.min(Math.floor(xp / 100) + 1, 10);
+
+  // Badge-capped level
+  // 0→0, 1→1, 2-3→2, 4-5→3, 6-7→4, 8-9→5, 10-11→6, 12-13→7, 14-15→8, 16-17→9, 18→10
+  let badgeMaxLevel = 0;
+  if (badgeCount >= 18) badgeMaxLevel = 10;
+  else if (badgeCount >= 16) badgeMaxLevel = 9;
+  else if (badgeCount >= 14) badgeMaxLevel = 8;
+  else if (badgeCount >= 12) badgeMaxLevel = 7;
+  else if (badgeCount >= 10) badgeMaxLevel = 6;
+  else if (badgeCount >= 8) badgeMaxLevel = 5;
+  else if (badgeCount >= 6) badgeMaxLevel = 4;
+  else if (badgeCount >= 4) badgeMaxLevel = 3;
+  else if (badgeCount >= 2) badgeMaxLevel = 2;
+  else if (badgeCount >= 1) badgeMaxLevel = 1;
+
+  const level = Math.min(xpLevel, badgeMaxLevel);
+
+  // Next XP threshold
+  const xpForNext = level >= 10 ? Infinity : Math.max(level * 100, 100);
+
+  // Badges needed for next badge level cap
+  const badgeCaps = [0, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18];
+  const badgesForNext = level >= 10 ? Infinity : Math.max(0, badgeCaps[level + 1] - badgeCount);
+
+  // Badges needed just for next level (if XP allows)
+  const badgesForNextLevel = level >= 10 ? 0 : Math.max(0, badgeCaps[Math.min(level + 1, 10)] - badgeCount);
+
+  return {
+    level,
+    xpForNext,
+    isBadgeCapped: badgeMaxLevel < xpLevel,
+    badgesForNextLevel,
+    badgeCaps,
+    badgeMaxLevel,
+  };
+}

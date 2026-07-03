@@ -3,16 +3,23 @@
 export const dynamic = 'force-dynamic';
 
 import { useAuth } from '@clerk/nextjs';
-import { useQuery } from 'convex/react';
+import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import Link from 'next/link';
-import { worlds, ALL_ACTIVITIES } from '@/lib/worlds';
+import { worlds, getLevelInfo, ALL_ACTIVITIES } from '@/lib/worlds';
+import { useState } from 'react';
 
 export default function StudentDashboard() {
   const { userId } = useAuth();
   const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
   const badges = userData?.badges ?? [];
   const totalBadges = ALL_ACTIVITIES.length;
+  const levelInfo = getLevelInfo(badges, userData?.xp ?? 0);
+  const sideQuests = useQuery(
+    api.sideQuests.getByChildActive,
+    userData?._id ? { childId: userData._id } : 'skip'
+  );
+  const markQuestComplete = useMutation(api.sideQuests.markComplete);
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
@@ -33,7 +40,7 @@ export default function StudentDashboard() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { l: '⭐ Level', v: `Lv ${userData?.level || 1}`, t: 'gradient-sky' },
+          { l: '⭐ Level', v: `Lv ${levelInfo.level}`, t: 'gradient-sky' },
           { l: '✨ XP', v: (userData?.xp || 0).toLocaleString(), t: 'gradient-sunset' },
           { l: '🪙 Koin', v: (userData?.coins || 0).toLocaleString(), t: 'gradient-magic' },
           { l: '🏅 Badge', v: `${badges.length}/${totalBadges}`, t: 'gradient-grass' },
@@ -48,25 +55,30 @@ export default function StudentDashboard() {
       {/* Level Progress + Completion Stats */}
       <div className="bg-white rounded-3xl p-5 shadow-soft">
         <div className="flex items-center justify-between mb-2">
-          <span className="font-extrabold">⭐ Level {userData?.level || 1}</span>
+          <span className="font-extrabold">⭐ Level {levelInfo.level}</span>
           <span className="text-xs font-bold text-muted-foreground">
-            {userData?.xp || 0} / {((userData?.level || 1) * 100)} XP
+            {userData?.xp || 0} / {Math.max(levelInfo.level * 100, 100)} XP
           </span>
         </div>
         <div className="w-full h-4 bg-muted rounded-full overflow-hidden">
           <div
             className="h-full gradient-sky rounded-full transition-all"
-            style={{ width: `${Math.min(((userData?.xp || 0) % 100), 100)}%` }}
+            style={{ width: `${Math.min(((userData?.xp || 0) % 100) || 0, 100)}%` }}
           />
         </div>
         <div className="flex items-center justify-between mt-2">
           <div className="text-xs text-muted-foreground font-bold">
-            {(userData?.level || 0) >= 10 ? 'Max Level! 🎉' : `${100 - ((userData?.xp || 0) % 100)} XP lagi ke level berikutnya`}
+            {levelInfo.level >= 10 ? 'Max Level! 🎉' : `${levelInfo.xpForNext - (userData?.xp || 0)} XP lagi ke level berikutnya`}
           </div>
-          <div className="text-xs font-bold text-primary bg-primary/5 px-3 py-1 rounded-full">
+          <div className="text-xs font-bold text-primary bg-primary/5 px-3 py-1 rounded-full" title={`Butuh ${levelInfo.badgesForNextLevel} badge lagi untuk naik ke level ${Math.min(levelInfo.level + 1, 10)}`}>
             🏅 {badges.length}/{totalBadges} aktivitas selesai
           </div>
         </div>
+        {levelInfo.isBadgeCapped && (
+          <div className="mt-2 p-2 bg-amber-50 rounded-xl border border-amber-200 text-xs font-bold text-amber-700 flex items-center gap-2 animate-wiggle">
+            🔒 Selesaikan {levelInfo.badgesForNextLevel} aktivitas lagi untuk naik ke level {Math.min(levelInfo.level + 1, 10)}
+          </div>
+        )}
       </div>
 
       {/* Aktivitas per Dunia */}
@@ -83,12 +95,12 @@ export default function StudentDashboard() {
                 const earned = badges.includes(a.badgeId);
                 return (
                   <Link key={a.id} href={`/worlds/${w.id}`}
-                    className={`bg-white rounded-3xl p-5 shadow-soft hover:shadow-pop transition-all border-2 ${
+                    className={`block bg-white rounded-3xl p-5 shadow-soft hover:shadow-pop transition-all duration-300 border-2 hover:-translate-y-1 group ${
                       earned ? 'border-green-300 bg-green-50' : 'border-transparent hover:border-primary/20'
                     }`}>
                     <div className="flex items-center justify-between">
-                      <div className="text-3xl animate-wobble">{a.icon}</div>
-                      {earned && <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">✓ Dapat!</span>}
+                      <div className="text-3xl group-hover:animate-bounce-sm">{a.icon}</div>
+                      {earned && <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full animate-pop-in">✓ Dapat!</span>}
                     </div>
                     <h3 className="font-extrabold mt-2">{a.name}</h3>
                     <p className="text-xs text-muted-foreground mt-1">{a.description}</p>
@@ -111,23 +123,34 @@ export default function StudentDashboard() {
           </div>
           <p className="text-xs text-muted-foreground mb-3">Tugas tambahan dari orang tua — selesaikan untuk poin ekstra!</p>
           <div className="grid sm:grid-cols-2 gap-3">
-            {[
-              { icon: '🧹', tugas: 'Bantu sapu rumah 10 menit', poin: 15, selesai: false },
-              { icon: '🫶', tugas: 'Cuci piring sendiri', poin: 15, selesai: true },
-              { icon: '🛏️', tugas: 'Rapikan tempat tidur', poin: 10, selesai: false },
-              { icon: '🌿', tugas: 'Siram tanaman 5 pot', poin: 10, selesai: false },
-            ].map((q, i) => (
-              <div key={i} className={`p-3 rounded-2xl flex items-center gap-3 ${q.selesai ? 'bg-green-50 border border-green-200' : 'bg-muted/40'}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${q.selesai ? 'gradient-grass text-white' : 'bg-white'}`}>
-                  {q.selesai ? '✓' : q.icon}
-                </div>
-                <div className="flex-1">
-                  <div className={`text-sm font-bold ${q.selesai ? 'line-through text-muted-foreground' : ''}`}>{q.tugas}</div>
-                  <div className="text-xs text-accent font-bold">+{q.poin} XP</div>
-                </div>
-                {!q.selesai && <button className="px-3 py-1 text-xs font-bold rounded-full bg-primary text-white">Selesai</button>}
+            {(sideQuests ?? []).length === 0 ? (
+              <div className="sm:col-span-2 p-6 text-center bg-muted/30 rounded-2xl">
+                <div className="text-2xl mb-1">📋</div>
+                <div className="text-xs font-bold text-muted-foreground">Belum ada side quest dari orang tua</div>
               </div>
-            ))}
+            ) : (
+              (sideQuests ?? []).map((q) => (
+                <div key={q._id} className={`p-3 rounded-2xl flex items-center gap-3 ${q.completed ? 'bg-green-50 border border-green-200' : 'bg-muted/40'}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${q.completed ? 'gradient-grass text-white' : 'bg-white'}`}>
+                    {q.completed ? '✓' : q.icon}
+                  </div>
+                  <div className="flex-1">
+                    <div className={`text-sm font-bold ${q.completed ? 'line-through text-muted-foreground' : ''}`}>{q.title}</div>
+                    <div className="text-xs text-accent font-bold">+{q.xpReward} XP</div>
+                  </div>
+                  {!q.completed && (
+                    <button
+                      onClick={async () => {
+                        if (userData?._id) await markQuestComplete({ questId: q._id, childId: userData._id });
+                      }}
+                      className="px-3 py-1 text-xs font-bold rounded-full bg-primary text-white"
+                    >
+                      Selesai
+                    </button>
+                  )}
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>

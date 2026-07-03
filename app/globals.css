@@ -201,6 +201,12 @@ h1, h2, h3, h4 {
   70% { transform: translateY(-4px); }
 }
 
+@keyframes bounce-sm {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-4px); }
+  60% { transform: translateY(1px); }
+}
+
 @keyframes confetti-fall {
   0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
   100% { transform: translateY(40px) rotate(360deg); opacity: 0; }
@@ -219,6 +225,10 @@ h1, h2, h3, h4 {
 
 .animate-bounce-soft {
   animation: bounce 1s ease-in-out infinite;
+}
+
+.animate-bounce-sm {
+  animation: bounce-sm 0.7s ease-in-out infinite;
 }
 
 .animate-confetti {

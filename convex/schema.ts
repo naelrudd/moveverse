@@ -102,4 +102,17 @@ export default defineSchema({
     updatedAt: v.number(),
   })
     .index("by_userId", ["userId"]),
+
+  side_quests: defineTable({
+    parentId: v.id("users"),
+    childId: v.id("users"),
+    title: v.string(),
+    icon: v.string(),
+    xpReward: v.number(),
+    completed: v.boolean(),
+    createdAt: v.number(),
+  })
+    .index("by_childId", ["childId"])
+    .index("by_parentId", ["parentId"])
+    .index("by_child_completed", ["childId", "completed"]),
 });

@@ -57,7 +57,7 @@ export const linkChild = mutation({
         });
       }
     }
-    return child._id;
+    return { _id: child._id, name: child.name, avatar: child.avatar, level: child.level, xp: child.xp, coins: child.coins, badges: child.badges };
   },
 });
 
