@@ -219,6 +219,27 @@ export const updateAvatar = mutation({
   },
 });
 
+export const updateUser = mutation({
+  args: {
+    userId: v.id("users"),
+    name: v.optional(v.string()),
+    avatar: v.optional(v.string()),
+    nis: v.optional(v.string()),
+    phone: v.optional(v.string()),
+    schoolId: v.optional(v.id("schools")),
+    classId: v.optional(v.id("classes")),
+  },
+  handler: async (ctx, args) => {
+    const { userId, ...fields } = args;
+    const patch: Record<string, unknown> = { updatedAt: Date.now() };
+    for (const [k, v] of Object.entries(fields)) {
+      if (v !== undefined) patch[k] = v;
+    }
+    await ctx.db.patch(userId, patch);
+    return { ok: true };
+  },
+});
+
 export const levelUpActivity = mutation({
   args: { userId: v.id("users"), activityId: v.string() },
   handler: async (ctx, { userId, activityId }) => {

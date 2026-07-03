@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAuth, useUser } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import Link from 'next/link';
+import { Id } from '@/convex/_generated/dataModel';
 import AvatarPicker from '@/components/AvatarPicker';
 import { ACTIVITIES } from '@/lib/worlds';
 
@@ -28,9 +28,28 @@ export default function ProfilePage() {
   const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
   const school = useQuery(api.schools.getSchool, userData?.schoolId ? { schoolId: userData.schoolId } : 'skip');
   const cls = useQuery(api.classes.getClass, userData?.classId ? { classId: userData.classId } : 'skip');
+  const schools = useQuery(api.schools.getAllSchools);
+  const classes = useQuery(api.classes.getClassesBySchool, userData?.schoolId ? { schoolId: userData.schoolId } : 'skip');
   const updateAvatar = useMutation(api.users.updateAvatar);
+  const updateUser = useMutation(api.users.updateUser);
   const [editing, setEditing] = useState(false);
-  const [newAvatar, setNewAvatar] = useState(userData?.avatar || '🦊');
+  const [newAvatar, setNewAvatar] = useState('🦊');
+  const [editName, setEditName] = useState('');
+  const [editNis, setEditNis] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editSchoolId, setEditSchoolId] = useState<Id<'schools'> | ''>('');
+  const [editClassId, setEditClassId] = useState<Id<'classes'> | ''>('');
+  const [saving, setSaving] = useState(false);
+
+  // Hydrate edit fields when userData loads
+  if (userData && editSchoolId === '' && userData.schoolId) {
+    setNewAvatar(userData.avatar);
+    setEditName(userData.name || '');
+    setEditNis(userData.nis || '');
+    setEditPhone(userData.phone || '');
+    setEditSchoolId(userData.schoolId as Id<'schools'>);
+    setEditClassId(userData.classId as Id<'classes'> || '');
+  }
 
   if (!userData) {
     return (
@@ -46,6 +65,26 @@ export default function ProfilePage() {
   const handleSaveAvatar = async () => {
     await updateAvatar({ userId: userData._id, avatar: newAvatar });
     setEditing(false);
+  };
+
+  const handleSaveProfile = async () => {
+    setSaving(true);
+    try {
+      await updateUser({
+        userId: userData._id,
+        name: editName || userData.name,
+        nis: editNis || undefined,
+        phone: editPhone || undefined,
+        schoolId: editSchoolId || undefined,
+        classId: editClassId || undefined,
+        avatar: newAvatar,
+      });
+      setEditing(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -134,31 +173,106 @@ export default function ProfilePage() {
         </div>
 
         <div className="mt-6">
-          <Link href="/onboarding" className="block w-full text-center py-3 rounded-full font-bold border-2 border-border hover:border-primary/40 transition-all">
-            Edit Profil
-          </Link>
+          <button
+            onClick={() => { setNewAvatar(userData.avatar); setEditing(true); }}
+            className="w-full py-3 rounded-full font-bold border-2 border-border hover:border-primary/40 transition-all"
+          >
+            ✏️ Edit Profil
+          </button>
         </div>
       </div>
 
-      {/* Avatar Picker Modal */}
+      {/* Profile Edit Modal */}
       {editing && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setEditing(false)}>
-          <div className="bg-white rounded-[2rem] p-6 shadow-pop border-4 border-white max-w-md w-full animate-pop-in" onClick={(e) => e.stopPropagation()}>
-            <h3 className="font-extrabold text-xl text-center mb-2">🐾 Pilih Avatar Baru</h3>
-            <p className="text-xs text-muted-foreground text-center mb-4">Pilih hewan favoritmu!</p>
+          <div className="bg-white rounded-[2rem] p-6 shadow-pop border-4 border-white max-w-md w-full max-h-[90vh] overflow-y-auto animate-pop-in" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-extrabold text-xl text-center mb-4">✏️ Edit Profil</h3>
 
+            {/* Avatar picker */}
+            <div className="text-center mb-4">
+              <p className="text-xs font-bold text-muted-foreground mb-2">Pilih Avatar</p>
+              <div className="text-6xl animate-float mb-2">{newAvatar}</div>
+            </div>
             <AvatarPicker selected={newAvatar} onSelect={setNewAvatar} />
 
-            <div className="flex justify-center my-4">
-              <div className="text-7xl animate-float">{newAvatar}</div>
+            <div className="space-y-3 mt-4">
+              {/* Name */}
+              <div>
+                <label className="text-xs font-bold text-muted-foreground">Nama</label>
+                <input
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="mt-1 w-full p-3 rounded-2xl border-2 border-border font-bold text-sm"
+                  placeholder="Nama kamu"
+                />
+              </div>
+
+              {/* NIS (student only) */}
+              {role === 'student' && (
+                <div>
+                  <label className="text-xs font-bold text-muted-foreground">NIS</label>
+                  <input
+                    value={editNis}
+                    onChange={(e) => setEditNis(e.target.value)}
+                    className="mt-1 w-full p-3 rounded-2xl border-2 border-border font-bold text-sm"
+                    placeholder="Nomor Induk Siswa"
+                  />
+                </div>
+              )}
+
+              {/* Phone (parent only) */}
+              {role === 'parent' && (
+                <div>
+                  <label className="text-xs font-bold text-muted-foreground">No. HP</label>
+                  <input
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    className="mt-1 w-full p-3 rounded-2xl border-2 border-border font-bold text-sm"
+                    placeholder="Nomor HP"
+                    type="tel"
+                  />
+                </div>
+              )}
+
+              {/* School */}
+              <div>
+                <label className="text-xs font-bold text-muted-foreground">Sekolah</label>
+                <select
+                  value={editSchoolId}
+                  onChange={(e) => { setEditSchoolId(e.target.value as Id<'schools'>); setEditClassId(''); }}
+                  className="mt-1 w-full p-3 rounded-2xl border-2 border-border bg-white font-bold text-sm"
+                >
+                  <option value="">Pilih sekolah...</option>
+                  {schools?.map((s) => <option key={s._id} value={s._id}>{s.name}</option>)}
+                </select>
+              </div>
+
+              {/* Class (student only) */}
+              {role === 'student' && editSchoolId && (
+                <div>
+                  <label className="text-xs font-bold text-muted-foreground">Kelas</label>
+                  <select
+                    value={editClassId}
+                    onChange={(e) => setEditClassId(e.target.value as Id<'classes'>)}
+                    className="mt-1 w-full p-3 rounded-2xl border-2 border-border bg-white font-bold text-sm"
+                  >
+                    <option value="">Pilih kelas...</option>
+                    {classes?.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
+                  </select>
+                </div>
+              )}
             </div>
 
-            <div className="flex gap-2">
-              <button onClick={() => setEditing(false)} className="flex-1 py-2 rounded-full font-bold border-2 border-border">
+            <div className="flex gap-2 mt-4">
+              <button onClick={() => setEditing(false)} className="flex-1 py-2.5 rounded-full font-bold border-2 border-border">
                 Batal
               </button>
-              <button onClick={handleSaveAvatar} className="flex-1 py-2 rounded-full font-bold gradient-sky text-white">
-                Simpan ✅
+              <button
+                onClick={handleSaveProfile}
+                disabled={saving}
+                className="flex-1 py-2.5 rounded-full font-bold gradient-sky text-white disabled:opacity-50"
+              >
+                {saving ? 'Menyimpan...' : 'Simpan ✅'}
               </button>
             </div>
           </div>

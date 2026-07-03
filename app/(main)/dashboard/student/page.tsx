@@ -113,7 +113,8 @@ export default function StudentDashboard() {
           </div>
 
           <div className="flex-1">
-            <h1 className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 bg-clip-text text-transparent drop-shadow-sm">
+            <h1 className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 bg-clip-text text-transparent drop-shadow-sm flex items-center gap-3">
+              <span className="text-5xl inline-block animate-wobble">{userData?.avatar || '🦊'}</span>
               Halo, {userData?.name || 'Explorer'}! 🎉
             </h1>
             <p className="text-base font-bold text-foreground/60 mt-1">
