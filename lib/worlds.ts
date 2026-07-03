@@ -7,6 +7,8 @@ export type Activity = {
   badgeName: string;
   xpReward: number;
   icon: string;
+  maxLevel: number;
+  levelNames: string[];
 };
 
 export type World = {
@@ -18,34 +20,34 @@ export type World = {
   emoji: string;
 };
 
-// ── Pulau Naga (Non-Lokomotor) ──
+// ── Pulau Naga (Non-Lokomotor) 🐉 ──
 const PULAU_NAGA: Activity[] = [
-  { id: 'meliuk', name: 'Meliuk', description: 'Gerakan meliuk tubuh ke kiri dan kanan', objective: 'Melatih fleksibilitas tulang belakang dan otot pinggang', badgeId: 'badge_meliuk', badgeName: 'Si Liuk Lincah', xpReward: 20, icon: '🌊' },
-  { id: 'menekuk', name: 'Menekuk', description: 'Gerakan menekuk tangan dan kaki', objective: 'Menguatkan sendi lutut dan siku', badgeId: 'badge_menekuk', badgeName: 'Si Tekuk Tangkas', xpReward: 20, icon: '🦩' },
-  { id: 'memutar', name: 'Memutar', description: 'Gerakan memutar tangan, kepala, dan pinggang', objective: 'Meningkatkan koordinasi dan fleksibilitas tubuh', badgeId: 'badge_memutar', badgeName: 'Si Putar Cepat', xpReward: 25, icon: '🌀' },
-  { id: 'mengayun', name: 'Mengayun', description: 'Gerakan mengayunkan tangan dan kaki', objective: 'Melatih keseimbangan dan ritme gerak', badgeId: 'badge_mengayun', badgeName: 'Si Ayun Kuat', xpReward: 25, icon: '🎪' },
-  { id: 'membungkuk', name: 'Membungkuk', description: 'Gerakan membungkuk dan meregang', objective: 'Memperpanjang otot punggung dan hamstring', badgeId: 'badge_membungkuk', badgeName: 'Si Bungkuk Fleksibel', xpReward: 30, icon: '🧘' },
-  { id: 'mendorong', name: 'Mendorong & Menarik', description: 'Gerakan mendorong dan menarik benda', objective: 'Menguatkan otot lengan dan daya tahan', badgeId: 'badge_mendorong', badgeName: 'Si Dorong Hebat', xpReward: 30, icon: '💪' },
+  { id: 'meliuk', name: 'Meliuk', description: 'Gerakan meliuk tubuh ke kiri dan kanan', objective: 'Melatih fleksibilitas tulang belakang dan otot pinggang', badgeId: 'badge_meliuk', badgeName: 'Si Liuk Lincah', xpReward: 20, icon: '🌊', maxLevel: 5, levelNames: ['Pemula', 'Lembut', 'Lentur', 'Elastis', 'Si Ular'] },
+  { id: 'menekuk', name: 'Menekuk', description: 'Gerakan menekuk tangan dan kaki', objective: 'Menguatkan sendi lutut dan siku', badgeId: 'badge_menekuk', badgeName: 'Si Tekuk Tangkas', xpReward: 20, icon: '🦩', maxLevel: 5, levelNames: ['Pemula', 'Tekukan', 'Fleksibel', 'Master Tekuk', 'Si Lentur'] },
+  { id: 'memutar', name: 'Memutar', description: 'Gerakan memutar tangan, kepala, dan pinggang', objective: 'Meningkatkan koordinasi dan fleksibilitas tubuh', badgeId: 'badge_memutar', badgeName: 'Si Putar Cepat', xpReward: 25, icon: '🌀', maxLevel: 5, levelNames: ['Pemula', 'Putaran', 'Spiral', 'Tornado', 'Si Pusing'] },
+  { id: 'mengayun', name: 'Mengayun', description: 'Gerakan mengayunkan tangan dan kaki', objective: 'Melatih keseimbangan dan ritme gerak', badgeId: 'badge_mengayun', badgeName: 'Si Ayun Kuat', xpReward: 25, icon: '🎪', maxLevel: 5, levelNames: ['Pemula', 'Ayunan', 'Ritmis', 'Harmonis', 'Si Ayun'] },
+  { id: 'membungkuk', name: 'Membungkuk', description: 'Gerakan membungkuk dan meregang', objective: 'Memperpanjang otot punggung dan hamstring', badgeId: 'badge_membungkuk', badgeName: 'Si Bungkuk Fleksibel', xpReward: 30, icon: '🧘', maxLevel: 5, levelNames: ['Pemula', 'Meregang', 'Fleksibel', 'Pilates', 'Si Lentur'] },
+  { id: 'mendorong', name: 'Mendorong & Menarik', description: 'Gerakan mendorong dan menarik benda', objective: 'Menguatkan otot lengan dan daya tahan', badgeId: 'badge_mendorong', badgeName: 'Si Dorong Hebat', xpReward: 30, icon: '💪', maxLevel: 5, levelNames: ['Pemula', 'Dorongan', 'Kuat', 'Power', 'Si Kuat'] },
 ];
 
-// ── Hutan Harimau (Lokomotor) ──
+// ── Hutan Harimau (Lokomotor) 🐅 ──
 const HUTAN_HARIMAU: Activity[] = [
-  { id: 'berjalan', name: 'Berjalan', description: 'Berjalan dengan ritme dan postur benar', objective: 'Membangun kebiasaan berjalan sehat dan postur tubuh', badgeId: 'badge_berjalan', badgeName: 'Si Jalan Pantang Lelah', xpReward: 20, icon: '🚶' },
-  { id: 'berlari', name: 'Berlari', description: 'Berlari dengan teknik yang benar', objective: 'Meningkatkan daya tahan kardiovaskular', badgeId: 'badge_berlari', badgeName: 'Si Lari Kencang', xpReward: 20, icon: '🏃' },
-  { id: 'melompat', name: 'Melompat', description: 'Melompat dengan satu atau dua kaki', objective: 'Melatih kekuatan otot kaki dan keseimbangan', badgeId: 'badge_melompat', badgeName: 'Si Lompat Jauh', xpReward: 25, icon: '🦘' },
-  { id: 'meloncat', name: 'Meloncat', description: 'Meloncat naik dan turun', objective: 'Meningkatkan power dan koordinasi tubuh', badgeId: 'badge_meloncat', badgeName: 'Si Loncat Tinggi', xpReward: 25, icon: '🐰' },
-  { id: 'mengejar', name: 'Mengejar', description: 'Mengejar objek dengan cepat', objective: 'Melatih kecepatan reaksi dan agility', badgeId: 'badge_mengejar', badgeName: 'Si Kejar Tangkas', xpReward: 30, icon: '🐆' },
-  { id: 'menghindar', name: 'Menghindar', description: 'Menghindari rintangan', objective: 'Meningkatkan awareness dan koordinasi mata-kaki', badgeId: 'badge_menghindar', badgeName: 'Si Hindar Lincah', xpReward: 30, icon: '🛡️' },
+  { id: 'berjalan', name: 'Berjalan', description: 'Berjalan dengan ritme dan postur benar', objective: 'Membangun kebiasaan berjalan sehat dan postur tubuh', badgeId: 'badge_berjalan', badgeName: 'Si Jalan Pantang Lelah', xpReward: 20, icon: '🚶', maxLevel: 5, levelNames: ['Pemula', 'Langkah', 'Ritmis', 'Atletis', 'Si Jalan'] },
+  { id: 'berlari', name: 'Berlari', description: 'Berlari dengan teknik yang benar', objective: 'Meningkatkan daya tahan kardiovaskular', badgeId: 'badge_berlari', badgeName: 'Si Lari Kencang', xpReward: 20, icon: '🏃', maxLevel: 5, levelNames: ['Pemula', 'Lari', 'Sprint', 'Kilat', 'Si Cepat'] },
+  { id: 'melompat', name: 'Melompat', description: 'Melompat dengan satu atau dua kaki', objective: 'Melatih kekuatan otot kaki dan keseimbangan', badgeId: 'badge_melompat', badgeName: 'Si Lompat Jauh', xpReward: 25, icon: '🦘', maxLevel: 5, levelNames: ['Pemula', 'Lompatan', 'Tinggi', 'Super', 'Si Terbang'] },
+  { id: 'meloncat', name: 'Meloncat', description: 'Meloncat naik dan turun', objective: 'Meningkatkan power dan koordinasi tubuh', badgeId: 'badge_meloncat', badgeName: 'Si Loncat Tinggi', xpReward: 25, icon: '🐰', maxLevel: 5, levelNames: ['Pemula', 'Loncatan', 'Akrobatik', 'Powerful', 'Si Loncat'] },
+  { id: 'mengejar', name: 'Mengejar', description: 'Mengejar objek dengan cepat', objective: 'Melatih kecepatan reaksi dan agility', badgeId: 'badge_mengejar', badgeName: 'Si Kejar Tangkas', xpReward: 30, icon: '🐆', maxLevel: 5, levelNames: ['Pemula', 'Kejaran', 'Cepat', 'Lincah', 'Si Kilat'] },
+  { id: 'menghindar', name: 'Menghindar', description: 'Menghindari rintangan', objective: 'Meningkatkan awareness dan koordinasi mata-kaki', badgeId: 'badge_menghindar', badgeName: 'Si Hindar Lincah', xpReward: 30, icon: '🛡️', maxLevel: 5, levelNames: ['Pemula', 'Hindaran', 'Agile', 'Ninja', 'Si Bayangan'] },
 ];
 
-// ── Gunung Elang (Manipulatif) ──
+// ── Gunung Elang (Manipulatif) 🦅 ──
 const GUNUNG_ELANG: Activity[] = [
-  { id: 'melempar', name: 'Melempar', description: 'Melempar bola dengan akurasi', objective: 'Melatih koordinasi mata-tangan dan kekuatan lengan', badgeId: 'badge_melempar', badgeName: 'Si Lempar Jitu', xpReward: 20, icon: '🤾' },
-  { id: 'menangkap', name: 'Menangkap', description: 'Menangkap bola dengan tepat', objective: 'Meningkatkan refleks dan koordinasi', badgeId: 'badge_menangkap', badgeName: 'Si Tangkap Mahir', xpReward: 20, icon: '🤲' },
-  { id: 'menendang', name: 'Menendang', description: 'Menendang bola dengan kuat', objective: 'Menguatkan otot kaki dan akurasi', badgeId: 'badge_menendang', badgeName: 'Si Tendang Dasyat', xpReward: 25, icon: '⚽' },
-  { id: 'memukul', name: 'Memukul', description: 'Memukul bola dengan alat', objective: 'Melatih koordinasi tangan-mata dan timing', badgeId: 'badge_memukul', badgeName: 'Si Pukul Hebat', xpReward: 25, icon: '🏏' },
-  { id: 'menggiring', name: 'Menggiring', description: 'Menggiring bola sambil bergerak', objective: 'Meningkatkan kontrol bola dan kelincahan', badgeId: 'badge_menggiring', badgeName: 'Si Giring Cerdas', xpReward: 30, icon: '🏀' },
-  { id: 'mengoper', name: 'Mengoper', description: 'Mengoper bola ke teman', objective: 'Melatih akurasi dan kerja sama tim', badgeId: 'badge_mengoper', badgeName: 'Si Oper Sempurna', xpReward: 30, icon: '🤝' },
+  { id: 'melempar', name: 'Melempar', description: 'Melempar bola dengan akurasi', objective: 'Melatih koordinasi mata-tangan dan kekuatan lengan', badgeId: 'badge_melempar', badgeName: 'Si Lempar Jitu', xpReward: 20, icon: '🤾', maxLevel: 5, levelNames: ['Pemula', 'Lemparan', 'Akurat', 'Presisi', 'Si Sniper'] },
+  { id: 'menangkap', name: 'Menangkap', description: 'Menangkap bola dengan tepat', objective: 'Meningkatkan refleks dan koordinasi', badgeId: 'badge_menangkap', badgeName: 'Si Tangkap Mahir', xpReward: 20, icon: '🤲', maxLevel: 5, levelNames: ['Pemula', 'Tangkapan', 'Refleks', 'Master', 'Si Penjaga'] },
+  { id: 'menendang', name: 'Menendang', description: 'Menendang bola dengan kuat', objective: 'Menguatkan otot kaki dan akurasi', badgeId: 'badge_menendang', badgeName: 'Si Tendang Dasyat', xpReward: 25, icon: '⚽', maxLevel: 5, levelNames: ['Pemula', 'Tendangan', 'Keras', 'Dasyat', 'Si Kaki Emas'] },
+  { id: 'memukul', name: 'Memukul', description: 'Memukul bola dengan alat', objective: 'Melatih koordinasi tangan-mata dan timing', badgeId: 'badge_memukul', badgeName: 'Si Pukul Hebat', xpReward: 25, icon: '🏏', maxLevel: 5, levelNames: ['Pemula', 'Pukulan', 'Kuat', 'Power', 'Si Pukul'] },
+  { id: 'menggiring', name: 'Menggiring', description: 'Menggiring bola sambil bergerak', objective: 'Meningkatkan kontrol bola dan kelincahan', badgeId: 'badge_menggiring', badgeName: 'Si Giring Cerdas', xpReward: 30, icon: '🏀', maxLevel: 5, levelNames: ['Pemula', 'Dribble', 'Kontrol', 'Master', 'Si Giring'] },
+  { id: 'mengoper', name: 'Mengoper', description: 'Mengoper bola ke teman', objective: 'Melatih akurasi dan kerja sama tim', badgeId: 'badge_mengoper', badgeName: 'Si Oper Sempurna', xpReward: 30, icon: '🤝', maxLevel: 5, levelNames: ['Pemula', 'Operan', 'Akurat', 'Playmaker', 'Si Oper'] },
 ];
 
 export const worlds: World[] = [
@@ -59,51 +61,15 @@ export const ALL_ACTIVITIES = worlds.flatMap((w) => w.activities);
 export const ACTIVITIES = ALL_ACTIVITIES;
 export const BADGE_LIST = ALL_ACTIVITIES.map((a) => ({ id: a.badgeId, name: a.badgeName, activityId: a.id, icon: a.icon }));
 
-/**
- * Level cap system:
- * - XP determines raw level (100 XP per level, max 10)
- * - Badge count caps max level — student must complete activities to level up
- * - First level needs 1 badge, then 2 badges per subsequent level
- * - 0 badges = level 0, 18 badges = level 10
- */
-export function getLevelInfo(badges: string[], xp: number) {
-  const badgeCount = badges.length;
+/** Activity level colors for UI */
+export function getActivityLevelColor(level: number): string {
+  if (level >= 5) return 'bg-purple-500';
+  if (level >= 4) return 'bg-blue-500';
+  if (level >= 3) return 'bg-green-500';
+  if (level >= 2) return 'bg-amber-500';
+  return 'bg-gray-400';
+}
 
-  // XP-based level (raw)
-  const xpLevel = Math.min(Math.floor(xp / 100) + 1, 10);
-
-  // Badge-capped level
-  // 0→0, 1→1, 2-3→2, 4-5→3, 6-7→4, 8-9→5, 10-11→6, 12-13→7, 14-15→8, 16-17→9, 18→10
-  let badgeMaxLevel = 0;
-  if (badgeCount >= 18) badgeMaxLevel = 10;
-  else if (badgeCount >= 16) badgeMaxLevel = 9;
-  else if (badgeCount >= 14) badgeMaxLevel = 8;
-  else if (badgeCount >= 12) badgeMaxLevel = 7;
-  else if (badgeCount >= 10) badgeMaxLevel = 6;
-  else if (badgeCount >= 8) badgeMaxLevel = 5;
-  else if (badgeCount >= 6) badgeMaxLevel = 4;
-  else if (badgeCount >= 4) badgeMaxLevel = 3;
-  else if (badgeCount >= 2) badgeMaxLevel = 2;
-  else if (badgeCount >= 1) badgeMaxLevel = 1;
-
-  const level = Math.min(xpLevel, badgeMaxLevel);
-
-  // Next XP threshold
-  const xpForNext = level >= 10 ? Infinity : Math.max(level * 100, 100);
-
-  // Badges needed for next badge level cap
-  const badgeCaps = [0, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18];
-  const badgesForNext = level >= 10 ? Infinity : Math.max(0, badgeCaps[level + 1] - badgeCount);
-
-  // Badges needed just for next level (if XP allows)
-  const badgesForNextLevel = level >= 10 ? 0 : Math.max(0, badgeCaps[Math.min(level + 1, 10)] - badgeCount);
-
-  return {
-    level,
-    xpForNext,
-    isBadgeCapped: badgeMaxLevel < xpLevel,
-    badgesForNextLevel,
-    badgeCaps,
-    badgeMaxLevel,
-  };
+export function getActivityLevelStars(level: number): string {
+  return '⭐'.repeat(level) + '☆'.repeat(Math.max(0, 5 - level));
 }

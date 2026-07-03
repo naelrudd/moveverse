@@ -144,7 +144,7 @@ export default function ParentDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-8" style={{ fontFamily: 'Nunito, sans-serif' }}>
+    <div className="max-w-7xl mx-auto px-4 py-8 space-y-8 bg-theme-dragon min-h-screen" style={{ fontFamily: 'Nunito, sans-serif' }}>
 
       {/* ═══════════════════ HERO SECTION ═══════════════════ */}
       <section className="relative rounded-[2rem] overflow-hidden shadow-pop border-4 border-white animate-pop-in">

@@ -62,6 +62,7 @@ export default function StudentDashboard() {
   const { userId } = useAuth();
   const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
   const badges = userData?.badges ?? [];
+  const activityLevels = userData?.activityLevels ?? {};
   const totalBadges = ALL_ACTIVITIES.length;
   const levelStatus = useQuery(api.users.getLevelStatus, userData?._id ? { userId: userData._id } : 'skip');
   const sideQuests = useQuery(
@@ -79,7 +80,7 @@ export default function StudentDashboard() {
   const xpPercent = Math.min(nextTarget > 0 ? (xp / nextTarget) * 100 : 100, 100);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8 bg-theme-forest min-h-screen">
       {/* ══════════════════════════════════════════
           HERO — Super kid entrance
           ══════════════════════════════════════════ */}
@@ -281,6 +282,8 @@ export default function StudentDashboard() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {w.activities.map((a, ai) => {
                 const earned = badges.includes(a.badgeId);
+                const actLevel = activityLevels[a.id] ?? 0;
+                const maxLvl = a.maxLevel ?? 5;
                 return (
                   <Link
                     key={a.id}
@@ -314,6 +317,37 @@ export default function StudentDashboard() {
                     <div className="mt-2 text-xs font-extrabold" style={{ color: 'oklch(0.7 0.2 60)' }}>
                       +{a.xpReward} XP ⚡
                     </div>
+
+                    {/* Activity level bar */}
+                    <div className="mt-2 flex items-center gap-1.5">
+                      <div className="flex gap-0.5">
+                        {Array.from({ length: maxLvl }, (_, i) => (
+                          <span key={i} className={`text-xs ${i < actLevel ? 'opacity-100' : 'opacity-25'}`}>
+                            ⭐
+                          </span>
+                        ))}
+                      </div>
+                      {actLevel > 0 && (
+                        <span className="text-[10px] font-extrabold text-amber-600">
+                          Lv.{actLevel}
+                        </span>
+                      )}
+                      {actLevel === 0 && (
+                        <span className="text-[10px] font-extrabold text-gray-400">
+                          Belum mulai
+                        </span>
+                      )}
+                    </div>
+                    {actLevel > 0 && actLevel < maxLvl && (
+                      <div className="mt-1 text-[10px] font-bold text-primary/60">
+                        {a.levelNames?.[actLevel] ?? `Level ${actLevel + 1}`} → {a.levelNames?.[actLevel] ?? `Level ${actLevel + 2}`}
+                      </div>
+                    )}
+                    {actLevel === maxLvl && (
+                      <div className="mt-1 text-[10px] font-extrabold text-purple-600">
+                        🏆 {a.levelNames?.[maxLvl - 1] ?? 'MAX'} — Sempurna!
+                      </div>
+                    )}
 
                     {/* Hover bounce MOVA tip */}
                     <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">

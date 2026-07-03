@@ -219,6 +219,31 @@ export const updateAvatar = mutation({
   },
 });
 
+export const levelUpActivity = mutation({
+  args: { userId: v.id("users"), activityId: v.string() },
+  handler: async (ctx, { userId, activityId }) => {
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+
+    const levels = { ...(user.activityLevels ?? {}) };
+    const current = levels[activityId] ?? 0;
+    const next = Math.min(current + 1, 5);
+    levels[activityId] = next;
+
+    // XP per level: L1=10, L2=20, L3=30, L4=40, L5=50
+    const xpGain = next * 10;
+
+    await ctx.db.patch(userId, {
+      activityLevels: levels,
+      xp: user.xp + xpGain,
+      coins: user.coins + Math.floor(xpGain / 5),
+      updatedAt: Date.now(),
+    });
+
+    return { activityId, level: next, xpGain };
+  },
+});
+
 export const getLevelStatus = query({
   args: { userId: v.id("users") },
   handler: async (ctx, { userId }) => {

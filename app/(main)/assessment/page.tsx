@@ -156,7 +156,7 @@ function AssessmentContent() {
   const masteredCount = scores.filter((s) => s.value >= 80).length;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10 relative">
+    <div className="max-w-6xl mx-auto px-4 py-10 relative bg-theme-tiger min-h-screen">
       {/* ─── confetti + sparkle layer ─── */}
       <ConfettiBurst />
       <SparkleDots count={18} />

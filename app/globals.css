@@ -125,6 +125,67 @@ h1, h2, h3, h4 {
 .gradient-magic { background: var(--gradient-magic); }
 .gradient-gold { background: var(--gradient-gold); }
 
+/* ── Unique themed backgrounds ── */
+.bg-theme-dragon {
+  background:
+    radial-gradient(circle 20px at 12% 20%, oklch(0.85 0.18 145 / 0.15) 0%, transparent 100%),
+    radial-gradient(circle 15px at 80% 15%, oklch(0.78 0.18 120 / 0.12) 0%, transparent 100%),
+    radial-gradient(circle 25px at 50% 80%, oklch(0.82 0.2 145 / 0.1) 0%, transparent 100%),
+    radial-gradient(circle 8px at 30% 60%, oklch(0.7 0.18 195 / 0.08) 0%, transparent 100%),
+    linear-gradient(180deg, oklch(0.94 0.06 145), oklch(0.97 0.03 160));
+  background-attachment: fixed;
+}
+
+.bg-theme-tiger {
+  background:
+    radial-gradient(circle 22px at 8% 12%, oklch(0.9 0.15 80 / 0.18) 0%, transparent 100%),
+    radial-gradient(circle 18px at 75% 20%, oklch(0.85 0.18 50 / 0.15) 0%, transparent 100%),
+    radial-gradient(circle 30px at 40% 85%, oklch(0.88 0.12 90 / 0.1) 0%, transparent 100%),
+    radial-gradient(circle 6px at 60% 40%, oklch(0.78 0.18 30 / 0.1) 0%, transparent 100%),
+    linear-gradient(180deg, oklch(0.96 0.05 80), oklch(0.98 0.03 70));
+  background-attachment: fixed;
+}
+
+.bg-theme-eagle {
+  background:
+    radial-gradient(circle 24px at 15% 18%, oklch(0.8 0.18 310 / 0.15) 0%, transparent 100%),
+    radial-gradient(circle 16px at 85% 25%, oklch(0.75 0.2 280 / 0.12) 0%, transparent 100%),
+    radial-gradient(circle 20px at 50% 75%, oklch(0.7 0.18 320 / 0.1) 0%, transparent 100%),
+    radial-gradient(circle 5px at 25% 50%, oklch(0.65 0.22 260 / 0.08) 0%, transparent 100%),
+    linear-gradient(180deg, oklch(0.93 0.06 310), oklch(0.97 0.03 290));
+  background-attachment: fixed;
+}
+
+.bg-theme-ocean {
+  background:
+    radial-gradient(circle 20px at 10% 25%, oklch(0.85 0.12 230 / 0.15) 0%, transparent 100%),
+    radial-gradient(circle 15px at 70% 15%, oklch(0.8 0.15 210 / 0.12) 0%, transparent 100%),
+    radial-gradient(circle 28px at 45% 80%, oklch(0.78 0.18 240 / 0.1) 0%, transparent 100%),
+    radial-gradient(circle 7px at 85% 55%, oklch(0.7 0.15 200 / 0.08) 0%, transparent 100%),
+    linear-gradient(180deg, oklch(0.94 0.05 230), oklch(0.97 0.03 210));
+  background-attachment: fixed;
+}
+
+.bg-theme-forest {
+  background:
+    radial-gradient(circle 18px at 12% 15%, oklch(0.82 0.2 120 / 0.15) 0%, transparent 100%),
+    radial-gradient(circle 22px at 68% 22%, oklch(0.78 0.18 145 / 0.12) 0%, transparent 100%),
+    radial-gradient(circle 16px at 40% 78%, oklch(0.75 0.2 130 / 0.1) 0%, transparent 100%),
+    radial-gradient(circle 4px at 80% 60%, oklch(0.65 0.22 160 / 0.08) 0%, transparent 100%),
+    linear-gradient(180deg, oklch(0.93 0.05 130), oklch(0.97 0.02 145));
+  background-attachment: fixed;
+}
+
+.bg-theme-sunset {
+  background:
+    radial-gradient(circle 20px at 10% 20%, oklch(0.88 0.15 30 / 0.15) 0%, transparent 100%),
+    radial-gradient(circle 25px at 72% 18%, oklch(0.85 0.18 50 / 0.12) 0%, transparent 100%),
+    radial-gradient(circle 18px at 50% 82%, oklch(0.82 0.2 10 / 0.1) 0%, transparent 100%),
+    radial-gradient(circle 6px at 30% 45%, oklch(0.78 0.18 60 / 0.08) 0%, transparent 100%),
+    linear-gradient(180deg, oklch(0.95 0.06 30), oklch(0.97 0.03 50));
+  background-attachment: fixed;
+}
+
 .shadow-pop { box-shadow: var(--shadow-pop); }
 .shadow-soft { box-shadow: var(--shadow-soft); }
 .shadow-glow { box-shadow: var(--shadow-glow); }

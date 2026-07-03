@@ -142,7 +142,7 @@ export default function TeacherDashboard() {
   const currentWorld = worlds[cpWorldIdx];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 py-10 space-y-8 bg-theme-eagle min-h-screen">
       {/* ═══════ HERO ═══════ */}
       <div className="relative rounded-[2.5rem] p-8 shadow-pop border-4 border-white animate-pop-in overflow-hidden"
         style={{ background: 'linear-gradient(135deg, oklch(0.92 0.12 230), oklch(0.95 0.1 60), oklch(0.93 0.12 310))' }}
