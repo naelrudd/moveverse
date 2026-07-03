@@ -24,9 +24,20 @@ export default function StudentDashboard() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
       {/* Hero */}
-      <div className="bg-white rounded-[2rem] p-6 shadow-pop border-4 border-white animate-pop-in">
-        <div className="flex items-center gap-4">
-          <div className="text-5xl animate-float">🧒</div>
+      <div className="bg-white rounded-[2rem] p-6 shadow-pop border-4 border-white animate-pop-in relative overflow-hidden">
+        {/* Confetti background */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
+          {['🟡', '🔵', '🟢', '🟣', '🔴'].map((c, i) => (
+            <span key={i} className="absolute text-xs animate-confetti-long" style={{ left: `${15 + i * 18}%`, animationDelay: `${i * 0.4}s`, opacity: 0.6 }}>{c}</span>
+          ))}
+        </div>
+        <div className="flex items-center gap-4 relative z-10">
+          <div className="flex items-center gap-2">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-soft animate-dance-slow flex-shrink-0 overflow-hidden">
+              <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+            </div>
+            <img src="/crystals.png" alt="Energy Crystals" className="h-12 w-auto opacity-80 animate-float" />
+          </div>
           <div className="flex-1">
             <h1 className="text-3xl font-extrabold">Halo, {userData?.name || 'Petualang'}! 👋</h1>
             <p className="text-sm text-foreground/70">Yuk latihan gerak seru hari ini!</p>
@@ -44,10 +55,11 @@ export default function StudentDashboard() {
           { l: '✨ XP', v: (userData?.xp || 0).toLocaleString(), t: 'gradient-sunset' },
           { l: '🪙 Koin', v: (userData?.coins || 0).toLocaleString(), t: 'gradient-magic' },
           { l: '🏅 Badge', v: `${badges.length}/${totalBadges}`, t: 'gradient-grass' },
-        ].map((s) => (
-          <div key={s.l} className={`${s.t} text-white rounded-3xl p-4 shadow-soft`}>
-            <div className="text-xs font-bold opacity-90">{s.l}</div>
-            <div className="text-2xl font-extrabold">{s.v}</div>
+        ].map((s, i) => (
+          <div key={s.l} className={`${s.t} text-white rounded-3xl p-4 shadow-soft animate-slide-up relative overflow-hidden`} style={{ animationDelay: `${i * 0.1}s` } as React.CSSProperties}>
+            <div className="absolute inset-0 animate-shimmer pointer-events-none" />
+            <div className="text-xs font-bold opacity-90 relative z-10">{s.l}</div>
+            <div className="text-2xl font-extrabold relative z-10">{s.v}</div>
           </div>
         ))}
       </div>
@@ -82,10 +94,23 @@ export default function StudentDashboard() {
       </div>
 
       {/* Aktivitas per Dunia */}
+      <div className="relative rounded-[2rem] overflow-hidden shadow-soft mb-4">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/world-map.jpg')" }} />
+        <div className="absolute inset-0 bg-primary/60" />
+        <div className="relative p-5 flex items-center justify-between">
+          <div>
+            <h2 className="font-extrabold text-2xl text-white">🗺️ Pilih Dunia</h2>
+            <p className="text-sm text-white/80">Klik aktivitas untuk mulai latihan!</p>
+          </div>
+          <Link href="/worlds" className="px-4 py-2 rounded-full font-bold text-sm bg-white/25 backdrop-blur-sm text-white border border-white/30 hover:bg-white/40 transition-all">
+            Semua Dunia →
+          </Link>
+        </div>
+      </div>
       {worlds.map((w) => {
         const worldBadges = w.activities.filter((a) => badges.includes(a.badgeId)).length;
         return (
-          <section key={w.id}>
+          <section key={w.id} className="animate-slide-up" style={{ animationDelay: `${(worlds.indexOf(w) * 0.15)}s` } as React.CSSProperties}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-extrabold text-xl">{w.emoji} Dunia {w.name}</h2>
               <Link href={`/worlds/${w.id}`} className="text-sm font-bold text-primary">Lihat Semua →</Link>

@@ -99,9 +99,16 @@ export default function ParentDashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-10 space-y-6">
       {/* Hero */}
-      <div className="bg-white rounded-[2rem] p-6 shadow-pop border-4 border-white animate-pop-in">
-        <div className="flex items-center gap-4">
-          <div className="text-5xl animate-float">👨‍👩‍👧</div>
+      <div className="bg-white rounded-[2rem] p-6 shadow-pop border-4 border-white animate-pop-in relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30">
+          {['🟡', '🔵', '🟢', '🟣', '🔴'].map((c, i) => (
+            <span key={i} className="absolute text-xs animate-confetti-long" style={{ left: `${10 + i * 20}%`, animationDelay: `${i * 0.5}s` }}>{c}</span>
+          ))}
+        </div>
+        <div className="flex items-center gap-4 relative z-10">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden animate-dance-slow flex-shrink-0">
+            <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+          </div>
           <div className="flex-1">
             <div className="text-xs font-bold text-muted-foreground">Dashboard Orang Tua</div>
             <h1 className="text-3xl font-extrabold">Pantau Aktivitas Anak</h1>
@@ -157,21 +164,29 @@ export default function ParentDashboard() {
           { l: 'XP Total', v: (activeChild?.xp ?? 0).toLocaleString(), t: 'gradient-sunset' },
           { l: 'Badge', v: `${(activeChild as any)?.badges?.length ?? 0}/${ALL_ACTIVITIES.length}`, t: 'gradient-grass' },
           { l: 'Dunia', v: '3 Dunia', t: 'gradient-magic' },
-        ].map((s) => (
-          <div key={s.l} className={`${s.t} text-white rounded-3xl p-5 shadow-soft`}>
-            <div className="text-xs font-bold opacity-90">{s.l}</div>
-            <div className="text-3xl font-extrabold">{s.v}</div>
+        ].map((s, i) => (
+          <div key={s.l} className={`${s.t} text-white rounded-3xl p-5 shadow-soft animate-slide-up relative overflow-hidden`} style={{ animationDelay: `${i * 0.1}s` } as React.CSSProperties}>
+            <div className="absolute inset-0 animate-shimmer pointer-events-none" />
+            <div className="text-xs font-bold opacity-90 relative z-10">{s.l}</div>
+            <div className="text-3xl font-extrabold relative z-10">{s.v}</div>
           </div>
         ))}
       </div>
 
       {/* Dunia Gerak — match worlds page design */}
       <section>
-        <div className="bg-white rounded-3xl p-6 shadow-soft">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-extrabold text-lg">🌍 Dunia Gerak</h3>
-            <span className="text-xs font-bold px-3 py-1 rounded-full gradient-grass text-white">3 Dunia</span>
+        <div className="rounded-[2rem] overflow-hidden shadow-soft mb-6">
+          <div className="relative p-5" style={{ backgroundImage: "url('/world-map.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/70 to-primary/40" />
+            <div className="relative flex items-center gap-3">
+              <img src="/crystals.png" alt="Crystals" className="h-10 w-auto opacity-90" />
+              <div>
+                <h3 className="font-extrabold text-xl text-white">🌍 Dunia Gerak</h3>
+                <p className="text-sm text-white/80">3 dunia dengan 18 aktivitas gerak</p>
+              </div>
+            </div>
           </div>
+        </div>
           <div className="grid md:grid-cols-3 gap-5">
             {worlds.map((w) => {
               const earnedCount = activeChild?.badges ? w.activities.filter((a) => (activeChild as any)?.badges?.includes(a.badgeId)).length : 0;
@@ -211,12 +226,11 @@ export default function ParentDashboard() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              );
-            })}
           </div>
-        </div>
+        </Link>
+      );
+    })}
+      </div>
       </section>
 
       {/* Analisis Perkembangan — bukan quest */}

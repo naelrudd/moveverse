@@ -21,7 +21,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-bounce text-4xl mb-4">🦊</div>
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden animate-bounce">
+            <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+          </div>
           <p className="text-lg font-bold text-muted-foreground">Memuat...</p>
         </div>
       </div>

@@ -155,7 +155,9 @@ function AssessmentContent() {
         <div className="space-y-6">
           <div className="bg-white rounded-[2rem] p-6 shadow-pop">
             <div className="flex items-start gap-3 mb-4">
-              <div className="w-16 h-16 -mt-2 animate-wobble flex items-center justify-center text-4xl">🦊</div>
+              <div className="w-16 h-16 -mt-2 animate-wobble flex-shrink-0 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden">
+                <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+              </div>
               <div className="bg-primary/10 rounded-2xl rounded-tl-none p-4 flex-1">
                 <div className="font-bold text-sm text-primary">MOVA berkata</div>
                 <p className="text-sm font-bold mt-1">
@@ -224,7 +226,9 @@ function AssessmentContent() {
           <div className="space-y-4">
             <div className="bg-white rounded-[2rem] p-6 shadow-pop">
               <div className="flex items-start gap-3 mb-4">
-                <div className="w-16 h-16 -mt-2 animate-wobble flex items-center justify-center text-4xl">🦊</div>
+              <div className="w-16 h-16 -mt-2 animate-wobble flex items-center justify-center flex-shrink-0 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden">
+                <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+              </div>
                 <div className="bg-primary/10 rounded-2xl rounded-tl-none p-4 flex-1">
                   <div className="font-bold text-sm text-primary">MOVA berkata</div>
                   <p className="text-sm font-bold mt-1">

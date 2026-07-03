@@ -32,7 +32,9 @@ export default function DashboardRouter() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="animate-bounce text-4xl">🦊</div>
+      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden animate-bounce">
+        <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+      </div>
     </div>
   );
 }

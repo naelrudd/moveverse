@@ -14,17 +14,20 @@ export default function WorldsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       <div className="text-center mb-8 animate-pop-in">
+        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden mx-auto mb-3 animate-float">
+          <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+        </div>
         <div className="inline-block bg-white/80 px-4 py-1 rounded-full text-sm font-bold mb-3">Peta Petualangan</div>
         <h1 className="text-4xl md:text-6xl font-extrabold">Dunia Gerak</h1>
         <p className="text-muted-foreground mt-2">Pilih dunia dan kumpulkan semua badge!</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
-        {worlds.map((w) => {
+        {worlds.map((w, i) => {
           const earnedCount = w.activities.filter((a) => badges.includes(a.badgeId)).length;
           const pct = Math.round((earnedCount / w.activities.length) * 100);
           return (
-            <Link key={w.id} href={`/worlds/${w.id}`} className="block group">
+            <Link key={w.id} href={`/worlds/${w.id}`} className="block group animate-slide-up" style={{ animationDelay: `${i * 0.12}s` } as React.CSSProperties}>
               <div className="relative rounded-[2rem] overflow-hidden text-white shadow-pop border-4 border-white hover:scale-[1.02] transition-transform" style={{ minHeight: '320px' }}>
                 <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/world-map.jpg')" }} />
                 <div className={`absolute inset-0 ${w.gradient} opacity-70`} />
