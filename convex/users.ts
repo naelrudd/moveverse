@@ -211,6 +211,14 @@ export const earnBadge = mutation({
   },
 });
 
+export const updateAvatar = mutation({
+  args: { userId: v.id("users"), avatar: v.string() },
+  handler: async (ctx, { userId, avatar }) => {
+    await ctx.db.patch(userId, { avatar, updatedAt: Date.now() });
+    return { avatar };
+  },
+});
+
 export const getLevelStatus = query({
   args: { userId: v.id("users") },
   handler: async (ctx, { userId }) => {

@@ -4,165 +4,72 @@ import Image from "next/image";
 
 export default function SignInPage() {
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "inherit" }}>
-      {/* LEFT — branding */}
+    <div className="flex min-h-screen">
+      {/* LEFT — branding with MOVA */}
       <div
+        className="flex-1 flex flex-col items-center justify-center p-12 relative overflow-hidden"
         style={{
-          flex: 1,
-          background: "linear-gradient(145deg, #0EA5E9, #7DD3FC)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "3rem",
-          position: "relative",
-          overflow: "hidden",
+          background: "linear-gradient(145deg, oklch(0.85 0.15 280), oklch(0.75 0.18 320), oklch(0.80 0.12 240))",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            width: 400,
-            height: 400,
-            borderRadius: "50%",
-            background: "rgba(255,255,255,0.07)",
-            top: -100,
-            left: -100,
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            width: 250,
-            height: 250,
-            borderRadius: "50%",
-            background: "rgba(255,255,255,0.05)",
-            bottom: -60,
-            right: -60,
-          }}
-        />
+        {/* Animated blobs */}
+        <div className="absolute w-[500px] h-[500px] rounded-full bg-white/5 -top-24 -left-24 animate-float" />
+        <div className="absolute w-[300px] h-[300px] rounded-full bg-white/5 bottom-[-80px] right-[-40px] animate-float" style={{ animationDelay: '1s' }} />
+        <div className="absolute w-[200px] h-[200px] rounded-full bg-white/8 top-1/3 right-1/4 animate-float" style={{ animationDelay: '2s' }} />
 
-        <div
-          style={{
-            position: "relative",
-            zIndex: 1,
-            textAlign: "center",
-            maxWidth: 320,
-          }}
-        >
+        {/* MOVA mascot — big & dancing */}
+        <div className="relative z-10 mb-8">
+          <div className="w-48 h-48 rounded-full bg-gradient-to-br from-amber-300 via-orange-400 to-red-400 p-2 shadow-pop animate-dance-slow relative overflow-hidden">
+            <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain drop-shadow-lg" />
+            <div className="absolute inset-0 rounded-full animate-pulse-glow" />
+          </div>
+          {/* Sparkles around MOVA */}
+          <span className="absolute -top-3 left-8 text-2xl animate-sparkle">✨</span>
+          <span className="absolute top-4 -right-2 text-lg animate-sparkle" style={{ animationDelay: '0.5s' }}>⭐</span>
+          <span className="absolute -bottom-2 left-0 text-xl animate-sparkle" style={{ animationDelay: '1s' }}>💫</span>
+          <span className="absolute bottom-6 -right-4 text-base animate-sparkle" style={{ animationDelay: '1.5s' }}>🌟</span>
+        </div>
+
+        <div className="relative z-10 text-center max-w-sm">
           {/* Logo */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 12,
-              marginBottom: 40,
-            }}
-          >
-            <div
-              style={{
-                background: "white",
-                borderRadius: 16,
-                width: 56,
-                height: 56,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Image src="/logo.png" alt="MOVEVERSE" width={40} height={40} />
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="bg-white/90 rounded-2xl w-14 h-14 flex items-center justify-center shadow-soft">
+              <Image src="/logo.png" alt="MOVEVERSE" width={44} height={44} />
             </div>
-            <span
-              style={{
-                fontSize: 28,
-                fontWeight: 800,
-                color: "white",
-                letterSpacing: -1,
-              }}
-            >
-              MOVE<span style={{ opacity: 0.65 }}>VERSE</span>
+            <span className="text-3xl font-extrabold text-white tracking-tight">
+              MOVE<span className="opacity-65">VERSE</span>
             </span>
           </div>
 
-          <h1
-            style={{
-              fontSize: 36,
-              fontWeight: 800,
-              color: "white",
-              lineHeight: 1.15,
-              marginBottom: 16,
-            }}
-          >
-            Gerak.
-            <br />
-            Belajar.
-            <br />
-            Berkembang.
+          <h1 className="text-4xl font-extrabold text-white leading-tight mb-4">
+            Gerak.<br />Belajar.<br />Berkembang.
           </h1>
-          <p
-            style={{
-              fontSize: 15,
-              color: "rgba(255,255,255,0.82)",
-              lineHeight: 1.7,
-              marginBottom: 40,
-            }}
-          >
-            Platform gamifikasi gerak untuk anak Indonesia. Bersama MOVA, setiap
-            langkah jadi petualangan!
+
+          <p className="text-sm text-white/75 leading-relaxed mb-8">
+            Platform gamifikasi gerak motorik untuk anak Indonesia.
+            Bersama <strong className="text-white">MOVA si rubah</strong>, setiap langkah jadi petualangan! 🦊
           </p>
 
           {/* Stats */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: 36,
-              marginBottom: 28,
-            }}
-          >
+          <div className="flex justify-center gap-8 mb-8">
             {[
-              ["5", "Worlds"],
-              ["50+", "Gerakan"],
+              ["3", "Dunia"],
+              ["18+", "Gerakan"],
               ["∞", "Fun"],
             ].map(([n, l]) => (
               <div key={l}>
-                <div style={{ fontSize: 24, fontWeight: 700, color: "white" }}>
-                  {n}
-                </div>
-                <div
-                  style={{
-                    fontSize: 11,
-                    color: "rgba(255,255,255,0.65)",
-                    marginTop: 2,
-                  }}
-                >
-                  {l}
-                </div>
+                <div className="text-2xl font-bold text-white">{n}</div>
+                <div className="text-[11px] text-white/55 mt-1">{l}</div>
               </div>
             ))}
           </div>
 
           {/* Badges */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              flexWrap: "wrap",
-              gap: 8,
-            }}
-          >
+          <div className="flex justify-center flex-wrap gap-2">
             {["🏆 Gamified", "🤖 AI Coach", "🇮🇩 Indonesia"].map((b) => (
               <span
                 key={b}
-                style={{
-                  fontSize: 12,
-                  color: "white",
-                  padding: "5px 14px",
-                  borderRadius: 20,
-                  background: "rgba(255,255,255,0.18)",
-                  border: "1px solid rgba(255,255,255,0.28)",
-                }}
+                className="text-xs text-white px-4 py-1.5 rounded-full bg-white/15 border border-white/25"
               >
                 {b}
               </span>
@@ -171,26 +78,40 @@ export default function SignInPage() {
         </div>
       </div>
 
-      {/* RIGHT — Clerk, no navbar */}
-      <div
-        style={{
-          width: 480,
-          background: "#f8fafc",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "2rem",
-        }}
-      >
-        <SignIn
-          appearance={{
-            elements: {
-              rootBox: "w-full",
-              card: "shadow-none bg-transparent border-0 p-0 w-full",
-              headerTitle: "text-xl font-bold",
-            },
-          }}
-        />
+      {/* RIGHT — Clerk sign-in */}
+      <div className="w-[480px] bg-slate-50 flex flex-col items-center justify-center p-8 relative">
+        {/* Top MOVA peek */}
+        <div className="absolute top-6 left-6 flex items-center gap-2">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft overflow-hidden animate-float">
+            <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+          </div>
+          <span className="text-xs font-bold text-muted-foreground">MOVA menyapa! 👋</span>
+        </div>
+
+        <div className="w-full max-w-sm">
+          <h2 className="text-2xl font-extrabold text-center mb-1">Selamat Datang! 👋</h2>
+          <p className="text-sm text-muted-foreground text-center mb-8">Masuk untuk mulai petualangan</p>
+
+          <SignIn
+            appearance={{
+              elements: {
+                rootBox: "w-full",
+                card: "shadow-none bg-transparent border-0 p-0 w-full",
+                headerTitle: "text-xl font-bold",
+                formButtonPrimary: "gradient-sky hover:opacity-90 transition-opacity rounded-full font-bold py-3",
+                socialButtonsBlockButton: "rounded-full border-2 border-border font-bold",
+                footerActionLink: "text-primary font-bold hover:underline",
+              },
+            }}
+          />
+        </div>
+
+        {/* Bottom MOVA quote */}
+        <div className="absolute bottom-6 left-0 right-0 text-center">
+          <p className="text-xs text-muted-foreground italic">
+            &quot;Ayo bergerak, setiap langkah itu seru!&quot; — MOVA 🦊
+          </p>
+        </div>
       </div>
     </div>
   );

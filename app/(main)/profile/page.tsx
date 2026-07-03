@@ -28,6 +28,7 @@ export default function ProfilePage() {
   const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
   const school = useQuery(api.schools.getSchool, userData?.schoolId ? { schoolId: userData.schoolId } : 'skip');
   const cls = useQuery(api.classes.getClass, userData?.classId ? { classId: userData.classId } : 'skip');
+  const updateAvatar = useMutation(api.users.updateAvatar);
   const [editing, setEditing] = useState(false);
   const [newAvatar, setNewAvatar] = useState(userData?.avatar || '🦊');
 
@@ -42,12 +43,24 @@ export default function ProfilePage() {
   const role = userData.role ?? 'student';
   const badges = userData.badges ?? [];
 
+  const handleSaveAvatar = async () => {
+    await updateAvatar({ userId: userData._id, avatar: newAvatar });
+    setEditing(false);
+  };
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
       <div className="bg-white rounded-[2rem] p-8 shadow-pop border-4 border-white animate-pop-in">
         <div className="flex flex-col items-center text-center mb-6">
-          <div className={`w-24 h-24 rounded-full ${roleColors[role] || 'gradient-sky'} flex items-center justify-center text-5xl shadow-soft mb-3`}>
+          {/* Avatar — clickable to edit */}
+          <div
+            onClick={() => { setNewAvatar(userData.avatar); setEditing(true); }}
+            className={`w-24 h-24 rounded-full ${roleColors[role] || 'gradient-sky'} flex items-center justify-center text-5xl shadow-soft mb-3 cursor-pointer hover:scale-105 hover:shadow-pop transition-all relative group`}
+          >
             {userData.avatar}
+            <div className="absolute inset-0 rounded-full bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span className="text-white text-xs font-bold">✏️</span>
+            </div>
           </div>
           <h1 className="text-2xl font-extrabold">{user?.firstName || userData.name}</h1>
           <span className={`mt-2 inline-block px-4 py-1 rounded-full text-sm font-bold text-white ${roleColors[role] || 'gradient-sky'}`}>
@@ -126,6 +139,31 @@ export default function ProfilePage() {
           </Link>
         </div>
       </div>
+
+      {/* Avatar Picker Modal */}
+      {editing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setEditing(false)}>
+          <div className="bg-white rounded-[2rem] p-6 shadow-pop border-4 border-white max-w-md w-full animate-pop-in" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-extrabold text-xl text-center mb-2">🐾 Pilih Avatar Baru</h3>
+            <p className="text-xs text-muted-foreground text-center mb-4">Pilih hewan favoritmu!</p>
+
+            <AvatarPicker selected={newAvatar} onSelect={setNewAvatar} />
+
+            <div className="flex justify-center my-4">
+              <div className="text-7xl animate-float">{newAvatar}</div>
+            </div>
+
+            <div className="flex gap-2">
+              <button onClick={() => setEditing(false)} className="flex-1 py-2 rounded-full font-bold border-2 border-border">
+                Batal
+              </button>
+              <button onClick={handleSaveAvatar} className="flex-1 py-2 rounded-full font-bold gradient-sky text-white">
+                Simpan ✅
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
