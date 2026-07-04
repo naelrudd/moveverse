@@ -356,26 +356,7 @@ function AssessmentContent() {
     <div className={`min-h-screen relative ${coach.isFullScreen ? '' : 'bg-theme-tiger'}`}>
       {/* Full Screen Mode */}
       {coach.isFullScreen ? (
-        <div className="h-screen flex flex-col">
-          {/* Minimal header */}
-          <div className="flex items-center justify-between px-4 py-2 bg-foreground/90 text-white">
-            <div className="flex items-center gap-2">
-              <span className="text-lg">{activity === 'menekuk' ? '🦵' : activity === 'meliuk' ? '🐍' : activity === 'memutar' ? '🌀' : '⚖️'}</span>
-              <span className="text-sm font-bold">{activity.charAt(0).toUpperCase() + activity.slice(1)} Lv.{level}</span>
-              {targetName && <span className="text-xs text-white/60">• {targetName}</span>}
-            </div>
-            <button
-              onClick={coach.toggleFullScreen}
-              className="text-xs font-bold bg-white/20 text-white px-3 py-1 rounded-full hover:bg-white/30 transition-all"
-            >
-              ESC ✕
-            </button>
-          </div>
-
-          <div className="flex-1 relative">
-            <LivePoseCoach state={coach} videoRef={coach.videoRef} canvasRef={coach.canvasRef} levelConfig={coach.levelConfig} />
-          </div>
-        </div>
+        <LivePoseCoach state={coach} videoRef={coach.videoRef} canvasRef={coach.canvasRef} levelConfig={coach.levelConfig} />
       ) : (
         /* Split View Mode */
         <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-10 relative">
