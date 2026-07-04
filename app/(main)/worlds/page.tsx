@@ -29,8 +29,8 @@ export default function WorldsPage() {
           return (
             <Link key={w.id} href={`/worlds/${w.id}`} className="block group animate-slide-up" style={{ animationDelay: `${i * 0.12}s` } as React.CSSProperties}>
               <div className="relative rounded-[2rem] overflow-hidden text-white shadow-pop border-4 border-white hover:scale-[1.02] transition-transform" style={{ minHeight: '320px' }}>
-                <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/world-map.jpg')" }} />
-                <div className={`absolute inset-0 ${w.gradient} opacity-70`} />
+                <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${w.bgImage}')` }} />
+                <div className={`absolute inset-0 ${w.gradient} opacity-50`} />
                 <div className="absolute inset-0 frosted-overlay" />
                 <div className="relative p-6 flex flex-col justify-end min-h-[320px]">
                   <div className="flex items-start justify-between absolute top-5 left-6 right-6">

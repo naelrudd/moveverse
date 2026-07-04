@@ -18,6 +18,7 @@ export type World = {
   activities: Activity[];
   gradient: string;
   emoji: string;
+  bgImage: string;
 };
 
 // ── Pulau Naga (Non-Lokomotor) 🐉 ──
@@ -52,9 +53,9 @@ const GUNUNG_ELANG: Activity[] = [
 ];
 
 export const worlds: World[] = [
-  { id: 'pulau-naga', name: 'Pulau Naga', tagline: 'Gerakkan tubuhmu seperti naga!', activities: PULAU_NAGA, gradient: 'gradient-grass', emoji: '🐉' },
-  { id: 'hutan-harimau', name: 'Hutan Harimau', tagline: 'Bergerak cepat seperti harimau!', activities: HUTAN_HARIMAU, gradient: 'gradient-sky', emoji: '🐯' },
-  { id: 'gunung-elang', name: 'Gunung Elang', tagline: 'Tangkap dan lempar seperti elang!', activities: GUNUNG_ELANG, gradient: 'gradient-magic', emoji: '🦅' },
+  { id: 'pulau-naga', name: 'Pulau Naga', tagline: 'Gerakkan tubuhmu seperti naga!', activities: PULAU_NAGA, gradient: 'gradient-grass', emoji: '🐉', bgImage: '/bg-pulau-naga.jpg' },
+  { id: 'hutan-harimau', name: 'Hutan Harimau', tagline: 'Bergerak cepat seperti harimau!', activities: HUTAN_HARIMAU, gradient: 'gradient-sky', emoji: '🐯', bgImage: '/bg-hutan-harimau.jpg' },
+  { id: 'gunung-elang', name: 'Gunung Elang', tagline: 'Tangkap dan lempar seperti elang!', activities: GUNUNG_ELANG, gradient: 'gradient-magic', emoji: '🦅', bgImage: '/bg-gunung-elang.jpg' },
 ];
 
 export const world = worlds[0];

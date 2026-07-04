@@ -18,8 +18,9 @@ export default function WorldDetailPage() {
   if (!world) return notFound();
 
   return (
-    <div className={`min-h-[80vh] ${world.gradient} relative overflow-hidden`}>
-      <div className="absolute inset-0 bg-white/10" />
+    <div className="min-h-[80vh] relative overflow-hidden">
+      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${world.bgImage}')` }} />
+      <div className="absolute inset-0 bg-black/40" />
       <div className="relative max-w-6xl mx-auto px-4 py-10 text-white">
         <Link href="/worlds" className="inline-flex items-center gap-2 font-bold bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition mb-6 w-fit">
           <ArrowLeft className="w-4 h-4" /> Kembali
