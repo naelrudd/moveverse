@@ -59,7 +59,7 @@ const DEFAULT_THEME = {
   border: "border-sky-300",
   accent: "text-sky-700",
   levelActive:
-    "gradient-grass text-white shadow-pop scale-110 border-green-500 ring-2 ring-green-300",
+    "gradient-grass text-white scale-110 border-green-500 ring-2 ring-green-300",
   levelInactive:
     "bg-white text-gray-600 border-gray-200 hover:border-green-300 hover:bg-green-50 hover:scale-105",
   headerBg: "bg-sky-600",
