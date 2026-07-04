@@ -28,6 +28,7 @@ export default defineSchema({
     badges: v.optional(v.array(v.string())),
     needsTutor: v.optional(v.boolean()),
     activityLevels: v.optional(v.record(v.string(), v.number())),
+    coachThresholds: v.optional(v.record(v.string(), v.number())), // e.g. { "menekuk_minScore": 65, "keseimbangan_holdSec": 8 }
     pets: v.optional(v.array(v.string())),
     role: v.optional(v.union(v.literal("student"), v.literal("parent"), v.literal("teacher"), v.literal("admin"))),
     schoolId: v.optional(v.id("schools")),

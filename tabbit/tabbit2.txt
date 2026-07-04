@@ -1,0 +1,249 @@
+### **Saya Bisa Membantu Melalui CLI Agent Anda!**
+
+Benar, saya tidak bisa langsung mengakses browser untuk klik sesuatu secara real-time. Namun, saya bisa memberikan instruksi yang sangat spesifik dan detail untuk dijalankan oleh CLI agent Anda atau secara manual.
+
+Berikut adalah **Rencana Aksi Langsung** yang harus Anda lakukan:
+
+---
+
+## **🚀 Langkah 1: Perbaiki Routing (Paling Penting)**
+
+Masalah utama saat ini adalah semua user setelah onboarding diarahkan ke `/dashboard` yang isinya hanya untuk Siswa. Kita perlu membuat sistem routing berdasarkan role.
+
+### **A. Buat File Baru: `app/(main)/dashboard/page.tsx` (Sebagai Router)**
+
+Ganti isi file `app/(main)/dashboard/page.tsx` yang sekarang dengan kode berikut. Kode ini akan mengecek role user dan mengarahkan mereka ke halaman yang benar.
+
+```tsx
+'use client';
+import { useEffect } from 'react';
+import { useAuth } from '@clerk/nextjs';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { useRouter } from 'next/navigation';
+
+export default function DashboardRouter() {
+  const { userId } = useAuth();
+  const router = useRouter();
+  
+  // Ambil data user dari Convex
+  const getUser = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
+
+  useEffect(() => {
+    if (getUser) {
+      // Redirect berdasarkan role
+      switch (getUser.role) {
+        case 'student':
+          router.replace('/dashboard/student'); // Halaman siswa (gamification)
+          break;
+        case 'parent':
+          router.replace('/parent'); // Halaman orang tua
+          break;
+        case 'teacher':
+          router.replace('/teacher'); // Halaman guru
+          break;
+        case 'school_admin':
+          router.replace('/school'); // Halaman sekolah
+          break;
+        default:
+          router.replace('/onboarding'); // Jika role belum ada, kembali ke onboarding
+      }
+    }
+  }, [getUser, router]);
+
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <p className="ml-4 text-lg">Memuat dashboard...</p>
+    </div>
+  );
+}
+```
+
+### **B. Pindahkan Halaman Siswa Saat Ini**
+
+File `app/(main)/dashboard/page.tsx` yang sekarang (yang berisi XP, Badges, dll) harus dipindahkan agar tidak tertimpa.
+
+1.  Buat folder baru: `app/(main)/dashboard/student/`
+2.  Pindahkan file `app/(main)/dashboard/page.tsx` yang lama ke dalam folder tersebut menjadi `app/(main)/dashboard/student/page.tsx`.
+3.  Pastikan path import di dalamnya tetap benar (biasanya sudah oke karena masih dalam struktur `app`).
+
+### **C. Update Onboarding Redirect**
+
+Edit file `app/(main)/onboarding/page.tsx`. Cari bagian `handleSubmit` dan ubah baris `router.replace('/dashboard');` menjadi:
+
+```typescript
+// Di dalam handleSubmit, setelah createUser berhasil:
+router.replace('/dashboard'); 
+// Biarkan tetap /dashboard karena kita sudah membuat router di atas yang akan mengarahkan otomatis.
+```
+*Catatan: Dengan langkah A & B, redirect ke `/dashboard` sekarang akan aman karena akan otomatis diteruskan ke halaman yang benar.*
+
+---
+
+## **🎨 Langkah 2: Perbaiki UI Parent Dashboard (`/parent`)**
+
+Saat ini halaman parent sudah ada tapi kurang lengkap sesuai permintaan tim produksi. Kita perlu menambahkan:
+1.  **Laporan Detail Motorik** (Breakdown skill)
+2.  **Akses Rekaman AI** (Placeholder untuk video/replay)
+3.  **Rekomendasi Olahraga**
+
+Edit file `app/(main)/parent/page.tsx` dan tambahkan section berikut di bawah "Weekly Family Report":
+
+```tsx
+// Tambahkan di dalam ParentPage component, setelah section "Weekly Targets"
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+  {/* 1. Laporan Detail Motorik */}
+  <div className="bg-card p-6 rounded-2xl shadow-sm border border-border">
+    <h3 className="text-xl font-bold mb-4 flex items-center">
+      📊 Detail Perkembangan Motorik
+    </h3>
+    <div className="space-y-4">
+      {[
+        { label: 'Keseimbangan (Balance)', value: 85, color: 'bg-sky-500' },
+        { label: 'Koordinasi', value: 72, color: 'bg-purple-500' },
+        { label: 'Kecepatan (Agility)', value: 68, color: 'bg-orange-500' },
+        { label: 'Kekuatan (Strength)', value: 60, color: 'bg-red-500' },
+      ].map((skill) => (
+        <div key={skill.label}>
+          <div className="flex justify-between mb-1">
+            <span className="text-sm font-medium">{skill.label}</span>
+            <span className="text-sm font-bold">{skill.value}/100</span>
+          </div>
+          <div className="w-full bg-muted rounded-full h-2.5">
+            <div 
+              className={`h-2.5 rounded-full ${skill.color}`} 
+              style={{ width: `${skill.value}%` }}
+            ></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {/* 2. Akses Rekaman AI & Rekomendasi */}
+  <div className="space-y-6">
+    {/* Rekaman AI */}
+    <div className="bg-card p-6 rounded-2xl shadow-sm border border-border">
+      <h3 className="text-xl font-bold mb-4 flex items-center">
+        🎥 Hasil Analisis AI Terakhir
+      </h3>
+      <div className="aspect-video bg-muted rounded-xl flex items-center justify-center relative overflow-hidden group cursor-pointer">
+        <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-all" />
+        <span className="text-4xl">▶️</span>
+        <p className="absolute bottom-4 left-4 text-white font-medium drop-shadow-md">
+          Lihat Replay Gerakan (Jumping Jack)
+        </p>
+      </div>
+      <p className="mt-3 text-sm text-muted-foreground">
+        Analisis dilakukan pada 29 Juni 2026. Skor Keseluruhan: <strong>82/100</strong>
+      </p>
+    </div>
+
+    {/* Rekomendasi Olahraga */}
+    <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 rounded-2xl shadow-lg text-white">
+      <h3 className="text-xl font-bold mb-2 flex items-center">
+        ⭐ Rekomendasi MOVA
+      </h3>
+      <p className="mb-4 opacity-90">
+        Berdasarkan perkembangan Adi, olahraga berikut sangat direkomendasikan:
+      </p>
+      <div className="flex gap-3">
+        <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl flex-1 text-center">
+          <span className="text-2xl block mb-1">🏸</span>
+          <span className="font-bold text-sm">Badminton</span>
+          <p className="text-xs opacity-80 mt-1">Meningkatkan koordinasi mata-tangan</p>
+        </div>
+        <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl flex-1 text-center">
+          <span className="text-2xl block mb-1">🤸</span>
+          <span className="font-bold text-sm">Senam Lantai</span>
+          <p className="text-xs opacity-80 mt-1">Melatih keseimbangan & fleksibilitas</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+---
+
+## **👩‍🏫 Langkah 3: Perbaiki UI Guru Dashboard (`/teacher`)**
+
+Tambahkan fitur **"Program Latihan"** dan **"Detail Siswa"**.
+
+Edit file `app/(main)/teacher/page.tsx`. Tambahkan section baru di bawah "Student Heatmap":
+
+```tsx
+// Tambahkan di dalam TeacherPage component, setelah table students
+
+<div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+  {/* 1. Program Latihan Kelas */}
+  <div className="lg:col-span-2 bg-card p-6 rounded-2xl shadow-sm border border-border">
+    <div className="flex justify-between items-center mb-6">
+      <h3 className="text-xl font-bold flex items-center">
+        📝 Program Latihan Kelas 3A
+      </h3>
+      <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-bold hover:opacity-90">
+        + Buat Program Baru
+      </button>
+    </div>
+    
+    <div className="space-y-3">
+      {[
+        { title: 'Pemanasan: Lari Kecil 5 Menit', type: 'Warm-up', duration: '5 min' },
+        { title: 'Latihan Inti: Jumping Jack & Squat', type: 'Main', duration: '15 min' },
+        { title: 'Pendinginan: Peregangan Statis', type: 'Cool-down', duration: '5 min' },
+      ].map((program, idx) => (
+        <div key={idx} className="flex items-center justify-between p-4 bg-muted/50 rounded-xl border border-border/50">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+              {idx + 1}
+            </div>
+            <div>
+              <h4 className="font-bold">{program.title}</h4>
+              <span className="text-xs text-muted-foreground">{program.type} • {program.duration}</span>
+            </div>
+          </div>
+          <button className="text-sm text-primary font-medium hover:underline">
+            Edit
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {/* 2. Statistik Cepat Kelas */}
+  <div className="bg-card p-6 rounded-2xl shadow-sm border border-border">
+    <h3 className="text-xl font-bold mb-4">Ringkasan Kelas</h3>
+    <div className="space-y-4">
+      <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
+        <p className="text-sm text-green-600 dark:text-green-400 font-medium">Rata-rata Kehadiran</p>
+        <p className="text-2xl font-bold text-green-700 dark:text-green-300">94%</p>
+      </div>
+      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+        <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">Siswa Membutuhkan Perhatian</p>
+        <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">3 Siswa</p>
+      </div>
+      <button className="w-full py-3 border-2 border-dashed border-border rounded-xl text-muted-foreground hover:border-primary hover:text-primary transition-colors font-medium">
+        Unduh Laporan Bulanan
+      </button>
+    </div>
+  </div>
+</div>
+```
+
+---
+
+## **✅ Checklist untuk Anda**
+
+Silakan jalankan langkah-langkah ini di CLI/Editor Anda:
+
+1.  [ ] **Backup** repository Anda sebelum mengedit.
+2.  [ ] **Buat file baru** `app/(main)/dashboard/page.tsx` dengan kode Router di atas.
+3.  [ ] **Pindahkan** file dashboard student lama ke `app/(main)/dashboard/student/page.tsx`.
+4.  [ ] **Edit** `app/(main)/parent/page.tsx` dan tambahkan kode section baru.
+5.  [ ] **Edit** `app/(main)/teacher/page.tsx` dan tambahkan kode section baru.
+6.  [ ] **Jalankan** `npm run dev` dan cek hasilnya.
+
+Apakah Anda ingin saya menjelaskan lebih detail tentang bagian tertentu, atau Anda siap untuk mulai mengimplementasikan ini?

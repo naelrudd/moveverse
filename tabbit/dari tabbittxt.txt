@@ -1,0 +1,131 @@
+
+
+
+
+
+
+### **Saya Sudah Analisis Mendalam Seluruh Repository MOVEVERSE!**
+
+Sekarang saya memahami masalahnya. Berikut adalah analisis lengkap dan rencana perbaikan UI + role-based routing:
+
+---
+
+## **🔍 Masalah yang Teridentifikasi**
+
+### **1. Role Routing Tidak Berfungsi**
+Setelah onboarding, semua user diarahkan ke `/dashboard` yang **selalu menampilkan student view** (gamification, XP, badges, pets), terlepas dari role yang dipilih (student/parent/teacher).
+
+**Bukti dari code:**
+- `onboarding/page.tsx` line 73: `router.replace('/dashboard')` — selalu ke dashboard yang sama
+- `dashboard/page.tsx` — hardcoded student dashboard dengan XP, badges, pet companions
+- `parent/page.tsx`, `teacher/page.tsx`, `school/page.tsx` — sudah ada tapi **tidak terhubung ke routing**
+
+### **2. Dashboard Tidak Sesuai Spesifikasi Tim Produksi**
+
+| Role | Yang Ada Sekarang | Yang Diperlukan |
+|------|-------------------|-----------------|
+| **Orang Tua** | Weekly family report, PL trend, family challenges ✅ (sudah ada di `/parent`) | Laporan detail perkembangan motorik, akses hasil rekaman kamera AI, rekomendasi cabang olahraga |
+| **Anak/Siswa** | Student dashboard dengan XP, badges, pets ✅ (sudah ada di `/dashboard`) | Game interaktif, pencapaian level, poin, reward ✅ |
+| **Guru** | Class overview, student heatmap ✅ (sudah ada di `/teacher`) | Data analisis seluruh siswa, kemajuan individu/kelompok, rancang program latihan |
+| **Sekolah** | School analytics ✅ (sudah ada di `/school`) | Laporan ringkas performa PJOK seluruh sekolah |
+
+---
+
+## **🛠️ Rencana Perbaikan Prioritas**
+
+### **Phase 1: Role-Based Routing (CRITICAL)**
+
+#### **1.1 Buat Dashboard Router Component**
+
+Buat file baru `app/(main)/dashboard/router.tsx` yang akan:
+- Fetch user data dari Convex
+- Redirect ke halaman yang sesuai berdasarkan role:
+  - `student` → `/dashboard/student` (rename dari `/dashboard` yang sekarang)
+  - `parent` → `/parent`
+  - `teacher` → `/teacher`
+  - `school_admin` → `/school`
+
+#### **1.2 Update Onboarding Redirect**
+
+Ubah `onboarding/page.tsx` line 73 dari:
+```typescript
+router.replace('/dashboard');
+```
+Menjadi:
+```typescript
+router.replace(`/dashboard/${role}`);
+```
+
+---
+
+### **Phase 2: UI Improvements per Dashboard**
+
+#### **2.1 Parent Dashboard (`/parent`)**
+
+**Yang perlu ditambahkan:**
+- **Laporan Detail Perkembangan Motorik**: Expand radar chart menjadi breakdown per skill (Balance, Coordination, Agility, Strength, Flexibility, Confidence) dengan trend bulanan
+- **Akses Hasil Rekaman Kamera AI**: Section untuk melihat replay/recording dari assessment sebelumnya (walaupun di MVP hanya landmark data, bisa tampilkan skeleton replay)
+- **Rekomendasi Cabang Olahraga**: AI-generated recommendations berdasarkan Physical Literacy profile
+
+#### **2.2 Teacher Dashboard (`/teacher`)**
+
+**Yang perlu ditambahkan:**
+- **Program Latihan Builder**: Form untuk guru membuat custom assessment/program untuk kelas
+- **Individual Student Detail**: Click-through ke profil siswa dengan historical data
+- **Export/Report Generation**: Tombol untuk export data ke PDF/Excel
+
+#### **2.3 Student Dashboard (`/dashboard`)**
+
+**Yang sudah bagus:**
+- XP system, level progression ✅
+- Daily/weekly missions ✅
+- Badges collection ✅
+- Pet companions ✅
+
+**Yang bisa diimprove:**
+- Tambahkan "Play Now" CTA yang prominent untuk langsung ke game/assessment
+- Tambahkan leaderboard (opsional, privacy-conscious)
+
+#### **2.4 School Dashboard (`/school`)**
+
+**Yang sudah bagus:**
+- 12-month trend chart ✅
+- Gender distribution pie chart ✅
+- Grade-level breakdown ✅
+
+**Yang bisa diimprove:**
+- Tambahkan comparison dengan national benchmark (jika ada data)
+- Export functionality untuk laporan ke Dinas Pendidikan
+
+---
+
+## **📋 Langkah Implementasi**
+
+Saya bisa membantu Anda dengan cara berikut:
+
+### **Opsi A: Saya Generate Code Lengkap**
+Saya akan generate semua file yang diperlukan:
+1. Dashboard router dengan role-based redirect
+2. Updated parent dashboard dengan 3 fitur baru
+3. Updated teacher dashboard dengan program builder
+4. Updated onboarding redirect logic
+5. Shared components (cards, charts, navigation)
+
+### **Opsi B: Step-by-Step Guidance**
+Saya berikan instruksi detail file-by-file yang perlu Anda edit, dengan code snippets siap copy-paste.
+
+### **Opsi C: Direct Repository Edit**
+Jika Anda give me access atau saya bisa generate patch files yang bisa Anda apply langsung.
+
+---
+
+## **🎯 Rekomendasi Saya**
+
+**Mulai dengan Phase 1 dulu** (role-based routing), karena ini adalah blocker utama. Setelah routing berfungsi, baru improve UI per dashboard.
+
+**Mana yang Anda prefer?**
+1. Saya generate semua code sekarang (Opsi A)
+2. Saya kasih step-by-step guide (Opsi B)
+3. Ada prioritas spesifik yang ingin dikerjakan duluan?
+
+Beritahu saya, dan saya akan langsung mulai implementasi! 🚀

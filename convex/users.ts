@@ -315,3 +315,63 @@ export const getLevelStatus = query({
     };
   },
 });
+
+/** Get coach thresholds for user */
+export const getCoachThresholds = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    const user = await ctx.db.get(userId);
+    return user?.coachThresholds ?? {};
+  },
+});
+
+/** Save coach thresholds (adjust by guru) */
+export const saveCoachThresholds = mutation({
+  args: {
+    userId: v.id("users"),
+    thresholds: v.record(v.string(), v.number()),
+  },
+  handler: async (ctx, { userId, thresholds }) => {
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+    const merged = { ...(user.coachThresholds ?? {}), ...thresholds };
+    await ctx.db.patch(userId, { coachThresholds: merged, updatedAt: Date.now() });
+    return merged;
+  },
+});
+
+/** Subscribe to live session data for monitoring (teacher/parent) */
+export const getLiveSessionData = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    const user = await ctx.db.get(userId);
+    if (!user) return null;
+
+    const movements = await ctx.db
+      .query("movements")
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .order("desc")
+      .take(5);
+
+    const pl = await ctx.db
+      .query("physical_literacy")
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .first();
+
+    return {
+      name: user.name,
+      avatar: user.avatar,
+      xp: user.xp,
+      level: user.level,
+      recentMovements: movements.map((m) => ({
+        activityId: m.activityId,
+        score: m.score,
+        duration: m.duration,
+        timestamp: m.timestamp,
+      })),
+      physicalLiteracy: pl
+        ? { balance: pl.balance, coordination: pl.coordination, agility: pl.agility, flexibility: pl.flexibility, strength: pl.strength }
+        : null,
+    };
+  },
+});

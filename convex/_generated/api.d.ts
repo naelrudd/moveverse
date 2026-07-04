@@ -10,6 +10,7 @@
 
 import type * as classes from "../classes.js";
 import type * as dailyQuests from "../dailyQuests.js";
+import type * as liveCoach from "../liveCoach.js";
 import type * as movements from "../movements.js";
 import type * as parent from "../parent.js";
 import type * as physical_literacy from "../physical_literacy.js";
@@ -28,6 +29,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   classes: typeof classes;
   dailyQuests: typeof dailyQuests;
+  liveCoach: typeof liveCoach;
   movements: typeof movements;
   parent: typeof parent;
   physical_literacy: typeof physical_literacy;

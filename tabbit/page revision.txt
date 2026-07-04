@@ -1,0 +1,38 @@
+# Moveverse Revision Checklist (live)
+
+---
+
+## Page = Ortu (Parent)
+
+| # | Item | Status |
+|---|---|---|
+| 1 | Fix bug: tambah anak NIS — child appears above input immediately | ✅ FIXED — extraChildren local state + mutation returns full child data |
+| 2 | World cards match worlds page design | ✅ DONE — background image, frosted overlay, progress bar, badge count, 3-col grid |
+| 3 | Quest di rumah dipindah ke akun murid saja | ✅ DONE — side quests removed from parent analysis view |
+| 4 | Side quest untuk anak (pengawasan ortu) | ✅ DONE — persisted in `side_quests` Convex table, parent creates/approves |
+| 5 | AI Coach di ortu ditiadakan (pakai HP siswa) | ✅ DONE — parent page analysis-only, no camera |
+| 6 | Rekomendasi olahraga berdasarkan stat anak | ✅ DONE — dynamic from motorik data (kaki/tangan/badan), advisory only |
+
+## Page = Murid (Student)
+
+| # | Item | Status |
+|---|---|---|
+| 1 | Penyederhanaan bahasa quest (anak friendly) | ✅ DONE — all labels in Indonesian, kid-friendly terms |
+| 2 | Tujuan aktivitas (capaian pembelajaran) | ✅ DONE — learning objectives on each activity card + assessment page |
+| 3 | UI kurang anak-anak + animasi kecil | ✅ DONE — MOVA mascot, confetti, bounce, slide-up, shimmer, dance animations |
+| 4 | Penyesuaian poin & level (tier cap, 8/18 cukup) | ✅ DONE — `getLevelInfo()` badge-based level cap. Uncompleted → teacher dashboard |
+
+## Page = Guru (Teacher)
+
+| # | Item | Status |
+|---|---|---|
+| 1 | Start activity → show learning objective, RPP dokumen HTML+CSS | 🟡 PARTIAL — learning objective shown in AI Coach via query params. RPP section exists but HTML document viewer pending |
+| 2 | Guru bisa hubungi ortu murid (nomor HP) | ✅ DONE — phone shown in student detail, clickable tel: link |
+
+## Page = Overall
+
+| # | Item | Status |
+|---|---|---|
+| 1 | Tampilan kurang "anak-anak" + animasi | 🟡 PARTIAL — 12+ animations added, MOVA mascot across all pages. Can always add more |
+| 2 | Aset Lovable copied | ✅ DONE — mova-hero.png, crystals.png, world-map.jpg integrated |
+| 3 | Level & XP persistence | ✅ DONE — side quests award XP, level cap works, badge tracking live |
