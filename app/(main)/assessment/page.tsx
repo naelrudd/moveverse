@@ -10,6 +10,7 @@ import { useLiveCoachEngine, type SessionResult } from '@/hooks/useLiveCoachEngi
 import { type MovementType, movementToPhysicalLiteracy } from '@/lib/fms-scoring';
 import { MovementSelector } from '@/components/coach/MovementSelector';
 import { LivePoseCoach } from '@/components/coach/LivePoseCoach';
+import { ScoreHistoryChart } from '@/components/coach/ScoreHistoryChart';
 
 /* ─── confetti burst ─── */
 const seed = (i: number) => {
@@ -71,7 +72,16 @@ function SparkleDots({ count = 12 }: { count?: number }) {
 }
 
 /* ─── Session Complete Screen (after Selesai) ─── */
-function SessionComplete({ result, onDismiss }: { result: SessionResult; onDismiss: () => void }) {
+function SessionComplete({ result, newBadges, onDismiss }: { result: SessionResult; newBadges?: string[]; onDismiss: () => void }) {
+  const BADGE_MAP: Record<string, { emoji: string; label: string }> = {
+    first_session: { emoji: '🌟', label: 'Sesi Pertama!' },
+    perfect_score: { emoji: '💎', label: 'Skor Sempurna!' },
+    excellent_form: { emoji: '🏅', label: 'Form Hebat!' },
+    rep_master: { emoji: '🔄', label: 'Master Repetisi!' },
+    max_level: { emoji: '👑', label: 'Max Level!' },
+    all_rounder: { emoji: '🎯', label: 'Serba Bisa!' },
+  };
+
   return (
     <div className="bg-white rounded-[2rem] p-6 shadow-pop border-4 border-green-200 animate-pop-in relative overflow-hidden">
       <SparkleDots count={8} />
@@ -97,6 +107,24 @@ function SessionComplete({ result, onDismiss }: { result: SessionResult; onDismi
             <div className="text-xs font-bold text-purple-600">Best Hold</div>
           </div>
         </div>
+
+        {/* New Badges */}
+        {newBadges && newBadges.length > 0 && (
+          <div className="mb-4">
+            <div className="text-xs font-extrabold text-amber-700 mb-2">🏆 Badge Baru!</div>
+            <div className="flex gap-2 flex-wrap justify-center">
+              {newBadges.map((b) => {
+                const info = BADGE_MAP[b] ?? { emoji: '⭐', label: b };
+                return (
+                  <div key={b} className="bg-amber-50 border-2 border-amber-300 rounded-xl px-3 py-2 text-center animate-pop-in">
+                    <div className="text-2xl">{info.emoji}</div>
+                    <div className="text-[10px] font-bold text-amber-800">{info.label}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* XP earned */}
         <div className="bg-gradient-to-r from-amber-100 to-yellow-100 rounded-xl p-3 border-2 border-amber-300 mb-4">
@@ -194,6 +222,19 @@ function SessionHistory({ userId }: { userId: string }) {
     expanded ? { userId: userId as any, limit: 20 } : 'skip'
   );
 
+  const exportCSV = useCallback(() => {
+    if (!history?.length) return;
+    const header = 'Aktivitas,Level,Skor,Durasi (detik),Tanggal\n';
+    const rows = history.map((h) =>
+      `${h.activity},${h.level},${h.score},${h.duration.toFixed(0)},${new Date(h.timestamp).toLocaleDateString('id-ID')}`
+    ).join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `riwayat-coach-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+  }, [history]);
+
   return (
     <div className="bg-white rounded-2xl p-4 shadow-soft border-2 border-purple-200 mb-4">
       <button
@@ -224,6 +265,14 @@ function SessionHistory({ userId }: { userId: string }) {
             ))
           ) : (
             <p className="text-xs text-muted-foreground text-center py-2">Belum ada sesi</p>
+          )}
+          {history && history.length > 0 && (
+            <button
+              onClick={exportCSV}
+              className="w-full mt-2 py-1.5 text-[10px] font-bold bg-purple-50 text-purple-600 rounded-lg border border-purple-200 hover:bg-purple-100 transition-all"
+            >
+              📥 Export CSV
+            </button>
           )}
         </div>
       )}
@@ -322,7 +371,7 @@ function AssessmentContent() {
         osc.stop(audioCtx.currentTime + 0.3);
       } catch { /* ignore audio errors */ }
     }
-    // Log to Convex in background
+    // Log to Convex in background + get new badges
     if (targetUserId) {
       logSession({
         userId: targetUserId as any,
@@ -333,6 +382,10 @@ function AssessmentContent() {
         holdTime: result.holdTime,
         duration: result.duration,
         scoreHistory: result.scoreHistory,
+      }).then((res) => {
+        if (res?.newBadges?.length) {
+          setSessionResult((prev) => prev ? { ...prev, newBadges: res.newBadges } : prev);
+        }
       }).catch(console.error);
     }
   }, [targetUserId, logSession, audioEnabled]);
@@ -531,12 +584,15 @@ function AssessmentContent() {
               {/* Session complete overlay */}
               {sessionResult && (
                 <div className="mb-6">
-                  <SessionComplete result={sessionResult} onDismiss={() => setSessionResult(null)} />
+                  <SessionComplete result={sessionResult} newBadges={sessionResult.newBadges} onDismiss={() => setSessionResult(null)} />
                 </div>
               )}
 
               {/* Session History */}
               {targetUserId && <SessionHistory userId={targetUserId} />}
+
+              {/* Score History Chart */}
+              {targetUserId && <ScoreHistoryChart userId={targetUserId} />}
 
               {/* Movement Selector */}
               <div className="bg-white rounded-[2rem] p-4 shadow-pop border-4 border-sky-200 mb-4 animate-slide-up">

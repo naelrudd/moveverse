@@ -66,8 +66,10 @@ export default defineSchema({
 
   movements: defineTable({
     userId: v.id("users"),
-    questId: v.id("quests"),
+    questId: v.optional(v.id("quests")),
     activityId: v.string(),
+    activity: v.optional(v.string()), // "menekuk" | "meliuk" | "memutar" | "keseimbangan"
+    level: v.optional(v.number()),
     score: v.number(),
     duration: v.number(),
     timestamp: v.number(),

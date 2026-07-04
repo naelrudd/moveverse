@@ -24,8 +24,9 @@ export const logMovementSession = mutation({
     // 1. Insert movement record
     const movementId = await ctx.db.insert("movements", {
       userId,
-      questId: "pending" as any, // movements without quest
       activityId: `${activity}_L${level}`,
+      activity,
+      level,
       score: avgScore,
       duration,
       timestamp: Date.now(),
@@ -70,12 +71,40 @@ export const logMovementSession = mutation({
     }
 
     // 3. XP reward based on score
-    const xpGain = Math.round(avgScore * 0.5 + reps * 2 + level * 3); // e.g. avgScore=80 → 40 + reps*2 + level*3
+    const xpGain = Math.round(avgScore * 0.5 + reps * 2 + level * 3);
+    const newBadges: string[] = [];
     const user = await ctx.db.get(userId);
     if (user) {
+      const existing = new Set(user.badges ?? []);
+
+      // Badge: first session ever
+      if (!existing.has('first_session')) { newBadges.push('first_session'); existing.add('first_session'); }
+      // Badge: score >= 95
+      if (avgScore >= 95 && !existing.has('perfect_score')) { newBadges.push('perfect_score'); existing.add('perfect_score'); }
+      // Badge: score >= 85
+      if (avgScore >= 85 && !existing.has('excellent_form')) { newBadges.push('excellent_form'); existing.add('excellent_form'); }
+      // Badge: 10+ reps
+      if (reps >= 10 && !existing.has('rep_master')) { newBadges.push('rep_master'); existing.add('rep_master'); }
+      // Badge: level 5
+      if (level >= 5 && !existing.has('max_level')) { newBadges.push('max_level'); existing.add('max_level'); }
+      // Badge: all 4 activities done today
+      const todayMovements = await ctx.db
+        .query("movements")
+        .withIndex("by_userId", (q) => q.eq("userId", userId))
+        .order("desc")
+        .take(20);
+      const todayActivities = new Set(
+        todayMovements
+          .filter((m) => m.timestamp > Date.now() - 86400000)
+          .map((m) => m.activityId.split("_")[0])
+      );
+      todayActivities.add(activity);
+      if (todayActivities.size >= 4 && !existing.has('all_rounder')) { newBadges.push('all_rounder'); existing.add('all_rounder'); }
+
       await ctx.db.patch(userId, {
         xp: user.xp + xpGain,
         coins: user.coins + Math.floor(xpGain / 10),
+        badges: Array.from(existing),
         updatedAt: Date.now(),
       });
     }
@@ -84,6 +113,7 @@ export const logMovementSession = mutation({
       movementId,
       xpGain,
       physicalLiteracy: plData,
+      newBadges,
     };
 
     // 4. Update daily quest progress (if quest exists for today)
@@ -155,8 +185,8 @@ export const getSessionHistory = query({
 
     return movements.map((m) => ({
       _id: m._id,
-      activity: m.activityId.split("_")[0],
-      level: parseInt(m.activityId.split("_")[1]?.replace("L", "") ?? "1"),
+      activity: m.activity ?? m.activityId.split("_")[0],
+      level: m.level ?? parseInt(m.activityId.split("_")[1]?.replace("L", "") ?? "1"),
       score: m.score,
       duration: m.duration,
       timestamp: m.timestamp,

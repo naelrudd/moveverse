@@ -64,22 +64,19 @@ Referensi: baca ini kalau mulai bias
 - [ ] Share session result ke social media (screenshot/URL)
 
 ### Prioritas Sedang
-- [ ] Gesture-based controls (swipe untuk next movement)
-- [ ] Export session data sebagai CSV/PDF
-- [ ] Score history chart (grafik perkembangan per gerakan)
-- [ ] Achievement badge otomatis (mencapai X rep atau skor sempurna)
+- [x] Gesture-based controls (swipe untuk next movement)
+- [x] Export session data sebagai CSV
+- [x] Score history chart (grafik perkembangan per gerakan)
+- [x] Achievement badge otomatis (mencapai X rep atau skor sempurna)
 
 ### Prioritas Rendah
-- [ ] Voice feedback (text-to-speech untuk MOVA)
-- [ ] Pet unlock animation (butuh asset tambahan)
 - [ ] Leaderboard kelas untuk gerakan tertentu
 - [ ] Challenge mode (ajak teman, skor tertinggi menang)
-
 ### Convex Next Steps
-- [ ] Tambah field `level` ke movements table (saat ini pakai activityId string)
-- [ ] Tambah table `movement_sessions` untuk detailed session log
-- [ ] Index optimization untuk live monitoring queries
-
+- [x] Tambah field `level` ke movements table
+- [x] Tambah field `activity` ke movements table
+- [x] Index optimization untuk live monitoring queries
+- [ ] Tambah daily quest integration (otomatis update daily_quests)
 ### Flutter Migration Notes
 - [ ] Ganti navigator.mediaDevices → CameraController + MediaPipe plugin
 - [ ] Ganti useMediaPipePose → onResults callback dari Flutter plugin
