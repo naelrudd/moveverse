@@ -186,6 +186,51 @@ function SessionComplete({ result, onDismiss }: { result: SessionResult; onDismi
   );
 }
 
+/* ─── Session History Component ─── */
+function SessionHistory({ userId }: { userId: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const history = useQuery(
+    api.liveCoach.getSessionHistory,
+    expanded ? { userId: userId as any, limit: 20 } : 'skip'
+  );
+
+  return (
+    <div className="bg-white rounded-2xl p-4 shadow-soft border-2 border-purple-200 mb-4">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full text-left font-bold text-xs flex items-center gap-2"
+      >
+        📊 Riwayat Sesi {expanded ? '▲' : '▼'}
+      </button>
+      {expanded && (
+        <div className="mt-3 space-y-2">
+          {history && history.length > 0 ? (
+            history.map((h) => (
+              <div key={h._id} className="flex items-center gap-3 p-2 bg-purple-50 rounded-xl border border-purple-100">
+                <span className="text-xl">
+                  {h.activity === 'menekuk' ? '🦵' : h.activity === 'meliuk' ? '🐍' : h.activity === 'memutar' ? '🌀' : '⚖️'}
+                </span>
+                <div className="flex-1">
+                  <div className="font-bold text-xs capitalize">{h.activity} Lv.{h.level}</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {new Date(h.timestamp).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-bold text-xs text-primary">{h.score}</div>
+                  <div className="text-[10px] text-muted-foreground">{h.duration.toFixed(0)}s</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-xs text-muted-foreground text-center py-2">Belum ada sesi</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AssessmentPage() {
   return (
     <Suspense fallback={
@@ -489,6 +534,9 @@ function AssessmentContent() {
                   <SessionComplete result={sessionResult} onDismiss={() => setSessionResult(null)} />
                 </div>
               )}
+
+              {/* Session History */}
+              {targetUserId && <SessionHistory userId={targetUserId} />}
 
               {/* Movement Selector */}
               <div className="bg-white rounded-[2rem] p-4 shadow-pop border-4 border-sky-200 mb-4 animate-slide-up">

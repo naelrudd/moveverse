@@ -59,8 +59,8 @@ Referensi: baca ini kalau mulai bias
 ## 🔲 TODO (Belum Dikerjakan)
 
 ### Prioritas Tinggi
-- [ ] Daily quest integration (otomatis update daily_quests + daily_quest_completions)
-- [ ] History session list (lihat semua sesi sebelumnya + detail)
+- [x] Daily quest integration (otomatis update daily_quests + daily_quest_completions)
+- [x] History session list (lihat semua sesi sebelumnya + detail)
 - [ ] Share session result ke social media (screenshot/URL)
 
 ### Prioritas Sedang

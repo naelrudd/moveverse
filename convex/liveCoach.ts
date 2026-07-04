@@ -85,6 +85,33 @@ export const logMovementSession = mutation({
       xpGain,
       physicalLiteracy: plData,
     };
+
+    // 4. Update daily quest progress (if quest exists for today)
+    const today = new Date().toISOString().split("T")[0];
+    const dailyQuest = await ctx.db
+      .query("daily_quests")
+      .withIndex("by_user_date", (q) => q.eq("userId", userId).eq("date", today))
+      .first();
+
+    if (dailyQuest != null) {
+      const dq = dailyQuest!;
+      if (!dq.tasks) return { movementId, xpGain, physicalLiteracy: plData, dailyQuestUpdated: false };
+      const activityId = `${activity}_L${level}`;
+      const newTasks = dq.tasks.map((t) => {
+        if (t.activityId !== activity && t.activityId !== activityId) return t;
+        const newCompleted = Math.min(t.completed + reps, t.target);
+        return { ...t, completed: newCompleted };
+      });
+      const newXp = newTasks.reduce((sum, t) => sum + (t.completed >= t.target ? t.xp : 0), 0);
+      await ctx.db.patch(dq._id, { tasks: newTasks, totalXpEarned: newXp });
+    }
+
+    return {
+      movementId,
+      xpGain,
+      physicalLiteracy: plData,
+      dailyQuestUpdated: !!dailyQuest,
+    };
   },
 });
 
@@ -113,5 +140,26 @@ export const getLiveStats = query({
     }
 
     return byActivity;
+  },
+});
+
+/** Get session history for a user */
+export const getSessionHistory = query({
+  args: { userId: v.id("users"), limit: v.optional(v.number()) },
+  handler: async (ctx, { userId, limit: lim }) => {
+    const movements = await ctx.db
+      .query("movements")
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .order("desc")
+      .take(lim ?? 50);
+
+    return movements.map((m) => ({
+      _id: m._id,
+      activity: m.activityId.split("_")[0],
+      level: parseInt(m.activityId.split("_")[1]?.replace("L", "") ?? "1"),
+      score: m.score,
+      duration: m.duration,
+      timestamp: m.timestamp,
+    }));
   },
 });
