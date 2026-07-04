@@ -44,8 +44,9 @@ export interface SessionResult {
   reps: number;
   avgScore: number;
   holdTime: number;
-  duration: number; // detik total
+  duration: number;
   scoreHistory: number[];
+  newBadges?: string[];
 }
 
 export interface UseLiveCoachEngineOptions {
