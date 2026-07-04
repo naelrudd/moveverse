@@ -82,7 +82,7 @@ export default function SchoolDashboard() {
       {/* Stat cards */}
       <div className="grid sm:grid-cols-4 gap-4">
         {[
-          { l: 'Total Siswa', v: totalStudents.toLocaleString(), t: 'gradient-sky' },
+          { l: 'Total Peserta Didik', v: totalStudents.toLocaleString(), t: 'gradient-sky' },
           { l: 'Aktif Hari Ini', v: activeStudents.toLocaleString(), t: 'gradient-grass' },
           { l: 'Rata-rata PL', v: avgSchoolPL.toString(), t: 'gradient-sunset' },
           { l: 'Total Kelas', v: classesManaged.length.toString(), t: 'gradient-magic' },
@@ -164,7 +164,7 @@ export default function SchoolDashboard() {
             <div className="text-sm font-bold text-muted-foreground">{g.grade}</div>
             <div className="text-3xl font-extrabold mt-1">{g.avgPL}</div>
             <div className="text-xs text-secondary-foreground font-bold mt-1">▲ +{g.trend}% vs semester lalu</div>
-            <div className="text-xs text-muted-foreground mt-2">{g.active}/{g.total} siswa aktif</div>
+            <div className="text-xs text-muted-foreground mt-2">{g.active}/{g.total} peserta didik aktif</div>
           </div>
         ))}
       </div>
@@ -222,7 +222,7 @@ export default function SchoolDashboard() {
               </div>
               <div className="space-y-1 text-xs text-muted-foreground">
                 <div className="flex justify-between"><span>👩‍🏫 Guru</span><span className="font-bold text-foreground">{cls.teacher}</span></div>
-                <div className="flex justify-between"><span>👤 Siswa</span><span className="font-bold text-foreground">{cls.students}</span></div>
+                <div className="flex justify-between"><span>👤 Peserta Didik</span><span className="font-bold text-foreground">{cls.students}</span></div>
                 <div className="flex justify-between"><span>🟢 Aktif</span><span className="font-bold text-foreground">{cls.active}</span></div>
               </div>
               <div className="mt-3">

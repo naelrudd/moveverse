@@ -486,7 +486,7 @@ export default function ParentDashboard() {
               </div>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground mt-3 font-semibold">* Rekomendasi ini hanya saran kegiatan tambahan di rumah, bukan bagian dari poin siswa 🏡</p>
+          <p className="text-xs text-muted-foreground mt-3 font-semibold">* Rekomendasi ini hanya saran kegiatan tambahan di rumah, bukan bagian dari poin peserta didik 🏡</p>
         </div>
       </section>
 

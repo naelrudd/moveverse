@@ -9,7 +9,7 @@ import { Id } from '@/convex/_generated/dataModel';
 import AvatarPicker from '@/components/AvatarPicker';
 
 const ROLES = [
-  { value: 'student' as const, emoji: '🧒', label: 'Siswa', desc: 'Aku ingin bermain dan belajar!' },
+  { value: 'student' as const, emoji: '🧒', label: 'Peserta Didik', desc: 'Aku ingin bermain dan belajar!' },
   { value: 'parent' as const, emoji: '👨‍👩‍👧', label: 'Orang Tua', desc: 'Aku ingin pantau perkembangan anakku' },
   { value: 'teacher' as const, emoji: '👩‍🏫', label: 'Guru', desc: 'Aku ingin kelola kelasku' },
 ];
@@ -152,7 +152,7 @@ export default function OnboardingPage() {
 
             {role === 'student' && (
               <div>
-                <label className="text-sm font-bold text-muted-foreground">NIS (Nomor Induk Siswa)</label>
+                <label className="text-sm font-bold text-muted-foreground">NIS (Nomor Induk Peserta Didik)</label>
                 <input
                   value={nis}
                   onChange={(e) => setNis(e.target.value)}

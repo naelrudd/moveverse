@@ -9,7 +9,7 @@ import AvatarPicker from '@/components/AvatarPicker';
 import { ACTIVITIES } from '@/lib/worlds';
 
 const roleLabels: Record<string, string> = {
-  student: '🧒 Siswa',
+  student: '🧒 Peserta Didik',
   parent: '👨‍👩‍👧 Orang Tua',
   teacher: '👩‍🏫 Guru',
   admin: '🛠️ Admin',
@@ -215,7 +215,7 @@ export default function ProfilePage() {
                     value={editNis}
                     onChange={(e) => setEditNis(e.target.value)}
                     className="mt-1 w-full p-3 rounded-2xl border-2 border-border font-bold text-sm"
-                    placeholder="Nomor Induk Siswa"
+                    placeholder="Nomor Induk Peserta Didik"
                   />
                 </div>
               )}

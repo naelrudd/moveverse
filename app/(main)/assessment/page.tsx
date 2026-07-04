@@ -171,7 +171,7 @@ function AssessmentContent() {
             <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
           </span>
           {role === 'teacher'
-            ? 'Rekam Siswa'
+            ? 'Rekam Peserta Didik'
             : role === 'parent'
               ? 'Analisis Anak'
               : 'Tunjukkan Gerakanmu!'}
@@ -181,7 +181,7 @@ function AssessmentContent() {
         </h1>
         <p className="text-muted-foreground mt-2 font-medium">
           {role === 'teacher'
-            ? 'Pilih siswa, lalu mulai AI Coach untuk merekam satu per satu.'
+            ? 'Pilih peserta didik, lalu mulai AI Coach untuk merekam satu per satu.'
             : role === 'parent'
               ? 'Lihat hasil analisis gerak anak kamu.'
               : 'AI melacak kerangka tubuh dan kualitas gerakmu secara real time.'}
@@ -192,7 +192,7 @@ function AssessmentContent() {
       {role === 'teacher' && (
         <div className="bg-white rounded-3xl p-4 shadow-pop border-4 border-sky-200 mb-6 animate-slide-up">
           <h3 className="font-extrabold mb-3 flex items-center gap-2">
-            <span className="text-lg">🏫</span> Pilih Kelas & Siswa
+            <span className="text-lg">🏫</span> Pilih Kelas & Peserta Didik
           </h3>
           <div className="flex gap-2 overflow-x-auto no-scrollbar mb-3">
             {classes?.map((c) => (
@@ -261,7 +261,7 @@ function AssessmentContent() {
       {targetName && (
         <div className="text-center mb-4 animate-pop-in">
           <span className="text-sm font-bold bg-primary/10 text-primary px-5 py-1.5 rounded-full shadow-soft border-2 border-primary/20">
-            {role === 'teacher' ? '🎯 Siswa: ' : role === 'parent' ? '👶 Anak: ' : ''}
+            {role === 'teacher' ? '🎯 Peserta Didik: ' : role === 'parent' ? '👶 Anak: ' : ''}
             {targetName}
           </span>
         </div>

@@ -84,7 +84,7 @@ export default function ParentLeaderboardPage() {
       {/* Class leaderboard */}
       <div className="bg-white rounded-3xl shadow-soft overflow-hidden">
         <div className="p-4 bg-muted/30 border-b border-border">
-          <span className="font-extrabold">Kelas {child?.classId} — {dummyLeaderboard.length} siswa</span>
+          <span className="font-extrabold">Kelas {child?.classId} — {dummyLeaderboard.length} peserta didik</span>
         </div>
         {dummyLeaderboard.map((s, i) => (
           <div

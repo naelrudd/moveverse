@@ -48,8 +48,8 @@ const CP_DATA = [
     icon: '🐲',
     materi: 'Gerak Non-Lokomotor',
     kd: 'PJOK KD 3.1',
-    ringkasan: 'Siswa memahami dan melaksanakan 6 gerak non-lokomotor di tempat: Meliuk, Menekuk, Memutar, Mengayun, Membungkuk, dan Mendorong/Menarik.',
-    capaian: 'Siswa memahami dan melaksanakan 6 gerak non-lokomotor dengan benar dan percaya diri',
+    ringkasan: 'Peserta Didik memahami dan melaksanakan 6 gerak non-lokomotor di tempat: Meliuk, Menekuk, Memutar, Mengayun, Membungkuk, dan Mendorong/Menarik.',
+    capaian: 'Peserta Didik memahami dan melaksanakan 6 gerak non-lokomotor dengan benar dan percaya diri',
     alat: ['Area luas / ruang terbuka', 'Matras / alas empuk', 'Musik pengiring', 'Papan putih / poster gerakan'],
     metode: ['Demonstrasi oleh guru', 'Peniruan berulang', 'Praktik langsung berpasangan', 'Permainan gerak'],
     penilaian: [
@@ -64,8 +64,8 @@ const CP_DATA = [
     icon: '🐯',
     materi: 'Gerak Lokomotor',
     kd: 'PJOK KD 3.2',
-    ringkasan: 'Siswa memahami dan melaksanakan 6 gerak lokomotor dengan ritme benar: Berlari, Melompat, Meloncat, Berjalan, Menjunting, dan Berputar.',
-    capaian: 'Siswa memahami dan melaksanakan 6 gerak lokomotor dengan ritme dan teknik yang benar',
+    ringkasan: 'Peserta Didik memahami dan melaksanakan 6 gerak lokomotor dengan ritme benar: Berlari, Melompat, Meloncat, Berjalan, Menjunting, dan Berputar.',
+    capaian: 'Peserta Didik memahami dan melaksanakan 6 gerak lokomotor dengan ritme dan teknik yang benar',
     alat: ['Area terbuka / lapangan', 'Rintangan sederhana (cones, tali)', 'Bola kecil', 'Timer / stopwatch'],
     metode: ['Permainan beregu', 'Simulasi lintasan', 'Praktik bergerak berirama', 'Tantangan waktu'],
     penilaian: [
@@ -80,8 +80,8 @@ const CP_DATA = [
     icon: '🦅',
     materi: 'Gerak Manipulatif',
     kd: 'PJOK KD 3.3',
-    ringkasan: 'Siswa memahami dan melaksanakan 6 gerak manipulatif dengan koordinasi baik: Melempar, Menangkap, Menendang, Memukul, Menggiring, dan Menembak.',
-    capaian: 'Siswa memahami dan melaksanakan 6 gerak manipulatif dengan koordinasi dan akurasi baik',
+    ringkasan: 'Peserta Didik memahami dan melaksanakan 6 gerak manipulatif dengan koordinasi baik: Melempar, Menangkap, Menendang, Memukul, Menggiring, dan Menembak.',
+    capaian: 'Peserta Didik memahami dan melaksanakan 6 gerak manipulatif dengan koordinasi dan akurasi baik',
     alat: ['Bola kecil berbagai ukuran', 'Raket mini / bet', 'Ring / keranjang', 'Gawang mini', 'Papan target'],
     metode: ['Permainan bola', 'Kerja sama kelompok', 'Tantangan akurasi', 'Simulasi pertandingan'],
     penilaian: [
@@ -163,7 +163,7 @@ export default function TeacherDashboard() {
             <h1 className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 bg-clip-text text-transparent">
               Selamat Mengajar, {userData?.name || 'Guru'}! 👩‍🏫
             </h1>
-            <p className="text-sm font-bold text-foreground/60 mt-1">Pantau siswa, kelola kelas, analisis perkembangan 📚</p>
+            <p className="text-sm font-bold text-foreground/60 mt-1">Pantau peserta didik, kelola kelas, analisis perkembangan 📚</p>
             {userData?.schoolId && <p className="text-[10px] font-mono font-bold text-foreground/40 mt-0.5">Sekolah ID: {userData.schoolId.slice(-6)}</p>}
             <div className="mt-2"><MovaTip text="💡 Klik 'Lihat CP' untuk melihat Capaian Pembelajaran setiap dunia!" /></div>
           </div>
@@ -174,7 +174,7 @@ export default function TeacherDashboard() {
       <div className="grid sm:grid-cols-3 gap-4">
         {[
           { icon: '🏫', l: 'Total Kelas', v: classes?.length ?? 0, gradient: 'linear-gradient(135deg, #a78bfa, #818cf8, #6366f1)' },
-          { icon: '👨‍🎓', l: 'Total Siswa', v: totalStudents, gradient: 'linear-gradient(135deg, #4ade80, #22c55e, #16a34a)' },
+          { icon: '👨‍🎓', l: 'Total Peserta Didik', v: totalStudents, gradient: 'linear-gradient(135deg, #4ade80, #22c55e, #16a34a)' },
           { icon: '📋', l: 'Kelas Aktif', v: selectedClassId ? classes?.find((c) => c._id === selectedClassId)?.name ?? '-' : '-', gradient: 'linear-gradient(135deg, #fb923c, #f97316, #ea580c)' },
         ].map((s, i) => (
           <div key={s.l} className="text-white rounded-3xl p-5 shadow-pop animate-slide-up relative overflow-hidden group hover:scale-105 hover:-translate-y-1 transition-all duration-300 border-2 border-white/30" style={{ background: s.gradient, animationDelay: `${i * 0.1}s` } as React.CSSProperties}>
@@ -213,7 +213,7 @@ export default function TeacherDashboard() {
               <button onClick={() => { setSelectedClassId(c._id); setSelectedStudentId(null); }} className={`px-5 py-3 rounded-2xl font-extrabold text-sm whitespace-nowrap transition-all ${selectedClassId === c._id ? 'text-white shadow-pop' : 'bg-muted/60 hover:bg-muted hover:scale-105'}`} style={selectedClassId === c._id ? { background: 'linear-gradient(135deg, #818cf8, #6366f1)' } : {}}>
                 Kelas {c.name}
               </button>
-              <span className="text-[9px] font-mono font-bold text-muted-foreground/60 mt-0.5" title="ID Kelas — beritahu siswa ID ini">{c._id.slice(-6)}</span>
+              <span className="text-[9px] font-mono font-bold text-muted-foreground/60 mt-0.5" title="ID Kelas — beritahu peserta didik ID ini">{c._id.slice(-6)}</span>
               <div className="absolute -top-1 -right-1 hidden group-hover:flex gap-0.5">
                 <button onClick={(e) => { e.stopPropagation(); setEditClass({ id: c._id, name: c.name, grade: c.grade }); }} className="w-5 h-5 rounded-full bg-amber-400 text-white text-[10px] flex items-center justify-center shadow-sm">E</button>
                 <button onClick={(e) => { e.stopPropagation(); handleDeleteClass(c._id); }} className="w-5 h-5 rounded-full bg-red-400 text-white text-[10px] flex items-center justify-center shadow-sm">X</button>
@@ -243,11 +243,11 @@ export default function TeacherDashboard() {
       {selectedClassId && (
         <div className="bg-white rounded-3xl p-6 shadow-pop border-2 border-primary/10">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-extrabold text-lg">👨‍🎓 Siswa — {classes?.find((c) => c._id === selectedClassId)?.name}</h3>
-            <span className="text-sm font-extrabold text-muted-foreground bg-primary/10 px-3 py-1 rounded-full">{totalStudents} siswa</span>
+            <h3 className="font-extrabold text-lg">👨‍🎓 Peserta Didik — {classes?.find((c) => c._id === selectedClassId)?.name}</h3>
+            <span className="text-sm font-extrabold text-muted-foreground bg-primary/10 px-3 py-1 rounded-full">{totalStudents} peserta didik</span>
           </div>
           {studentList.length === 0 ? (
-            <p className="text-sm text-muted-foreground font-bold">Belum ada siswa di kelas ini.</p>
+            <p className="text-sm text-muted-foreground font-bold">Belum ada peserta didik di kelas ini.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -260,7 +260,7 @@ export default function TeacherDashboard() {
                   {studentList.map((s, i) => (
                     <tr key={s._id} className={`border-b last:border-0 cursor-pointer transition-all ${selectedStudentId === s._id ? 'bg-primary/5' : 'hover:bg-muted/30 hover:scale-[1.01]'}`} onClick={() => setSelectedStudentId(selectedStudentId === s._id ? null : s._id)} style={{ animationDelay: `${i * 0.05}s` }}>
                       <td className="p-2 font-bold">{s.name}</td>
-                      <td className="font-mono text-[10px] text-muted-foreground/60" title="ID Siswa">{s._id.slice(-6)}</td>
+                      <td className="font-mono text-[10px] text-muted-foreground/60" title="ID Peserta Didik">{s._id.slice(-6)}</td>
                       <td className="font-bold">Lv {s.level}</td>
                       <td className="font-bold">{s.xp.toLocaleString()}</td>
                       <td className="font-bold">{s.badges?.length ?? 0}/6</td>
@@ -470,7 +470,7 @@ export default function TeacherDashboard() {
 
       {/* ═══════ BOTTOM TIP ═══════ */}
       <div className="flex justify-center animate-slide-up" style={{ animationDelay: '1s' }}>
-        <MovaTip text="👩‍🏫 Semangat mengajar! Siswa yang aktif bergerak belajar lebih cepat! 💪" />
+        <MovaTip text="👩‍🏫 Semangat mengajar! Peserta Didik yang aktif bergerak belajar lebih cepat! 💪" />
       </div>
     </div>
   );
