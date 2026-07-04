@@ -84,9 +84,7 @@ export default function StudentDashboard() {
       {/* ══════════════════════════════════════════
           HERO — Super kid entrance
           ══════════════════════════════════════════ */}
-      <div className="relative rounded-[2.5rem] p-8 shadow-pop border-4 border-white animate-pop-in overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, oklch(0.92 0.12 230), oklch(0.95 0.1 60), oklch(0.93 0.12 310))' }}
-      >
+      <div className="relative rounded-[2.5rem] p-8 shadow-pop border-4 border-white animate-pop-in overflow-hidden glass-card" style={{ background: 'linear-gradient(135deg, oklch(0.92 0.12 230), oklch(0.95 0.1 60), oklch(0.93 0.12 310))' }}>
         <ConfettiBurst />
 
         {/* Sparkles around MOVA */}

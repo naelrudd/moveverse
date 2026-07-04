@@ -28,7 +28,7 @@ export default function WorldsPage() {
           const pct = Math.round((earnedCount / w.activities.length) * 100);
           return (
             <Link key={w.id} href={`/worlds/${w.id}`} className="block group animate-slide-up" style={{ animationDelay: `${i * 0.12}s` } as React.CSSProperties}>
-              <div className="relative rounded-[2rem] overflow-hidden text-white shadow-pop border-4 border-white hover:scale-[1.02] transition-transform" style={{ minHeight: '320px' }}>
+              <div className="relative rounded-[2rem] overflow-hidden text-white shadow-pop border-4 border-white hover:scale-[1.02] transition-all duration-200 interactive-card" style={{ minHeight: '320px' }}>
                 <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${w.bgImage}')` }} />
                 <div className={`absolute inset-0 ${w.gradient} opacity-50`} />
                 <div className="absolute inset-0 frosted-overlay" />
