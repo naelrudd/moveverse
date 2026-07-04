@@ -111,7 +111,7 @@ export function MovementSelector({
       onTouchEnd={handleTouchEnd}
     >
       {/* Activity tabs */}
-      <div className="flex gap-1.5 px-2 py-4 overflow-x-auto no-scrollbar">
+      <div className="flex gap-1.5 px-2 py-1 overflow-x-auto no-scrollbar">
         {ACTIVITIES.map((a) => (
           <button
             key={a.id}
@@ -128,7 +128,7 @@ export function MovementSelector({
       </div>
 
       {/* Level pills */}
-      <div className="flex px-2 py-4 gap-1.5 overflow-x-auto no-scrollbar">
+      <div className="flex px-2 py-1 gap-1.5 overflow-x-auto no-scrollbar">
         {(MOVEMENT_LEVELS[activity] ?? []).map((lv) => (
           <button
             key={lv.level}
