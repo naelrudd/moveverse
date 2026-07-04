@@ -674,6 +674,118 @@ input:disabled, select:disabled, textarea:disabled {
   border: 1px solid oklch(0.9 0.03 260);
 }
 
+/* ═══════════════════════════════════════════
+   RESPONSIVE — Mobile-first adjustments
+   ═══════════════════════════════════════════ */
+
+/* Base: mobile-first padding */
+@media (max-width: 640px) {
+  body {
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  /* Reduce shadow intensity on mobile for performance */
+  .shadow-pop {
+    box-shadow: 2px 2px 0 oklch(0.7 0.18 235 / 0.6), 0 8px 20px -8px oklch(0.5 0.15 260 / 0.2);
+  }
+  
+  /* Smaller border radius on mobile */
+  .rounded-\[2rem\] {
+    border-radius: 1.25rem;
+  }
+  
+  /* Prevent horizontal overflow */
+  .overflow-hidden {
+    overflow: hidden;
+  }
+  
+  /* Touch-friendly tap targets — minimum 44px */
+  button, a, [role="button"] {
+    min-height: 44px;
+  }
+  
+  /* Compact headers on mobile */
+  h1 {
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  
+  h2 {
+    font-size: 1.25rem;
+    line-height: 1.25;
+  }
+}
+
+/* Tablet breakpoint */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .shadow-pop {
+    box-shadow: 3px 3px 0 oklch(0.7 0.18 235 / 0.7), 0 10px 30px -8px oklch(0.5 0.15 260 / 0.22);
+  }
+}
+
+/* Ensure images don't overflow */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Smooth scrolling on mobile */
+@media (hover: none) {
+  .interactive-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .interactive-card:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Prevent text overflow on mobile */
+.truncate-mobile {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (min-width: 641px) {
+  .truncate-mobile {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+}
+
+/* Responsive grid helper */
+.responsive-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 641px) {
+  .responsive-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1025px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Safe area padding for iOS */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   END RESPONSIVE
+   ═══════════════════════════════════════════ */
+
 /* Spacing scale — consistent vertical rhythm */
 .space-section > * + * { margin-top: 2rem; }
 .space-component > * + * { margin-top: 1rem; }

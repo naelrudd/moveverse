@@ -80,7 +80,7 @@ export default function StudentDashboard() {
   const xpPercent = Math.min(nextTarget > 0 ? (xp / nextTarget) * 100 : 100, 100);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8 bg-theme-forest min-h-screen">
+    <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-6 sm:space-y-8 bg-theme-forest min-h-screen">
       {/* ══════════════════════════════════════════
           HERO — Super kid entrance
           ══════════════════════════════════════════ */}

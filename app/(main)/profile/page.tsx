@@ -88,7 +88,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10">
+    <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-10">
       <div className="bg-white rounded-[2rem] p-8 shadow-pop border-4 border-white animate-pop-in">
         <div className="flex flex-col items-center text-center mb-6">
           {/* Avatar — clickable to edit */}

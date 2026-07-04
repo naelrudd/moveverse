@@ -378,7 +378,7 @@ function AssessmentContent() {
         </div>
       ) : (
         /* Split View Mode */
-        <div className="max-w-6xl mx-auto px-4 py-10 relative">
+        <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-10 relative">
           <ConfettiBurst />
           <SparkleDots count={18} />
 
@@ -387,7 +387,7 @@ function AssessmentContent() {
             <div className="inline-block bg-white/80 px-5 py-1.5 rounded-full text-sm font-bold mb-3 shadow-soft border-2 border-amber-300">
               {role === 'parent' ? '📊 Analisis Gerak' : '🎥 AI Pose Coach'}
             </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-amber-500 to-green-500 flex items-center justify-center gap-3">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-amber-500 to-green-500 flex items-center justify-center gap-2 sm:gap-3">
               <span className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-pop inline-block animate-float overflow-hidden flex-shrink-0">
                 <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
               </span>

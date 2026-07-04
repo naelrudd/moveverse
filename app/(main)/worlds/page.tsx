@@ -12,8 +12,8 @@ export default function WorldsPage() {
   const badges = userData?.badges ?? [];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
-      <div className="text-center mb-8 animate-pop-in">
+    <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-10">
+      <div className="text-center mb-6 sm:mb-8 animate-pop-in">
         <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden mx-auto mb-3 animate-float">
           <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
         </div>
