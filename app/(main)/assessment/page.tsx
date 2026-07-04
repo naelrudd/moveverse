@@ -247,6 +247,7 @@ function AssessmentContent() {
   const activityObjective = searchParams?.get('objective') ?? null;
   const activityName = searchParams?.get('activity') ?? null;
   const worldName = searchParams?.get('world') ?? null;
+  const worldId = searchParams?.get('worldId') ?? null;
   const logSession = useMutation(api.liveCoach.logMovementSession);
 
   // Role-based selectors
@@ -545,6 +546,7 @@ function AssessmentContent() {
                   level={level}
                   onActivityChange={setActivity}
                   onLevelChange={setLevel}
+                  worldId={worldId ?? undefined}
                 />
               </div>
 
