@@ -118,7 +118,7 @@ export function MovementSelector({
             onClick={() => onActivityChange(a.id)}
             className={`px-3 py-1.5 rounded-full font-bold text-xs whitespace-nowrap transition-all border-2 ${
               activity === a.id
-                ? `${theme.headerBg} text-white shadow-pop scale-105 border-transparent`
+                ? `${theme.headerBg} text-white scale-105 border-transparent`
                 : `bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:scale-105`
             }`}
           >
