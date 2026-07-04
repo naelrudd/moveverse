@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@700&family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@700&family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;700&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -30,18 +30,44 @@
   --bubblegum: oklch(0.78 0.18 350);
 
   /* Gradients */
-  --gradient-sky: linear-gradient(180deg, oklch(0.88 0.1 230), oklch(0.95 0.04 200));
-  --gradient-sunset: linear-gradient(135deg, oklch(0.78 0.18 60), oklch(0.78 0.18 350));
-  --gradient-grass: linear-gradient(135deg, oklch(0.82 0.2 145), oklch(0.7 0.18 195));
-  --gradient-magic: linear-gradient(135deg, oklch(0.65 0.22 310), oklch(0.7 0.18 235));
-  --gradient-gold: linear-gradient(135deg, oklch(0.9 0.18 95), oklch(0.78 0.18 60));
+  --gradient-sky: linear-gradient(
+    180deg,
+    oklch(0.88 0.1 230),
+    oklch(0.95 0.04 200)
+  );
+  --gradient-sunset: linear-gradient(
+    135deg,
+    oklch(0.78 0.18 60),
+    oklch(0.78 0.18 350)
+  );
+  --gradient-grass: linear-gradient(
+    135deg,
+    oklch(0.82 0.2 145),
+    oklch(0.7 0.18 195)
+  );
+  --gradient-magic: linear-gradient(
+    135deg,
+    oklch(0.65 0.22 310),
+    oklch(0.7 0.18 235)
+  );
+  --gradient-gold: linear-gradient(
+    135deg,
+    oklch(0.9 0.18 95),
+    oklch(0.78 0.18 60)
+  );
 
   /* Shadows — chunky solid drop-shadows (neo-brutalism / toy-like) */
-  --shadow-pop: 4px 4px 0 oklch(0.7 0.18 235), 0 12px 0 0 oklch(0.7 0.18 235 / 0.18), 0 20px 40px -10px oklch(0.5 0.15 260 / 0.25);
-  --shadow-soft: 3px 3px 0 oklch(0.5 0.1 260 / 0.18), 0 10px 24px -6px oklch(0.5 0.1 260 / 0.18);
+  --shadow-pop:
+    4px 4px 0 oklch(0.7 0.18 235), 0 12px 0 0 oklch(0.7 0.18 235 / 0.18),
+    0 20px 40px -10px oklch(0.5 0.15 260 / 0.25);
+  --shadow-soft:
+    3px 3px 0 oklch(0.5 0.1 260 / 0.18),
+    0 10px 24px -6px oklch(0.5 0.1 260 / 0.18);
   --shadow-glow: 0 0 40px oklch(0.78 0.18 60 / 0.5);
   --shadow-chunky: 4px 4px 0 oklch(0.25 0.08 260 / 0.12);
-  --shadow-inner: inset 0 2px 0 0 oklch(1 0 0 / 0.6), inset 0 -1px 0 0 oklch(0.25 0.08 260 / 0.06);
+  --shadow-inner:
+    inset 0 2px 0 0 oklch(1 0 0 / 0.6),
+    inset 0 -1px 0 0 oklch(0.25 0.08 260 / 0.06);
 
   /* Border Radius */
   --radius: 1.25rem;
@@ -94,103 +120,257 @@
 body {
   background:
     /* tiny cloud puffs */
-    radial-gradient(circle 18px at 10% 15%, oklch(1 0 0 / 0.45) 0%, transparent 100%),
-    radial-gradient(circle 12px at 25% 8%, oklch(1 0 0 / 0.35) 0%, transparent 100%),
-    radial-gradient(circle 22px at 70% 12%, oklch(1 0 0 / 0.4) 0%, transparent 100%),
-    radial-gradient(circle 14px at 85% 20%, oklch(1 0 0 / 0.3) 0%, transparent 100%),
+    radial-gradient(
+      circle 18px at 10% 15%,
+      oklch(1 0 0 / 0.45) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 12px at 25% 8%,
+      oklch(1 0 0 / 0.35) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 22px at 70% 12%,
+      oklch(1 0 0 / 0.4) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 14px at 85% 20%,
+      oklch(1 0 0 / 0.3) 0%,
+      transparent 100%
+    ),
     /* geometric dots */
-    radial-gradient(circle 3px at 15% 45%, oklch(0.7 0.18 235 / 0.07) 0%, transparent 100%),
-    radial-gradient(circle 3px at 55% 35%, oklch(0.82 0.2 145 / 0.07) 0%, transparent 100%),
-    radial-gradient(circle 3px at 80% 55%, oklch(0.78 0.18 60 / 0.07) 0%, transparent 100%),
-    radial-gradient(circle 2px at 35% 70%, oklch(0.65 0.22 310 / 0.06) 0%, transparent 100%),
-    radial-gradient(circle 2px at 65% 80%, oklch(0.7 0.18 235 / 0.06) 0%, transparent 100%),
-    /* base gradient */
-    var(--gradient-sky);
+    radial-gradient(
+        circle 3px at 15% 45%,
+        oklch(0.7 0.18 235 / 0.07) 0%,
+        transparent 100%
+      ),
+    radial-gradient(
+      circle 3px at 55% 35%,
+      oklch(0.82 0.2 145 / 0.07) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 3px at 80% 55%,
+      oklch(0.78 0.18 60 / 0.07) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 2px at 35% 70%,
+      oklch(0.65 0.22 310 / 0.06) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 2px at 65% 80%,
+      oklch(0.7 0.18 235 / 0.06) 0%,
+      transparent 100%
+    ),
+    /* base gradient */ var(--gradient-sky);
   background-attachment: fixed;
   color: var(--foreground);
   font-family: "Nunito", "Baloo 2", system-ui, sans-serif;
   font-weight: 400;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-family: "Fredoka", "Baloo 2", "Nunito", sans-serif;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 /* Utility Classes */
-.gradient-sky { background: var(--gradient-sky); }
-.gradient-sunset { background: var(--gradient-sunset); }
-.gradient-grass { background: var(--gradient-grass); }
-.gradient-magic { background: var(--gradient-magic); }
-.gradient-gold { background: var(--gradient-gold); }
+.gradient-sky {
+  background: var(--gradient-sky);
+}
+.gradient-sunset {
+  background: var(--gradient-sunset);
+}
+.gradient-grass {
+  background: var(--gradient-grass);
+}
+.gradient-magic {
+  background: var(--gradient-magic);
+}
+.gradient-gold {
+  background: var(--gradient-gold);
+}
 
 /* ── Unique themed backgrounds ── */
 .bg-theme-dragon {
   background:
-    radial-gradient(circle 20px at 12% 20%, oklch(0.85 0.18 145 / 0.15) 0%, transparent 100%),
-    radial-gradient(circle 15px at 80% 15%, oklch(0.78 0.18 120 / 0.12) 0%, transparent 100%),
-    radial-gradient(circle 25px at 50% 80%, oklch(0.82 0.2 145 / 0.1) 0%, transparent 100%),
-    radial-gradient(circle 8px at 30% 60%, oklch(0.7 0.18 195 / 0.08) 0%, transparent 100%),
+    radial-gradient(
+      circle 20px at 12% 20%,
+      oklch(0.85 0.18 145 / 0.15) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 15px at 80% 15%,
+      oklch(0.78 0.18 120 / 0.12) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 25px at 50% 80%,
+      oklch(0.82 0.2 145 / 0.1) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 8px at 30% 60%,
+      oklch(0.7 0.18 195 / 0.08) 0%,
+      transparent 100%
+    ),
     linear-gradient(180deg, oklch(0.94 0.06 145), oklch(0.97 0.03 160));
   background-attachment: fixed;
 }
 
 .bg-theme-tiger {
   background:
-    radial-gradient(circle 22px at 8% 12%, oklch(0.9 0.15 80 / 0.18) 0%, transparent 100%),
-    radial-gradient(circle 18px at 75% 20%, oklch(0.85 0.18 50 / 0.15) 0%, transparent 100%),
-    radial-gradient(circle 30px at 40% 85%, oklch(0.88 0.12 90 / 0.1) 0%, transparent 100%),
-    radial-gradient(circle 6px at 60% 40%, oklch(0.78 0.18 30 / 0.1) 0%, transparent 100%),
+    radial-gradient(
+      circle 22px at 8% 12%,
+      oklch(0.9 0.15 80 / 0.18) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 18px at 75% 20%,
+      oklch(0.85 0.18 50 / 0.15) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 30px at 40% 85%,
+      oklch(0.88 0.12 90 / 0.1) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 6px at 60% 40%,
+      oklch(0.78 0.18 30 / 0.1) 0%,
+      transparent 100%
+    ),
     linear-gradient(180deg, oklch(0.96 0.05 80), oklch(0.98 0.03 70));
   background-attachment: fixed;
 }
 
 .bg-theme-eagle {
   background:
-    radial-gradient(circle 24px at 15% 18%, oklch(0.8 0.18 310 / 0.15) 0%, transparent 100%),
-    radial-gradient(circle 16px at 85% 25%, oklch(0.75 0.2 280 / 0.12) 0%, transparent 100%),
-    radial-gradient(circle 20px at 50% 75%, oklch(0.7 0.18 320 / 0.1) 0%, transparent 100%),
-    radial-gradient(circle 5px at 25% 50%, oklch(0.65 0.22 260 / 0.08) 0%, transparent 100%),
+    radial-gradient(
+      circle 24px at 15% 18%,
+      oklch(0.8 0.18 310 / 0.15) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 16px at 85% 25%,
+      oklch(0.75 0.2 280 / 0.12) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 20px at 50% 75%,
+      oklch(0.7 0.18 320 / 0.1) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 5px at 25% 50%,
+      oklch(0.65 0.22 260 / 0.08) 0%,
+      transparent 100%
+    ),
     linear-gradient(180deg, oklch(0.93 0.06 310), oklch(0.97 0.03 290));
   background-attachment: fixed;
 }
 
 .bg-theme-ocean {
   background:
-    radial-gradient(circle 20px at 10% 25%, oklch(0.85 0.12 230 / 0.15) 0%, transparent 100%),
-    radial-gradient(circle 15px at 70% 15%, oklch(0.8 0.15 210 / 0.12) 0%, transparent 100%),
-    radial-gradient(circle 28px at 45% 80%, oklch(0.78 0.18 240 / 0.1) 0%, transparent 100%),
-    radial-gradient(circle 7px at 85% 55%, oklch(0.7 0.15 200 / 0.08) 0%, transparent 100%),
+    radial-gradient(
+      circle 20px at 10% 25%,
+      oklch(0.85 0.12 230 / 0.15) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 15px at 70% 15%,
+      oklch(0.8 0.15 210 / 0.12) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 28px at 45% 80%,
+      oklch(0.78 0.18 240 / 0.1) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 7px at 85% 55%,
+      oklch(0.7 0.15 200 / 0.08) 0%,
+      transparent 100%
+    ),
     linear-gradient(180deg, oklch(0.94 0.05 230), oklch(0.97 0.03 210));
   background-attachment: fixed;
 }
 
 .bg-theme-forest {
   background:
-    radial-gradient(circle 18px at 12% 15%, oklch(0.82 0.2 120 / 0.15) 0%, transparent 100%),
-    radial-gradient(circle 22px at 68% 22%, oklch(0.78 0.18 145 / 0.12) 0%, transparent 100%),
-    radial-gradient(circle 16px at 40% 78%, oklch(0.75 0.2 130 / 0.1) 0%, transparent 100%),
-    radial-gradient(circle 4px at 80% 60%, oklch(0.65 0.22 160 / 0.08) 0%, transparent 100%),
+    radial-gradient(
+      circle 18px at 12% 15%,
+      oklch(0.82 0.2 120 / 0.15) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 22px at 68% 22%,
+      oklch(0.78 0.18 145 / 0.12) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 16px at 40% 78%,
+      oklch(0.75 0.2 130 / 0.1) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 4px at 80% 60%,
+      oklch(0.65 0.22 160 / 0.08) 0%,
+      transparent 100%
+    ),
     linear-gradient(180deg, oklch(0.93 0.05 130), oklch(0.97 0.02 145));
   background-attachment: fixed;
 }
 
 .bg-theme-sunset {
   background:
-    radial-gradient(circle 20px at 10% 20%, oklch(0.88 0.15 30 / 0.15) 0%, transparent 100%),
-    radial-gradient(circle 25px at 72% 18%, oklch(0.85 0.18 50 / 0.12) 0%, transparent 100%),
-    radial-gradient(circle 18px at 50% 82%, oklch(0.82 0.2 10 / 0.1) 0%, transparent 100%),
-    radial-gradient(circle 6px at 30% 45%, oklch(0.78 0.18 60 / 0.08) 0%, transparent 100%),
+    radial-gradient(
+      circle 20px at 10% 20%,
+      oklch(0.88 0.15 30 / 0.15) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 25px at 72% 18%,
+      oklch(0.85 0.18 50 / 0.12) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 18px at 50% 82%,
+      oklch(0.82 0.2 10 / 0.1) 0%,
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 6px at 30% 45%,
+      oklch(0.78 0.18 60 / 0.08) 0%,
+      transparent 100%
+    ),
     linear-gradient(180deg, oklch(0.95 0.06 30), oklch(0.97 0.03 50));
   background-attachment: fixed;
 }
 
-.shadow-pop { box-shadow: var(--shadow-pop); }
-.shadow-soft { box-shadow: var(--shadow-soft); }
-.shadow-glow { box-shadow: var(--shadow-glow); }
-.shadow-chunky { box-shadow: var(--shadow-chunky); }
-.shadow-inner { box-shadow: var(--shadow-inner); }
+.shadow-pop {
+  box-shadow: var(--shadow-pop);
+}
+.shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+.shadow-glow {
+  box-shadow: var(--shadow-glow);
+}
+.shadow-chunky {
+  box-shadow: var(--shadow-chunky);
+}
+.shadow-inner {
+  box-shadow: var(--shadow-inner);
+}
 
 /* Neo-brutalism card — inner border for tactile feel */
 .card-chunky {
@@ -200,7 +380,12 @@ h1, h2, h3, h4 {
 
 /* Frosted glass overlay — for world biome cards */
 .frosted-overlay {
-  background: linear-gradient(0deg, oklch(0.15 0.05 260 / 0.85) 0%, oklch(0.15 0.05 260 / 0.4) 60%, transparent 100%);
+  background: linear-gradient(
+    0deg,
+    oklch(0.15 0.05 260 / 0.85) 0%,
+    oklch(0.15 0.05 260 / 0.4) 60%,
+    transparent 100%
+  );
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
@@ -212,13 +397,23 @@ h1, h2, h3, h4 {
 
 /* Animations */
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
 }
 
 @keyframes wobble {
-  0%, 100% { transform: rotate(-2deg); }
-  50% { transform: rotate(2deg); }
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
 }
 
 @keyframes pop-in {
@@ -237,7 +432,8 @@ h1, h2, h3, h4 {
 }
 
 @keyframes sparkle {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0;
     transform: scale(0.5);
   }
@@ -256,72 +452,156 @@ h1, h2, h3, h4 {
 }
 
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-8px); }
-  50% { transform: translateY(3px); }
-  70% { transform: translateY(-4px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-8px);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+  70% {
+    transform: translateY(-4px);
+  }
 }
 
 @keyframes bounce-sm {
-  0%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-4px); }
-  60% { transform: translateY(1px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(1px);
+  }
 }
 
 @keyframes confetti-fall {
-  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(40px) rotate(360deg); opacity: 0; }
+  0% {
+    transform: translateY(-10px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(40px) rotate(360deg);
+    opacity: 0;
+  }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 oklch(0.7 0.18 235 / 0.4); }
-  50% { box-shadow: 0 0 0 12px oklch(0.7 0.18 235 / 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.7 0.18 235 / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 12px oklch(0.7 0.18 235 / 0);
+  }
 }
 
 @keyframes wiggle {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-5deg); }
-  75% { transform: rotate(5deg); }
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
 }
 
 @keyframes slide-up {
-  0% { transform: translateY(30px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes dance {
-  0%, 100% { transform: translateX(0) rotate(0deg); }
-  15% { transform: translateX(-4px) rotate(-4deg); }
-  30% { transform: translateX(4px) rotate(4deg); }
-  45% { transform: translateX(-3px) rotate(-3deg); }
-  60% { transform: translateX(3px) rotate(3deg); }
-  75% { transform: translateX(-2px) rotate(-2deg); }
-  90% { transform: translateX(2px) rotate(2deg); }
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  15% {
+    transform: translateX(-4px) rotate(-4deg);
+  }
+  30% {
+    transform: translateX(4px) rotate(4deg);
+  }
+  45% {
+    transform: translateX(-3px) rotate(-3deg);
+  }
+  60% {
+    transform: translateX(3px) rotate(3deg);
+  }
+  75% {
+    transform: translateX(-2px) rotate(-2deg);
+  }
+  90% {
+    transform: translateX(2px) rotate(2deg);
+  }
 }
 
 @keyframes sway {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  75% { transform: translateX(6px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes celebrate {
-  0% { transform: scale(1) rotate(0deg); }
-  20% { transform: scale(1.3) rotate(-5deg); }
-  40% { transform: scale(1.1) rotate(3deg); }
-  60% { transform: scale(1.2) rotate(-2deg); }
-  80% { transform: scale(1.05) rotate(1deg); }
-  100% { transform: scale(1) rotate(0deg); }
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  20% {
+    transform: scale(1.3) rotate(-5deg);
+  }
+  40% {
+    transform: scale(1.1) rotate(3deg);
+  }
+  60% {
+    transform: scale(1.2) rotate(-2deg);
+  }
+  80% {
+    transform: scale(1.05) rotate(1deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 @keyframes confetti-fall-long {
-  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(120px) rotate(480deg); opacity: 0; }
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120px) rotate(480deg);
+    opacity: 0;
+  }
 }
 
 .animate-bounce-soft {
@@ -369,7 +649,12 @@ h1, h2, h3, h4 {
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, transparent 0%, oklch(1 0 0 / 0.15) 50%, transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(1 0 0 / 0.15) 50%,
+    transparent 100%
+  );
   background-size: 200% 100%;
   animation: shimmer 2s ease-in-out infinite;
 }
@@ -396,10 +681,19 @@ h1, h2, h3, h4 {
    ═══════════════════════════════════════════ */
 
 @keyframes float-strong {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-16px) rotate(1deg); }
-  50% { transform: translateY(-20px) rotate(-1deg); }
-  75% { transform: translateY(-8px) rotate(0.5deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-16px) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(-1deg);
+  }
+  75% {
+    transform: translateY(-8px) rotate(0.5deg);
+  }
 }
 
 .animate-float-strong {
@@ -407,11 +701,21 @@ h1, h2, h3, h4 {
 }
 
 @keyframes bounce-card {
-  0% { transform: scale(1); }
-  30% { transform: scale(1.03); }
-  50% { transform: scale(0.98); }
-  70% { transform: scale(1.01); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.03);
+  }
+  50% {
+    transform: scale(0.98);
+  }
+  70% {
+    transform: scale(1.01);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .animate-bounce-card {
@@ -419,20 +723,44 @@ h1, h2, h3, h4 {
 }
 
 @keyframes typing-dot {
-  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
-  30% { opacity: 1; transform: translateY(-4px); }
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
 }
 
-.animate-typing-dot-1 { animation: typing-dot 1.4s infinite 0s; }
-.animate-typing-dot-2 { animation: typing-dot 1.4s infinite 0.2s; }
-.animate-typing-dot-3 { animation: typing-dot 1.4s infinite 0.4s; }
+.animate-typing-dot-1 {
+  animation: typing-dot 1.4s infinite 0s;
+}
+.animate-typing-dot-2 {
+  animation: typing-dot 1.4s infinite 0.2s;
+}
+.animate-typing-dot-3 {
+  animation: typing-dot 1.4s infinite 0.4s;
+}
 
 @keyframes rainbow-border {
-  0% { border-color: oklch(0.7 0.18 235); }
-  25% { border-color: oklch(0.7 0.2 145); }
-  50% { border-color: oklch(0.78 0.18 60); }
-  75% { border-color: oklch(0.65 0.22 310); }
-  100% { border-color: oklch(0.7 0.18 235); }
+  0% {
+    border-color: oklch(0.7 0.18 235);
+  }
+  25% {
+    border-color: oklch(0.7 0.2 145);
+  }
+  50% {
+    border-color: oklch(0.78 0.18 60);
+  }
+  75% {
+    border-color: oklch(0.65 0.22 310);
+  }
+  100% {
+    border-color: oklch(0.7 0.18 235);
+  }
 }
 
 .animate-rainbow-border {
@@ -442,8 +770,17 @@ h1, h2, h3, h4 {
 }
 
 @keyframes glow-pulse-strong {
-  0%, 100% { box-shadow: 0 0 0 0 oklch(0.7 0.18 235 / 0.5), var(--shadow-pop); }
-  50% { box-shadow: 0 0 0 16px oklch(0.7 0.18 235 / 0), var(--shadow-pop); }
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 oklch(0.7 0.18 235 / 0.5),
+      var(--shadow-pop);
+  }
+  50% {
+    box-shadow:
+      0 0 0 16px oklch(0.7 0.18 235 / 0),
+      var(--shadow-pop);
+  }
 }
 
 .animate-glow-pulse-strong {
@@ -451,10 +788,21 @@ h1, h2, h3, h4 {
 }
 
 @keyframes pop-float {
-  0% { transform: scale(0.5) translateY(20px); opacity: 0; }
-  60% { transform: scale(1.08) translateY(-4px); opacity: 1; }
-  80% { transform: scale(0.98) translateY(2px); }
-  100% { transform: scale(1) translateY(0); opacity: 1; }
+  0% {
+    transform: scale(0.5) translateY(20px);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08) translateY(-4px);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.98) translateY(2px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
 .animate-pop-float {
@@ -462,9 +810,16 @@ h1, h2, h3, h4 {
 }
 
 @keyframes wiggle-slow {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-3deg); }
-  75% { transform: rotate(3deg); }
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-3deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
 }
 
 .animate-wiggle-slow {
@@ -472,8 +827,14 @@ h1, h2, h3, h4 {
 }
 
 @keyframes slide-in-left {
-  0% { transform: translateX(-40px); opacity: 0; }
-  100% { transform: translateX(0); opacity: 1; }
+  0% {
+    transform: translateX(-40px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .animate-slide-in-left {
@@ -481,8 +842,14 @@ h1, h2, h3, h4 {
 }
 
 @keyframes slide-in-right {
-  0% { transform: translateX(40px); opacity: 0; }
-  100% { transform: translateX(0); opacity: 1; }
+  0% {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .animate-slide-in-right {
@@ -490,9 +857,18 @@ h1, h2, h3, h4 {
 }
 
 @keyframes scale-in {
-  0% { transform: scale(0); opacity: 0; }
-  70% { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .animate-scale-in {
@@ -500,8 +876,13 @@ h1, h2, h3, h4 {
 }
 
 @keyframes float-gentle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
 .animate-float-gentle {
@@ -509,8 +890,12 @@ h1, h2, h3, h4 {
 }
 
 @keyframes dash-march {
-  0% { stroke-dashoffset: 0; }
-  100% { stroke-dashoffset: -20; }
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -20;
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -525,17 +910,25 @@ h1, h2, h3, h4 {
 }
 
 /* Inputs — proper focus/error/disabled states */
-input, select, textarea {
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+input,
+select,
+textarea {
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   border-color: oklch(0.7 0.18 235) !important;
   box-shadow: 0 0 0 3px oklch(0.7 0.18 235 / 0.15);
   outline: none;
 }
 
-input:disabled, select:disabled, textarea:disabled {
+input:disabled,
+select:disabled,
+textarea:disabled {
   background: oklch(0.95 0.02 230);
   color: oklch(0.45 0.05 260);
   cursor: not-allowed;
@@ -550,7 +943,9 @@ input:disabled, select:disabled, textarea:disabled {
   box-shadow:
     inset 0 1px 0 0 oklch(1 0 0 / 0.7),
     0 4px 16px -4px oklch(0.5 0.1 260 / 0.12);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .glass-card:hover {
@@ -562,13 +957,17 @@ input:disabled, select:disabled, textarea:disabled {
 
 /* Interactive card — clickable cards with hover feedback */
 .interactive-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   cursor: pointer;
 }
 
 .interactive-card:hover {
   transform: translateY(-3px) scale(1.01);
-  box-shadow: var(--shadow-pop), 0 8px 24px -6px oklch(0.5 0.1 260 / 0.2);
+  box-shadow:
+    var(--shadow-pop),
+    0 8px 24px -6px oklch(0.5 0.1 260 / 0.2);
 }
 
 .interactive-card:active {
@@ -683,33 +1082,37 @@ input:disabled, select:disabled, textarea:disabled {
   body {
     -webkit-text-size-adjust: 100%;
   }
-  
+
   /* Reduce shadow intensity on mobile for performance */
   .shadow-pop {
-    box-shadow: 2px 2px 0 oklch(0.7 0.18 235 / 0.6), 0 8px 20px -8px oklch(0.5 0.15 260 / 0.2);
+    box-shadow:
+      2px 2px 0 oklch(0.7 0.18 235 / 0.6),
+      0 8px 20px -8px oklch(0.5 0.15 260 / 0.2);
   }
-  
+
   /* Smaller border radius on mobile */
   .rounded-\[2rem\] {
     border-radius: 1.25rem;
   }
-  
+
   /* Prevent horizontal overflow */
   .overflow-hidden {
     overflow: hidden;
   }
-  
+
   /* Touch-friendly tap targets — minimum 44px */
-  button, a, [role="button"] {
+  button,
+  a,
+  [role="button"] {
     min-height: 44px;
   }
-  
+
   /* Compact headers on mobile */
   h1 {
     font-size: 1.5rem;
     line-height: 1.2;
   }
-  
+
   h2 {
     font-size: 1.25rem;
     line-height: 1.25;
@@ -719,14 +1122,15 @@ input:disabled, select:disabled, textarea:disabled {
 /* Tablet breakpoint */
 @media (min-width: 641px) and (max-width: 1024px) {
   .shadow-pop {
-    box-shadow: 3px 3px 0 oklch(0.7 0.18 235 / 0.7), 0 10px 30px -8px oklch(0.5 0.15 260 / 0.22);
+    box-shadow:
+      3px 3px 0 oklch(0.7 0.18 235 / 0.7),
+      0 10px 30px -8px oklch(0.5 0.15 260 / 0.22);
   }
 }
 
 /* Ensure images don't overflow */
 img {
   max-width: 100%;
-  height: auto;
 }
 
 /* Smooth scrolling on mobile */
@@ -735,7 +1139,7 @@ img {
     transform: none;
     box-shadow: var(--shadow-soft);
   }
-  
+
   .interactive-card:active {
     transform: scale(0.98);
   }
@@ -787,12 +1191,27 @@ img {
    ═══════════════════════════════════════════ */
 
 /* Spacing scale — consistent vertical rhythm */
-.space-section > * + * { margin-top: 2rem; }
-.space-component > * + * { margin-top: 1rem; }
-.space-element > * + * { margin-top: 0.5rem; }
+.space-section > * + * {
+  margin-top: 2rem;
+}
+.space-component > * + * {
+  margin-top: 1rem;
+}
+.space-element > * + * {
+  margin-top: 0.5rem;
+}
 @media print {
-  .no-print { display: none !important; }
-  .print-only { display: block !important; }
-  body { background: white !important; }
-  .shadow-pop, .shadow-soft { box-shadow: none !important; }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  body {
+    background: white !important;
+  }
+  .shadow-pop,
+  .shadow-soft {
+    box-shadow: none !important;
+  }
 }
