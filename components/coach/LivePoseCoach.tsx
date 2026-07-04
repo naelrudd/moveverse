@@ -23,9 +23,9 @@ export function LivePoseCoach({ state, videoRef, canvasRef, levelConfig }: LiveP
 
   return (
     <div className={`
-      relative
+      relative w-full h-full
       ${isFullScreen
-        ? 'fixed inset-0 z-50 bg-black flex flex-col'
+        ? 'bg-black flex flex-col'
         : 'rounded-[2rem] overflow-hidden border-4 border-white/10 bg-foreground/90 text-white'
       }
     `}>

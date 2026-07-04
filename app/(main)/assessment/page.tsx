@@ -1,6 +1,7 @@
 'use client';
 
-import { Suspense, useState, useMemo, useCallback } from 'react';
+import { Suspense, useState, useMemo, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -354,11 +355,16 @@ function AssessmentContent() {
 
   return (
     <div className={`min-h-screen relative ${coach.isFullScreen ? '' : 'bg-theme-tiger'}`}>
-      {/* Full Screen Mode */}
-      {coach.isFullScreen ? (
-        <LivePoseCoach state={coach} videoRef={coach.videoRef} canvasRef={coach.canvasRef} levelConfig={coach.levelConfig} />
-      ) : (
-        /* Split View Mode */
+      {/* Full Screen Mode — portal ke body, bypass header/footer */}
+      {coach.isFullScreen && typeof window !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] bg-black flex flex-col">
+          <LivePoseCoach state={coach} videoRef={coach.videoRef} canvasRef={coach.canvasRef} levelConfig={coach.levelConfig} />
+        </div>,
+        document.body
+      )}
+
+      {/* Split View Mode — only when NOT fullscreen */}
+      {!coach.isFullScreen && (
         <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-10 relative">
           <ConfettiBurst />
           <SparkleDots count={18} />
