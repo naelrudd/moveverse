@@ -57,7 +57,7 @@ export default function WorldDetailPage() {
                 <div className="mt-2 text-xs font-bold text-accent bg-accent/5 rounded-xl px-3 py-1.5">🎯 {a.objective}</div>
                 <div className="mt-3 flex items-center justify-between">
                   <span className="text-xs font-bold text-accent">+{a.xpReward} XP</span>
-                  <Link href={`/assessment?activity=${a.id}&objective=${encodeURIComponent(a.objective)}&world=${encodeURIComponent(world.name)}`} className="rounded-full font-bold gradient-sunset text-white border-0 px-4 py-2 text-sm inline-block">
+                  <Link href={`/assessment?activity=${a.id}&objective=${encodeURIComponent(a.objective)}&world=${encodeURIComponent(world.name)}&worldId=${world.id}`} className="rounded-full font-bold gradient-sunset text-white border-0 px-4 py-2 text-sm inline-block">
                     {earned ? 'Main Lagi' : 'Mulai'}
                   </Link>
                 </div>
