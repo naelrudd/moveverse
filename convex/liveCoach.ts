@@ -145,13 +145,19 @@ export const logMovementSession = mutation({
   },
 });
 
-/** Get live movement stats for a user */
+/** Get live movement stats for a user by Clerk ID */
 export const getLiveStats = query({
-  args: { userId: v.id("users") },
+  args: { userId: v.string() },
   handler: async (ctx, { userId }) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+      .first();
+    if (!user) return {};
+
     const movements = await ctx.db
       .query("movements")
-      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .withIndex("by_userId", (q) => q.eq("userId", user._id))
       .order("desc")
       .take(20);
 
@@ -173,13 +179,19 @@ export const getLiveStats = query({
   },
 });
 
-/** Get session history for a user */
+/** Get session history for a user by Clerk ID */
 export const getSessionHistory = query({
-  args: { userId: v.id("users"), limit: v.optional(v.number()) },
+  args: { userId: v.string(), limit: v.optional(v.number()) },
   handler: async (ctx, { userId, limit: lim }) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+      .first();
+    if (!user) return [];
+
     const movements = await ctx.db
       .query("movements")
-      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .withIndex("by_userId", (q) => q.eq("userId", user._id))
       .order("desc")
       .take(lim ?? 50);
 
