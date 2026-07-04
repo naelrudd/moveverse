@@ -74,10 +74,10 @@ export function MovementSelector({ activity, level, onActivityChange, onLevelCha
           <button
             key={lv.level}
             onClick={() => onLevelChange(lv.level)}
-            className={`px-3 py-1.5 rounded-full font-bold text-xs whitespace-nowrap transition-all ${
+            className={`px-3 py-1.5 rounded-full font-bold text-xs whitespace-nowrap transition-all border-2 ${
               level === lv.level
-                ? 'gradient-grass text-white shadow-pop scale-105'
-                : 'bg-muted hover:bg-green-100'
+                ? 'gradient-grass text-white shadow-pop scale-110 border-green-500 ring-2 ring-green-300'
+                : 'bg-white text-gray-600 border-gray-200 hover:border-green-300 hover:bg-green-50 hover:scale-105'
             }`}
           >
             Lv {lv.level}
@@ -85,14 +85,10 @@ export function MovementSelector({ activity, level, onActivityChange, onLevelCha
         ))}
       </div>
 
-      {/* Swipe hint */}
-      <div className="text-[10px] text-muted-foreground text-center font-medium">
-        👆 Geser kiri/kanan untuk ganti gerakan
-      </div>
-
-      {/* Level requirement */}
-      <div className="text-xs font-bold text-muted-foreground bg-white/50 rounded-xl px-3 py-2 border-2 border-muted">
-        🎯 {MOVEMENT_LEVELS[activity]?.[level - 1]?.requirement ?? 'Pilih level'}
+      {/* Level requirement + swipe hint */}
+      <div className="flex items-center justify-between text-[10px] font-bold text-muted-foreground bg-muted/50 rounded-lg px-2.5 py-1.5">
+        <span>🎯 {MOVEMENT_LEVELS[activity]?.[level - 1]?.requirement ?? 'Pilih level'}</span>
+        <span className="opacity-60">👆 Geser kiri/kanan</span>
       </div>
     </div>
   );

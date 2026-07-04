@@ -10,9 +10,6 @@ import { useLiveCoachEngine, type SessionResult } from '@/hooks/useLiveCoachEngi
 import { type MovementType, movementToPhysicalLiteracy } from '@/lib/fms-scoring';
 import { MovementSelector } from '@/components/coach/MovementSelector';
 import { LivePoseCoach } from '@/components/coach/LivePoseCoach';
-import { ScoreHistoryChart } from '@/components/coach/ScoreHistoryChart';
-import { Leaderboard } from '@/components/coach/Leaderboard';
-import { ChallengeMode } from '@/components/coach/ChallengeMode';
 
 /* ─── confetti burst ─── */
 const seed = (i: number) => {
@@ -226,72 +223,6 @@ function SessionComplete({ result, newBadges, onDismiss }: { result: SessionResu
           ✨ Kembali ke Coach
         </button>
       </div>
-    </div>
-  );
-}
-
-/* ─── Session History Component ─── */
-function SessionHistory({ userId }: { userId: string }) {
-  const [expanded, setExpanded] = useState(false);
-  const history = useQuery(
-    api.liveCoach.getSessionHistory,
-    expanded ? { userId: userId as any, limit: 20 } : 'skip'
-  );
-
-  const exportCSV = useCallback(() => {
-    if (!history?.length) return;
-    const header = 'Aktivitas,Level,Skor,Durasi (detik),Tanggal\n';
-    const rows = history.map((h) =>
-      `${h.activity},${h.level},${h.score},${h.duration.toFixed(0)},${new Date(h.timestamp).toLocaleDateString('id-ID')}`
-    ).join('\n');
-    const blob = new Blob([header + rows], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `riwayat-coach-${new Date().toISOString().slice(0,10)}.csv`;
-    a.click(); URL.revokeObjectURL(url);
-  }, [history]);
-
-  return (
-    <div className="bg-white rounded-2xl p-4 shadow-soft border-2 border-purple-200 mb-4">
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full text-left font-bold text-xs flex items-center gap-2"
-      >
-        📊 Riwayat Sesi {expanded ? '▲' : '▼'}
-      </button>
-      {expanded && (
-        <div className="mt-3 space-y-2">
-          {history && history.length > 0 ? (
-            history.map((h) => (
-              <div key={h._id} className="flex items-center gap-3 p-2 bg-purple-50 rounded-xl border border-purple-100">
-                <span className="text-xl">
-                  {h.activity === 'menekuk' ? '🦵' : h.activity === 'meliuk' ? '🐍' : h.activity === 'memutar' ? '🌀' : '⚖️'}
-                </span>
-                <div className="flex-1">
-                  <div className="font-bold text-xs capitalize">{h.activity} Lv.{h.level}</div>
-                  <div className="text-[10px] text-muted-foreground">
-                    {new Date(h.timestamp).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="font-bold text-xs text-primary">{h.score}</div>
-                  <div className="text-[10px] text-muted-foreground">{h.duration.toFixed(0)}s</div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-xs text-muted-foreground text-center py-2">Belum ada sesi</p>
-          )}
-          {history && history.length > 0 && (
-            <button
-              onClick={exportCSV}
-              className="w-full mt-2 py-1.5 text-[10px] font-bold bg-purple-50 text-purple-600 rounded-lg border border-purple-200 hover:bg-purple-100 transition-all"
-            >
-              📥 Export CSV
-            </button>
-          )}
-        </div>
-      )}
     </div>
   );
 }
@@ -574,20 +505,20 @@ function AssessmentContent() {
           {role === 'parent' ? (
             <div className="space-y-6 relative">
               <SparkleDots count={10} />
-              <div className="bg-white rounded-[2rem] p-6 shadow-pop border-4 border-amber-200 animate-pop-in relative">
-                <div className="flex items-start gap-4 mb-4 relative z-10">
-                  <div className="w-20 h-20 -mt-1 animate-dance-slow flex-shrink-0 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1.5 shadow-pop overflow-hidden">
+              <div className="bg-white rounded-2xl p-4 shadow-pop border-2 border-amber-200 animate-pop-in relative">
+                <div className="flex items-center gap-3 relative z-10">
+                  <div className="w-14 h-14 animate-dance-slow flex-shrink-0 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-pop overflow-hidden">
                     <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
                   </div>
-                  <div className="bg-primary/10 rounded-2xl rounded-tl-none p-5 flex-1 shadow-soft">
-                    <div className="font-extrabold text-sm text-primary mb-1 flex items-center gap-1">
-                      <span className="animate-sparkle">✨</span> MOVA berkata
+                  <div className="bg-primary/10 rounded-xl rounded-tl-none px-3 py-2 flex-1 shadow-soft">
+                    <div className="font-extrabold text-xs text-primary mb-0.5 flex items-center gap-1">
+                      <span className="animate-sparkle">✨</span> MOVA
                     </div>
-                    <p className="text-sm font-bold leading-relaxed">
+                    <p className="text-xs font-bold leading-snug">
                       {targetName ? (
-                        <><span className="text-lg">Pilih aktivitas di panel kiri untuk melihat analisis {targetName}! 🌟</span></>
+                        <>Pilih aktivitas untuk lihat analisis {targetName}! 🌟</>
                       ) : (
-                        <span className="text-lg">Pilih anak terlebih dahulu! 👶</span>
+                        <>Pilih anak terlebih dahulu! 👶</>
                       )}
                     </p>
                   </div>
@@ -603,18 +534,6 @@ function AssessmentContent() {
                   <SessionComplete result={sessionResult} newBadges={sessionResult.newBadges} onDismiss={() => setSessionResult(null)} />
                 </div>
               )}
-
-              {/* Session History */}
-              {targetUserId && <SessionHistory userId={targetUserId} />}
-
-              {/* Score History Chart */}
-              {targetUserId && <ScoreHistoryChart userId={targetUserId} />}
-
-              {/* Leaderboard */}
-              <Leaderboard activity={activity} />
-
-              {/* Challenge Mode */}
-              {targetUserId && <ChallengeMode currentUserId={targetUserId} activity={activity} />}
 
               {/* Movement Selector */}
               <div className="bg-white rounded-[2rem] p-4 shadow-pop border-4 border-sky-200 mb-4 animate-slide-up">
@@ -643,21 +562,20 @@ function AssessmentContent() {
                   <SparkleDots count={6} />
 
                   {/* MOVA bubble */}
-                  <div className="bg-white rounded-[2rem] p-5 shadow-pop border-4 border-amber-200 animate-pop-in relative overflow-hidden">
-                    <SparkleDots count={4} />
-                    <div className="flex items-start gap-3 mb-3 relative z-10">
-                      <div className="w-16 h-16 -mt-1 animate-wobble flex-shrink-0 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-pop overflow-hidden">
+                  <div className="bg-white rounded-2xl p-3 shadow-pop border-2 border-amber-200 animate-pop-in relative overflow-hidden">
+                    <div className="flex items-center gap-2 relative z-10">
+                      <div className="w-10 h-10 animate-wobble flex-shrink-0 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-0.5 shadow-pop overflow-hidden">
                         <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
                       </div>
-                      <div className="bg-primary/10 rounded-2xl rounded-tl-none p-4 flex-1 shadow-soft">
-                        <div className="font-extrabold text-xs text-primary mb-1 flex items-center gap-1">
-                          <span className="animate-sparkle">✨</span> MOVA berkata
+                      <div className="bg-primary/10 rounded-xl rounded-tl-none px-3 py-2 flex-1 shadow-soft">
+                        <div className="font-extrabold text-[10px] text-primary mb-0.5 flex items-center gap-1">
+                          <span className="animate-sparkle">✨</span> MOVA
                         </div>
-                        <p className="text-xs font-bold leading-relaxed">
+                        <p className="text-[11px] font-bold leading-snug">
                           {role === 'teacher' ? (
-                            <>Rekaman untuk {targetName ?? '...'}! 🎬 Pilih gerakan & level, lalu mulai! 💪</>
+                            <>Rekaman untuk {targetName ?? '...'}! 🎬 Pilih gerakan & mulai! 💪</>
                           ) : (
-                            <>Siap latihan {activity} Lv.{level}? Tekan Mulai Rekam ya! 🌟</>
+                            <>Siap latihan {activity} Lv.{level}? Tekan Mulai! 🌟</>
                           )}
                         </p>
                       </div>

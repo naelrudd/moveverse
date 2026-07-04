@@ -1,11 +1,11 @@
 'use client';
 
-import { Camera, Maximize2, Minimize2, Pause, Play, Square, Loader2 } from 'lucide-react';
+import { Camera, Maximize2, Minimize2, Pause, Play, Square, Loader2, AlertTriangle, Move } from 'lucide-react';
 import type { CoachState, CoachActions } from '@/hooks/useLiveCoachEngine';
 import { RealTimeMetrics } from './RealTimeMetrics';
 import type { LevelThreshold } from '@/lib/fms-scoring';
 
-// ── LivePoseCoach: camera + skeleton overlay + controls + metrics ──
+// ── LivePoseCoach: camera + silhouette overlay + body detection + controls ──
 
 interface LivePoseCoachProps {
   state: CoachState & CoachActions;
@@ -38,7 +38,7 @@ export function LivePoseCoach({ state, videoRef, canvasRef, levelConfig }: LiveP
           playsInline
           muted
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ transform: 'scaleX(-1)' }} // mirror
+          style={{ transform: 'scaleX(-1)' }}
         />
 
         {/* Skeleton canvas overlay */}
@@ -47,6 +47,49 @@ export function LivePoseCoach({ state, videoRef, canvasRef, levelConfig }: LiveP
           className="absolute inset-0 w-full h-full"
           style={{ transform: 'scaleX(-1)' }}
         />
+
+        {/* Body silhouette guide — shows user where to stand */}
+        {!isRecording && !isLoading && !error && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <svg
+              viewBox="0 0 200 400"
+              className="h-[85%] opacity-20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              {/* Head */}
+              <circle cx="100" cy="50" r="25" />
+              {/* Neck */}
+              <line x1="100" y1="75" x2="100" y2="95" />
+              {/* Shoulders */}
+              <line x1="55" y1="110" x2="145" y2="110" />
+              {/* Left arm */}
+              <line x1="55" y1="110" x2="35" y2="170" />
+              <line x1="35" y1="170" x2="25" y2="230" />
+              {/* Right arm */}
+              <line x1="145" y1="110" x2="165" y2="170" />
+              <line x1="165" y1="170" x2="175" y2="230" />
+              {/* Torso */}
+              <line x1="100" y1="95" x2="100" y2="230" />
+              {/* Hips */}
+              <line x1="70" y1="230" x2="130" y2="230" />
+              {/* Left leg */}
+              <line x1="70" y1="230" x2="60" y2="310" />
+              <line x1="60" y1="310" x2="55" y2="390" />
+              {/* Right leg */}
+              <line x1="130" y1="230" x2="140" y2="310" />
+              <line x1="140" y1="310" x2="145" y2="390" />
+            </svg>
+            <div className="absolute bottom-4 left-0 right-0 text-center">
+              <p className="text-xs font-bold text-white/70 bg-black/30 backdrop-blur-sm inline-block px-3 py-1.5 rounded-full">
+                <Move className="w-3 h-3 inline mr-1" />
+                Mundur hingga seluruh tubuh terlihat
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Loading skeleton */}
         {isLoading && (
@@ -71,7 +114,7 @@ export function LivePoseCoach({ state, videoRef, canvasRef, levelConfig }: LiveP
         {/* Live badge */}
         {isRecording && !isPaused && (
           <div className="absolute top-3 left-3 bg-red-500 text-xs font-bold px-2.5 py-1 rounded-full animate-pulse shadow-pop">
-            ● REC {isPaused ? 'PAUSED' : ''}
+            ● REC
           </div>
         )}
 

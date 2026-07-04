@@ -1,166 +1,92 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
-
+import { Suspense } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import {
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip,
-  ResponsiveContainer, Legend,
-} from 'recharts';
+import { ScoreHistoryChart } from '@/components/coach/ScoreHistoryChart';
+import { Leaderboard } from '@/components/coach/Leaderboard';
+import { ChallengeMode } from '@/components/coach/ChallengeMode';
+import type { MovementType } from '@/lib/fms-scoring';
+import { useState } from 'react';
 
-const weeklyPL = [
-  { w: 'W1', pl: 58, balance: 62, agility: 55, strength: 58 },
-  { w: 'W2', pl: 61, balance: 64, agility: 58, strength: 61 },
-  { w: 'W3', pl: 63, balance: 66, agility: 60, strength: 63 },
-  { w: 'W4', pl: 65, balance: 68, agility: 62, strength: 65 },
-  { w: 'W5', pl: 68, balance: 70, agility: 65, strength: 68 },
-  { w: 'W6', pl: 71, balance: 73, agility: 68, strength: 71 },
+// ── Stats Page: History + Chart + Leaderboard + Challenge ──
+
+const ACTIVITIES: { id: MovementType; label: string; emoji: string }[] = [
+  { id: 'menekuk', label: 'Menekuk', emoji: '🦵' },
+  { id: 'meliuk', label: 'Meliuk', emoji: '🐍' },
+  { id: 'memutar', label: 'Memutar', emoji: '🌀' },
+  { id: 'keseimbangan', label: 'Keseimbangan', emoji: '⚖️' },
 ];
 
-const skillBreakdown = [
-  { skill: 'Keseimbangan', score: 73, avg: 65, change: '+8' },
-  { skill: 'Kelincahan', score: 68, avg: 60, change: '+8' },
-  { skill: 'Kekuatan', score: 71, avg: 62, change: '+9' },
-  { skill: 'Koordinasi', score: 65, avg: 58, change: '+7' },
-  { skill: 'Fleksibilitas', score: 62, avg: 55, change: '+7' },
-];
-
-const gameStats = [
-  { name: 'Move Dash', played: 14, avgScore: 82, best: 95 },
-  { name: 'Balance Beam', played: 11, avgScore: 75, best: 88 },
-  { name: 'Jump Quest', played: 9, avgScore: 70, best: 85 },
-];
-
-const monthlyQuest = [
-  { m: 'Jan', completed: 12, missed: 3 },
-  { m: 'Feb', completed: 15, missed: 2 },
-  { m: 'Mar', completed: 18, missed: 1 },
-  { m: 'Apr', completed: 14, missed: 4 },
-  { m: 'Mei', completed: 19, missed: 2 },
-  { m: 'Jun', completed: 16, missed: 1 },
-];
-
-export default function StudentStatsPage() {
-  const { userId } = useAuth();
-  const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
+function SessionHistory({ userId }: { userId: string }) {
+  const history = useQuery(api.liveCoach.getSessionHistory, { userId: userId as any, limit: 50 });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
-      {/* Header */}
-      <div className="bg-white rounded-[2rem] p-6 shadow-pop border-4 border-white animate-pop-in">
-        <div className="flex items-center gap-4">
-          <span className="text-4xl">📊</span>
-          <div>
-            <div className="text-xs font-bold text-muted-foreground">Statistik Personal</div>
-            <h1 className="text-3xl font-extrabold">Progress & Statistik</h1>
-            <p className="text-sm text-foreground/60">Lacak perkembangan motorik dan pencapaianmu</p>
-          </div>
-          <div className="ml-auto text-right">
-            <div className="text-2xl font-extrabold text-blue-600">{userData?.level ?? 1} lvl</div>
-            <div className="text-xs text-muted-foreground">Level saat ini</div>
-          </div>
-        </div>
+    <div className="bg-white rounded-2xl p-4 shadow-soft border-2 border-purple-200">
+      <h3 className="font-extrabold text-xs flex items-center gap-2 mb-3">📋 Riwayat Sesi</h3>
+      <div className="space-y-2 max-h-80 overflow-y-auto">
+        {history && history.length > 0 ? (
+          history.map((h) => (
+            <div key={h._id} className="flex items-center gap-3 p-2 bg-purple-50 rounded-xl border border-purple-100">
+              <span className="text-xl">
+                {h.activity === 'menekuk' ? '🦵' : h.activity === 'meliuk' ? '🐍' : h.activity === 'memutar' ? '🌀' : '⚖️'}
+              </span>
+              <div className="flex-1">
+                <div className="font-bold text-xs capitalize">{h.activity} Lv.{h.level}</div>
+                <div className="text-[10px] text-muted-foreground">
+                  {new Date(h.timestamp).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="font-bold text-xs text-primary">{h.score}</div>
+                <div className="text-[10px] text-muted-foreground">{h.duration.toFixed(0)}s</div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-xs text-muted-foreground text-center py-4">Belum ada sesi</p>
+        )}
       </div>
+    </div>
+  );
+}
 
-      {/* Top metrics */}
-      <div className="grid grid-cols-4 gap-4">
-        {[
-          { l: 'Total XP', v: (userData?.xp ?? 2450).toLocaleString(), c: 'from-purple-500 to-pink-600' },
-          { l: 'PL Score', v: '71', c: 'from-blue-500 to-cyan-600' },
-          { l: 'Quest Selesai', v: '94/108', c: 'from-green-500 to-emerald-600' },
-          { l: 'Hari Aktif', v: '23', c: 'from-amber-500 to-orange-600' },
-        ].map((s, i) => (
-          <div key={i} className={`bg-gradient-to-br ${s.c} text-white rounded-2xl p-4 shadow-soft text-center`}>
-            <div className="text-2xl font-extrabold">{s.v}</div>
-            <div className="text-xs font-bold opacity-80 mt-1">{s.l}</div>
-          </div>
+export default function StatsPage() {
+  const { userId } = useAuth();
+  const [activity, setActivity] = useState<MovementType>('menekuk');
+
+  if (!userId) return null;
+
+  return (
+    <div className="max-w-4xl mx-auto p-4 space-y-4">
+      <h1 className="font-extrabold text-lg">📊 Statistik & Kompetisi</h1>
+
+      {/* Activity filter */}
+      <div className="flex gap-2 overflow-x-auto no-scrollbar">
+        {ACTIVITIES.map((a) => (
+          <button
+            key={a.id}
+            onClick={() => setActivity(a.id)}
+            className={`px-4 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all ${
+              activity === a.id
+                ? 'gradient-sky text-white shadow-pop scale-105'
+                : 'bg-muted hover:bg-sky-100'
+            }`}
+          >
+            {a.emoji} {a.label}
+          </button>
         ))}
       </div>
 
-      {/* Charts row */}
-      <div className="grid lg:grid-cols-2 gap-5">
-        {/* PL Trend */}
-        <div className="bg-white rounded-3xl p-5 shadow-soft">
-          <h3 className="font-extrabold text-sm mb-4">📈 Trend Physical Literacy (6 Minggu)</h3>
-          <div className="h-52">
-            <ResponsiveContainer>
-              <LineChart data={weeklyPL}>
-                <XAxis dataKey="w" tick={{ fontSize: 11, fontWeight: 700 }} />
-                <YAxis domain={[50, 90]} tick={{ fontSize: 10 }} />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="pl" stroke="#6366f1" strokeWidth={3} dot={{ r: 4 }} name="Skor PL" />
-                <Line type="monotone" dataKey="balance" stroke="#22d3ee" strokeWidth={2} strokeDasharray="5 5" name="Keseimbangan" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Skill breakdown */}
-        <div className="bg-white rounded-3xl p-5 shadow-soft">
-          <h3 className="font-extrabold text-sm mb-4">🎯 Rincian per Skill</h3>
-          <div className="space-y-3">
-            {skillBreakdown.map((s) => (
-              <div key={s.skill} className="flex items-center gap-3">
-                <span className="w-24 text-sm font-bold">{s.skill}</span>
-                <div className="flex-1 h-4 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full" style={{ width: `${s.score}%` }} />
-                </div>
-                <span className="font-extrabold w-8 text-right">{s.score}</span>
-                <span className="text-xs font-bold text-green-600 w-8">{s.change}</span>
-              </div>
-            ))}
-          </div>
-          <div className="mt-3 pt-3 border-t border-border">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span className="w-4 h-4 bg-blue-500 rounded"></span>
-              Skor kamu &nbsp;|&nbsp;
-              <span className="w-4 h-4 bg-muted rounded border"></span>
-              Rata-rata kelas
-            </div>
-          </div>
-        </div>
+      <div className="grid md:grid-cols-2 gap-4">
+        <SessionHistory userId={userId} />
+        <ScoreHistoryChart userId={userId} />
       </div>
 
-      {/* Game stats + Quest */}
-      <div className="grid lg:grid-cols-2 gap-5">
-        {/* Game performance */}
-        <div className="bg-white rounded-3xl p-5 shadow-soft">
-          <h3 className="font-extrabold text-sm mb-4">🎮 Performa Game</h3>
-          <div className="space-y-3">
-            {gameStats.map((g) => (
-              <div key={g.name} className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-lg">🎮</div>
-                <div className="flex-1">
-                  <div className="font-bold text-sm">{g.name}</div>
-                  <div className="text-xs text-muted-foreground">Main {g.played}x · Terbaik: {g.best}</div>
-                </div>
-                <div className="text-right">
-                  <div className="font-extrabold">{g.avgScore}</div>
-                  <div className="text-[10px] text-muted-foreground">rata-rata</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Monthly quest */}
-        <div className="bg-white rounded-3xl p-5 shadow-soft">
-          <h3 className="font-extrabold text-sm mb-4">📋 Quest per Bulan</h3>
-          <div className="h-40">
-            <ResponsiveContainer>
-              <BarChart data={monthlyQuest}>
-                <XAxis dataKey="m" tick={{ fontSize: 10, fontWeight: 700 }} />
-                <YAxis tick={{ fontSize: 10 }} />
-                <Tooltip />
-                <Bar dataKey="completed" name="Selesai" fill="#22c55e" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="missed" name="Terlewat" fill="#ef4444" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+      <div className="grid md:grid-cols-2 gap-4">
+        <Leaderboard activity={activity} />
+        <ChallengeMode currentUserId={userId} activity={activity} />
       </div>
     </div>
   );
