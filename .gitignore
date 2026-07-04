@@ -22,15 +22,19 @@
 
 # misc
 .DS_Store
+Thumbs.db
+Desktop.ini
 *.pem
 
 # debug
+*.log
+*.heapsnapshot
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
 
 # vercel
@@ -40,13 +44,28 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-lovable-project-c136ee78
-.claude
-.agents
-CAMERA_SETUP.md
+# Convex generated
+convex/_generated/
+
+# AI agent files
+.cursor/
+.kiro/
+.opencode/
+.hermes/
+.claude/
+.agents/
+CLAUDE.md
 AGENTS.md
+CAMERA_SETUP.md
 MEDIAPIPE_RESEARCH.md
+.commandcode
+
+# Editor
+.vscode/
+.idea/
+
+# Project-specific
+lovable-project-c136ee78
 .tabbit
 tabbit
 docs
-.commandcode
