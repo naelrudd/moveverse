@@ -61,7 +61,7 @@ Referensi: baca ini kalau mulai bias
 ### Prioritas Tinggi
 - [x] Daily quest integration (otomatis update daily_quests + daily_quest_completions)
 - [x] History session list (lihat semua sesi sebelumnya + detail)
-- [ ] Share session result ke social media (screenshot/URL)
+- [x] Share session result ke social media (screenshot/URL)
 
 ### Prioritas Sedang
 - [x] Gesture-based controls (swipe untuk next movement)
@@ -70,13 +70,13 @@ Referensi: baca ini kalau mulai bias
 - [x] Achievement badge otomatis (mencapai X rep atau skor sempurna)
 
 ### Prioritas Rendah
-- [ ] Leaderboard kelas untuk gerakan tertentu
-- [ ] Challenge mode (ajak teman, skor tertinggi menang)
+- [x] Leaderboard kelas untuk gerakan tertentu
+- [x] Challenge mode (ajak teman, skor tertinggi menang)
 ### Convex Next Steps
 - [x] Tambah field `level` ke movements table
 - [x] Tambah field `activity` ke movements table
 - [x] Index optimization untuk live monitoring queries
-- [ ] Tambah daily quest integration (otomatis update daily_quests)
+- [x] Tambah daily quest integration (otomatis update daily_quests)
 ### Flutter Migration Notes
 - [ ] Ganti navigator.mediaDevices → CameraController + MediaPipe plugin
 - [ ] Ganti useMediaPipePose → onResults callback dari Flutter plugin

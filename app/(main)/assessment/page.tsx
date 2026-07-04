@@ -11,6 +11,8 @@ import { type MovementType, movementToPhysicalLiteracy } from '@/lib/fms-scoring
 import { MovementSelector } from '@/components/coach/MovementSelector';
 import { LivePoseCoach } from '@/components/coach/LivePoseCoach';
 import { ScoreHistoryChart } from '@/components/coach/ScoreHistoryChart';
+import { Leaderboard } from '@/components/coach/Leaderboard';
+import { ChallengeMode } from '@/components/coach/ChallengeMode';
 
 /* ─── confetti burst ─── */
 const seed = (i: number) => {
@@ -202,6 +204,20 @@ function SessionComplete({ result, newBadges, onDismiss }: { result: SessionResu
             </p>
           </div>
         </div>
+
+        <button
+          onClick={() => {
+            const text = `🎮 MOVEVERSE — Sesi Latihan!\n${result.activity} Lv.${result.level}\n⭐ Skor: ${result.avgScore} | 🔄 Rep: ${result.reps} | ⏱️ ${result.duration.toFixed(0)}s\n${result.newBadges?.length ? '🏆 ' + result.newBadges.join(', ') : ''}\n\n#MOVEVERSE #PJOKDigital`;
+            if (navigator.share) {
+              navigator.share({ title: 'MOVEVERSE', text }).catch(() => {});
+            } else {
+              navigator.clipboard.writeText(text).then(() => alert('Disalin ke clipboard! 📋'));
+            }
+          }}
+          className="w-full rounded-full font-bold bg-white text-sky-600 border-2 border-sky-300 h-11 flex items-center justify-center shadow-soft transition-all hover:scale-105 active:scale-95 mb-2"
+        >
+          📤 Bagikan Hasil
+        </button>
 
         <button
           onClick={onDismiss}
@@ -593,6 +609,12 @@ function AssessmentContent() {
 
               {/* Score History Chart */}
               {targetUserId && <ScoreHistoryChart userId={targetUserId} />}
+
+              {/* Leaderboard */}
+              <Leaderboard activity={activity} />
+
+              {/* Challenge Mode */}
+              {targetUserId && <ChallengeMode currentUserId={targetUserId} activity={activity} />}
 
               {/* Movement Selector */}
               <div className="bg-white rounded-[2rem] p-4 shadow-pop border-4 border-sky-200 mb-4 animate-slide-up">

@@ -193,3 +193,41 @@ export const getSessionHistory = query({
     }));
   },
 });
+
+/** Leaderboard: top students by best score per activity */
+export const getLeaderboard = query({
+  args: {
+    activity: v.string(),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, { activity, limit: lim }) => {
+    const movements = await ctx.db
+      .query("movements")
+      .order("desc")
+      .take(500); // fetch recent, group in memory
+
+    // Group by userId, keep best score per activity
+    const bestByUser = new Map<string, { userId: string; score: number; level: number; timestamp: number; userName: string }>();
+
+    for (const m of movements) {
+      const act = m.activity ?? m.activityId.split("_")[0];
+      if (act !== activity) continue;
+
+      const existing = bestByUser.get(m.userId);
+      if (!existing || m.score > existing.score) {
+        const user = await ctx.db.get(m.userId);
+        bestByUser.set(m.userId, {
+          userId: m.userId,
+          score: m.score,
+          level: m.level ?? parseInt(m.activityId.split("_")[1]?.replace("L", "") ?? "1"),
+          timestamp: m.timestamp,
+          userName: user?.name ?? "Peserta Didik",
+        });
+      }
+    }
+
+    return Array.from(bestByUser.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, lim ?? 10);
+  },
+});
