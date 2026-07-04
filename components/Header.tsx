@@ -41,7 +41,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-white/70 border-b-4 border-primary/20">
-      <div className="flex-1 flex py-6 items-center gap-1 overflow-x-auto no-scrollbar max-w-7xl mx-auto px-4 items-center gap-3 md:gap-6">
+      <div className="flex-1 flex items-center gap-1 overflow-x-auto no-scrollbar max-w-7xl mx-auto px-4 items-center gap-3 md:gap-6">
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <img
             src="/logo.png"
