@@ -1,6 +1,6 @@
 # Live AI Coach — Implementation TODO
 
-Status: MVP DONE (2026-07-04)
+Status: v2 DONE (2026-07-04)
 Referensi: baca ini kalau mulai bias
 
 ---
@@ -27,46 +27,58 @@ Referensi: baca ini kalau mulai bias
 - [x] Start / Pause / Resume / Stop actions
 - [x] Fullscreen toggle
 - [x] Session complete callback
+- [x] Keyboard shortcuts (SPACE=start/stop, ESC=fullscreen exit)
+- [x] Thresholds param (from Convex user preferences)
 
 ### 3. Components
-- [x] LivePoseCoach — camera + canvas overlay + controls + metrics
+- [x] LivePoseCoach — camera + canvas overlay + controls + metrics + loading skeleton
 - [x] MovementSelector — activity tabs + level pills
 - [x] RealTimeMetrics — score gauge + hold timer + reps + MOVA bubble
 
-### 4. Page Refactor (assessment/page.tsx)
-- [x] Split view: 60% camera + 40% panel
+### 4. Page (assessment/page.tsx)
+- [x] Split view: 60% camera + 40% panel (lg:grid-cols-5)
 - [x] Fullscreen toggle (button + ESC)
-- [x] Session complete screen (XP + stats + MOVA message)
+- [x] Session complete screen (XP + stats + radar chart mini + MOVA message)
 - [x] Role-based: student/teacher/parent
 - [x] Activity selector + level selector
+- [x] Audio feedback toggle (sfx per rep complete)
+- [x] Calibration panel (guru only) — adjust threshold per activity/level
+- [x] Live monitor card (guru/orangtua) — physical literacy preview
+- [x] Tips section with keyboard shortcut hint
 
-### 5. Convex (convex/liveCoach.ts)
+### 5. Convex
 - [x] logMovementSession — insert + update physical_literacy + XP
 - [x] getLiveStats — query for per-activity stats
+- [x] getCoachThresholds — read saved thresholds
+- [x] saveCoachThresholds — save guru adjustments
+- [x] getLiveSessionData — live data for monitoring
+- [x] coachThresholds field in users schema
 
 ---
 
 ## 🔲 TODO (Belum Dikerjakan)
 
 ### Prioritas Tinggi
-- [x] Real-time subscription untuk guru/orang tua monitor live
-- [x] Kalibrasi sederhana: tombol "Adjust Threshold" untuk guru
-- [x] Simpan threshold preferences ke Convex user doc
-- [x] Keyboard shortcut: SPACE=start/stop, ESC=fullscreen exit
+- [ ] Daily quest integration (otomatis update daily_quests + daily_quest_completions)
+- [ ] History session list (lihat semua sesi sebelumnya + detail)
+- [ ] Share session result ke social media (screenshot/URL)
 
 ### Prioritas Sedang
-- [x] Loading skeleton saat camera permission (bukan spinner)
-- [x] Mobile responsive: split view otomatis stack di HP
 - [ ] Gesture-based controls (swipe untuk next movement)
-- [x] Audio feedback toggle (sfx untuk rep complete)
-- [x] Radar chart mini di session complete
+- [ ] Export session data sebagai CSV/PDF
+- [ ] Score history chart (grafik perkembangan per gerakan)
+- [ ] Achievement badge otomatis (mencapai X rep atau skor sempurna)
 
 ### Prioritas Rendah
 - [ ] Voice feedback (text-to-speech untuk MOVA)
 - [ ] Pet unlock animation (butuh asset tambahan)
-- [ ] Share session result ke social media
-- [ ] History session list (lihat semua sesi sebelumnya)
-- [ ] Export session data sebagai CSV/PDF
+- [ ] Leaderboard kelas untuk gerakan tertentu
+- [ ] Challenge mode (ajak teman, skor tertinggi menang)
+
+### Convex Next Steps
+- [ ] Tambah field `level` ke movements table (saat ini pakai activityId string)
+- [ ] Tambah table `movement_sessions` untuk detailed session log
+- [ ] Index optimization untuk live monitoring queries
 
 ### Flutter Migration Notes
 - [ ] Ganti navigator.mediaDevices → CameraController + MediaPipe plugin
@@ -74,12 +86,6 @@ Referensi: baca ini kalau mulai bias
 - [ ] Ganti canvas drawing → Flutter CustomPainter
 - [ ] Ganti requestAnimationFrame → Timer.periodic atau Stream
 - [ ] Test di Android/iOS dengan MediaPipe Pose
-
-### Convex Next Steps
-- [ ] Tambah field `level` ke movements table (saat ini pakai activityId string)
-- [ ] Tambah table `movement_sessions` untuk detailed session log
-- [x] Tambah real-time subscription untuk live monitoring
-- [ ] Tambah daily quest integration (otomatis update daily_quests)
 
 ---
 
@@ -92,6 +98,9 @@ Referensi: baca ini kalau mulai bias
 - Score = 0-100 per frame, averaged over session
 - Rep = state transition (below threshold → above threshold)
 - Hold = continuous time above threshold
+- Thresholds = per-user Convex preferences (guru can adjust)
+- Audio = Web Audio API oscillator (no assets needed)
+- Radar chart = pure SVG (no chart library)
 
 ## 🎯 Movement Thresholds (per games.md)
 
