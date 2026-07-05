@@ -425,7 +425,7 @@ function AssessmentContent() {
                       onClick={() => setSelectedStudentId(s._id)}
                       className={`px-4 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all hover:animate-bounce-sm ${
                         selectedStudentId === s._id
-                          ? 'gradient-grass text-white shadow-pop scale-105'
+                          ? 'gradient-grass text-white shadow-pop'
                           : 'bg-muted hover:bg-green-100'
                       }`}
                     >
@@ -449,7 +449,7 @@ function AssessmentContent() {
                     onClick={() => setSelectedChildId(c._id)}
                     className={`px-4 py-2 rounded-full font-bold text-sm transition-all hover:animate-bounce-sm ${
                       selectedChildId === c._id
-                        ? 'gradient-sunset text-white shadow-pop scale-105'
+                        ? 'gradient-sunset text-white shadow-pop'
                         : 'bg-muted hover:bg-orange-100'
                     }`}
                   >
