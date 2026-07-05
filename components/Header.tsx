@@ -61,7 +61,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`whitespace-nowrap px-3 py-2 rounded-full text-sm font-bold transition-all ${
+                className={`flex items-center justify-center whitespace-nowrap px-3 py-2 rounded-full text-sm font-bold transition-all ${
                   isActive
                     ? "bg-primary text-primary-foreground shadow-soft scale"
                     : "text-foreground/70 hover:bg-primary/10 hover:text-primary"
@@ -84,7 +84,7 @@ export function Header() {
           )}
           <Link
             href="/profile"
-            className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-bold border-2 transition-all ${
+            className={`flex items-center justify-center whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-bold border-2 transition-all ${
               pathname === "/profile"
                 ? "bg-primary text-primary-foreground border-transparent"
                 : "border-border hover:border-primary/40 text-foreground"
