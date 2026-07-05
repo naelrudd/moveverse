@@ -249,27 +249,68 @@ export default function TeacherDashboard() {
           {studentList.length === 0 ? (
             <p className="text-sm text-muted-foreground font-bold">Belum ada peserta didik di kelas ini.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-muted-foreground border-b text-xs font-extrabold uppercase">
-                    <th className="p-2">Nama</th><th>ID</th><th>Level</th><th>XP</th><th>Badge</th><th>Detail</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {studentList.map((s, i) => (
-                    <tr key={s._id} className={`border-b last:border-0 cursor-pointer transition-all ${selectedStudentId === s._id ? 'bg-primary/5' : 'hover:bg-muted/30 hover:scale-[1.01]'}`} onClick={() => setSelectedStudentId(selectedStudentId === s._id ? null : s._id)} style={{ animationDelay: `${i * 0.05}s` }}>
-                      <td className="p-2 font-bold">{s.name}</td>
-                      <td className="font-mono text-[10px] text-muted-foreground/60" title="ID Peserta Didik">{s._id.slice(-6)}</td>
-                      <td className="font-bold">Lv {s.level}</td>
-                      <td className="font-bold">{s.xp.toLocaleString()}</td>
-                      <td className="font-bold">{s.badges?.length ?? 0}/6</td>
-                      <td><span className="text-xs font-extrabold text-primary px-2 py-1 rounded-full bg-primary/10">{selectedStudentId === s._id ? 'Tutup' : 'Lihat'}</span></td>
+            <>
+              {/* ── Mobile: card list ── */}
+              <div className="md:hidden space-y-3">
+                {studentList.map((s, i) => (
+                  <div
+                    key={s._id}
+                    className={`rounded-2xl p-4 border-2 transition-all cursor-pointer ${
+                      selectedStudentId === s._id ? 'border-primary bg-primary/5' : 'border-border bg-white'
+                    }`}
+                    onClick={() => setSelectedStudentId(selectedStudentId === s._id ? null : s._id)}
+                    style={{ animationDelay: `${i * 0.05}s` }}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-extrabold text-base text-foreground">{s.name}</span>
+                      <span className="text-xs font-extrabold text-primary px-2 py-0.5 rounded-full bg-primary/10">
+                        {selectedStudentId === s._id ? 'Tutup' : 'Lihat'}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-center">
+                      <div className="bg-muted/50 rounded-xl p-2">
+                        <div className="text-xs font-extrabold text-foreground">Lv {s.level}</div>
+                        <div className="text-[9px] text-muted-foreground">Level</div>
+                      </div>
+                      <div className="bg-muted/50 rounded-xl p-2">
+                        <div className="text-xs font-extrabold text-foreground">{s.xp.toLocaleString()}</div>
+                        <div className="text-[9px] text-muted-foreground">XP</div>
+                      </div>
+                      <div className="bg-muted/50 rounded-xl p-2">
+                        <div className="text-xs font-extrabold text-foreground">{s.badges?.length ?? 0}/6</div>
+                        <div className="text-[9px] text-muted-foreground">Badge</div>
+                      </div>
+                    </div>
+                    <div className="text-[9px] font-mono text-muted-foreground/50 mt-2 text-right">
+                      ID: {s._id.slice(-6)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* ── Desktop: table ── */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-muted-foreground border-b text-xs font-extrabold uppercase">
+                      <th className="p-2">Nama</th><th>ID</th><th>Level</th><th>XP</th><th>Badge</th><th>Detail</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {studentList.map((s, i) => (
+                      <tr key={s._id} className={`border-b last:border-0 cursor-pointer transition-all ${selectedStudentId === s._id ? 'bg-primary/5' : 'hover:bg-muted/30 hover:scale-[1.01]'}`} onClick={() => setSelectedStudentId(selectedStudentId === s._id ? null : s._id)} style={{ animationDelay: `${i * 0.05}s` }}>
+                        <td className="p-2 font-bold">{s.name}</td>
+                        <td className="font-mono text-[10px] text-muted-foreground/60" title="ID Peserta Didik">{s._id.slice(-6)}</td>
+                        <td className="font-bold">Lv {s.level}</td>
+                        <td className="font-bold">{s.xp.toLocaleString()}</td>
+                        <td className="font-bold">{s.badges?.length ?? 0}/6</td>
+                        <td><span className="text-xs font-extrabold text-primary px-2 py-1 rounded-full bg-primary/10">{selectedStudentId === s._id ? 'Tutup' : 'Lihat'}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </div>
       )}
