@@ -1,7 +1,6 @@
 'use client';
 
 import { Suspense, useState, useMemo, useCallback, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -155,15 +154,13 @@ function SessionComplete({ result, newBadges, onDismiss }: { result: SessionResu
                     {/* Axes */}
                     {entries.map((_, i) => {
                       const angle = angleStep * i - Math.PI / 2;
-                      return (
-                        <line key={i} x1={cx} y1={cy} x2={cx + r * Math.cos(angle)} y2={cy + r * Math.sin(angle)} stroke="#cbd5e1" strokeWidth="1" />
-                      );
+                      return <line key={i} x1={cx} y1={cy} x2={cx + r * Math.cos(angle)} y2={cy + r * Math.sin(angle)} stroke="#cbd5e1" strokeWidth="1" />;
                     })}
                     {/* Data polygon */}
                     <polygon
                       points={entries.map(([, val], i) => {
                         const angle = angleStep * i - Math.PI / 2;
-                        const score = Math.min(100, val * 10) / 100; // scale delta to 0-100
+                        const score = Math.min(100, val * 10) / 100;
                         return `${cx + r * score * Math.cos(angle)},${cy + r * score * Math.sin(angle)}`;
                       }).join(' ')}
                       fill="rgba(59,130,246,0.2)"
@@ -173,11 +170,9 @@ function SessionComplete({ result, newBadges, onDismiss }: { result: SessionResu
                     {/* Labels */}
                     {labels.map((label, i) => {
                       const angle = angleStep * i - Math.PI / 2;
-                      return (
-                        <text key={i} x={cx + (r + 15) * Math.cos(angle)} y={cy + (r + 15) * Math.sin(angle)} textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-bold fill-sky-700">
-                          {label}
-                        </text>
-                      );
+                      return <text key={i} x={cx + (r + 15) * Math.cos(angle)} y={cy + (r + 15) * Math.sin(angle)} textAnchor="middle" dominantBaseline="middle" className="text-[10px] font-bold fill-sky-700">
+                        {label}
+                      </text>;
                     })}
                   </>
                 );
@@ -355,15 +350,7 @@ function AssessmentContent() {
 
   return (
     <div className={`min-h-screen relative ${coach.isFullScreen ? '' : 'bg-theme-tiger'}`}>
-      {/* Full Screen Mode — portal ke body, bypass header/footer */}
-      {coach.isFullScreen && typeof window !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[9999] bg-black flex flex-col">
-          <LivePoseCoach state={coach} videoRef={coach.videoRef} canvasRef={coach.canvasRef} levelConfig={coach.levelConfig} />
-        </div>,
-        document.body
-      )}
-
-      {/* Split View Mode — only when NOT fullscreen */}
+      {/* ── Page chrome (hidden in fullscreen) ── */}
       {!coach.isFullScreen && (
         <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-10 relative">
           <ConfettiBurst />
@@ -490,7 +477,7 @@ function AssessmentContent() {
           )}
 
           {/* PARENT VIEW: analysis only, no camera */}
-          {role === 'parent' ? (
+          {role === 'parent' && (
             <div className="space-y-6 relative">
               <SparkleDots count={10} />
               <div className="bg-white rounded-2xl p-4 shadow-pop border-2 border-amber-200 animate-pop-in relative">
@@ -513,17 +500,24 @@ function AssessmentContent() {
                 </div>
               </div>
             </div>
-          ) : (
-            /* ─── STUDENT & TEACHER: Split View (Camera 60% + Panel 40%) ─── */
-            <div className="relative">
-              {/* Session complete overlay */}
+          )}
+        </div>
+      )}
+
+      {/* ── Camera + Panel (ALWAYS rendered — never unmount LivePoseCoach) ── */}
+      {role !== 'parent' && (
+        <div className={coach.isFullScreen
+          ? 'fixed inset-0 z-[9999]'
+          : 'max-w-5xl mx-auto px-3 sm:px-4 pb-4 sm:pb-10'
+        }>
+          {/* Session result + Movement selector (hidden in fullscreen) */}
+          {!coach.isFullScreen && (
+            <>
               {sessionResult && (
                 <div className="mb-6">
                   <SessionComplete result={sessionResult} newBadges={sessionResult.newBadges} onDismiss={() => setSessionResult(null)} />
                 </div>
               )}
-
-              {/* Movement Selector */}
               <div className="bg-white rounded-[2rem] p-4 shadow-pop border-4 border-sky-200 mb-4 animate-slide-up">
                 <h3 className="font-extrabold mb-3 flex items-center gap-2 text-sm">
                   <span className="text-lg">🎮</span> Pilih Gerakan & Level
@@ -536,130 +530,138 @@ function AssessmentContent() {
                   worldId={worldId ?? undefined}
                 />
               </div>
-
-              {/* Split View: 60% camera + 40% panel */}
-              <div className="grid lg:grid-cols-5 gap-4 relative">
-                <SparkleDots count={8} />
-
-                {/* Camera (3/5 = 60%) */}
-                <div className="lg:col-span-3 animate-slide-up">
-                  <LivePoseCoach state={coach} videoRef={coach.videoRef} canvasRef={coach.canvasRef} levelConfig={coach.levelConfig} />
-                </div>
-
-                {/* Panel (2/5 = 40%) */}
-                <div className="lg:col-span-2 space-y-4 relative">
-                  <SparkleDots count={6} />
-
-                  {/* MOVA bubble */}
-                  <div className="bg-white rounded-2xl p-3 shadow-pop border-2 border-amber-200 animate-pop-in relative overflow-hidden">
-                    <div className="flex items-center gap-2 relative z-10">
-                      <div className="w-10 h-10 animate-wobble flex-shrink-0 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-0.5 shadow-pop overflow-hidden">
-                        <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
-                      </div>
-                      <div className="bg-primary/10 rounded-xl rounded-tl-none px-3 py-2 flex-1 shadow-soft">
-                        <div className="font-extrabold text-[10px] text-primary mb-0.5 flex items-center gap-1">
-                          <span className="animate-sparkle">✨</span> MOVA
-                        </div>
-                        <p className="text-[11px] font-bold leading-snug">
-                          {role === 'teacher' ? (
-                            <>Rekaman untuk {targetName ?? '...'}! 🎬 Pilih gerakan & mulai! 💪</>
-                          ) : (
-                            <>Siap latihan {activity} Lv.{level}? Tekan Mulai! 🌟</>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Quick tips */}
-                  <div className="bg-white rounded-2xl p-4 shadow-soft border-3 border-purple-200 animate-slide-up relative overflow-hidden">
-                    <SparkleDots count={3} />
-                    <h3 className="font-extrabold mb-2 flex items-center gap-2 text-xs relative z-10">
-                      <span className="text-lg animate-wiggle">💡</span>
-                      <Sparkles className="w-4 h-4 text-accent" /> Tips Cepat
-                    </h3>
-                    <ul className="text-xs space-y-1.5 font-bold text-muted-foreground relative z-10">
-                      <li>🟢 Skor ≥85: Gerakan sempurna!</li>
-                      <li>🟡 Skor 60-84: Cukup bagus, tingkatkan</li>
-                      <li>🔴 Skor {'<'}60: Perlu perbaikan</li>
-                      <li>⏱️ Tahan posisi sesuai target waktu</li>
-                      <li>🔄 Ulangi untuk menambah repetisi</li>
-                      <li>⌨️ SPACE = Mulai/Stop, ESC = Keluar Full Screen</li>
-                    </ul>
-                  </div>
-
-                  {/* Audio Toggle */}
-                  <button
-                    onClick={() => setAudioEnabled(!audioEnabled)}
-                    className={`w-full rounded-xl p-3 text-sm font-bold border-2 transition-all ${
-                      audioEnabled
-                        ? 'bg-green-50 border-green-300 text-green-700'
-                        : 'bg-muted border-border text-muted-foreground'
-                    }`}
-                  >
-                    {audioEnabled ? '🔊 Suara Aktif' : '🔇 Suara Mati'}
-                  </button>
-
-                  {/* Calibration Panel (teacher only) */}
-                  {(role === 'teacher' || role === 'admin') && (
-                    <div className="bg-white rounded-2xl p-4 shadow-soft border-2 border-amber-200">
-                      <button
-                        onClick={() => setShowCalibration(!showCalibration)}
-                        className="w-full text-left font-bold text-xs flex items-center gap-2"
-                      >
-                        ⚙️ Kalibrasi Threshold {showCalibration ? '▲' : '▼'}
-                      </button>
-                      {showCalibration && (
-                        <div className="mt-3 space-y-2 text-xs">
-                          <p className="text-muted-foreground font-medium">Atur threshold untuk {activity} Lv.{level}:</p>
-                          {[
-                            { key: `${activity}_minScore`, label: 'Min Score', def: [60,70,80,85,90][level-1] },
-                            { key: `${activity}_holdSec`, label: 'Hold (detik)', def: [3,5,5,3,2][level-1] },
-                          ].map(({ key, label, def }) => (
-                            <div key={key} className="flex items-center gap-2">
-                              <span className="font-bold flex-1">{label}:</span>
-                              <input
-                                type="number"
-                                defaultValue={savedThresholds?.[key] ?? def}
-                                className="w-16 text-center rounded-lg border-2 border-amber-300 px-2 py-1 font-bold"
-                                onChange={(e) => handleSaveThresholds(key, Number(e.target.value))}
-                              />
-                              <span className="text-muted-foreground">({def})</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Live Monitor Card (teacher/parent) */}
-                  {((role as string) === 'teacher' || (role as string) === 'parent') && liveSessionData && (
-                    <div className="bg-white rounded-2xl p-4 shadow-soft border-2 border-sky-200">
-                      <h3 className="font-extrabold text-xs mb-2 flex items-center gap-2">
-                        📊 Live Monitor: {liveSessionData.name}
-                      </h3>
-                      <div className="flex items-center gap-2 text-xs">
-                        <span className="text-xl">{liveSessionData.avatar}</span>
-                        <div className="flex-1">
-                          <div className="font-bold">Lv.{liveSessionData.level} • {liveSessionData.xp} XP</div>
-                        </div>
-                      </div>
-                      {liveSessionData.physicalLiteracy && (
-                        <div className="mt-2 grid grid-cols-5 gap-1 text-center">
-                          {(['balance', 'coordination', 'agility', 'flexibility', 'strength'] as const).map((k) => (
-                            <div key={k} className="bg-sky-50 rounded-lg p-1">
-                              <div className="text-[10px] font-bold text-sky-700">{liveSessionData.physicalLiteracy![k]}</div>
-                              <div className="text-[8px] text-sky-500">{k.slice(0,3).toUpperCase()}</div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            </>
           )}
+
+          {/* Split View grid — CSS switches between fullscreen and split layout */}
+          <div className={coach.isFullScreen
+            ? 'w-full h-full'
+            : 'grid lg:grid-cols-5 gap-4 relative'
+          }>
+            {!coach.isFullScreen && <SparkleDots count={8} />}
+
+            {/* Camera — 60% in split, full viewport in fullscreen */}
+            <div className={coach.isFullScreen
+              ? 'w-full h-full'
+              : 'lg:col-span-3 animate-slide-up'
+            }>
+              <LivePoseCoach state={coach} videoRef={coach.videoRef} canvasRef={coach.canvasRef} levelConfig={coach.levelConfig} />
+            </div>
+
+            {/* Panel — 40% in split, hidden in fullscreen */}
+            {!coach.isFullScreen && (
+              <div className="lg:col-span-2 space-y-4 relative">
+                <SparkleDots count={6} />
+
+                {/* MOVA bubble */}
+                <div className="bg-white rounded-2xl p-3 shadow-pop border-2 border-amber-200 animate-pop-in relative overflow-hidden">
+                  <div className="flex items-center gap-2 relative z-10">
+                    <div className="w-10 h-10 animate-wobble flex-shrink-0 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-0.5 shadow-pop overflow-hidden">
+                      <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+                    </div>
+                    <div className="bg-primary/10 rounded-xl rounded-tl-none px-3 py-2 flex-1 shadow-soft">
+                      <div className="font-extrabold text-[10px] text-primary mb-0.5 flex items-center gap-1">
+                        <span className="animate-sparkle">✨</span> MOVA
+                      </div>
+                      <p className="text-[11px] font-bold leading-snug">
+                        {role === 'teacher' ? (
+                          <>Rekaman untuk {targetName ?? '...'}! 🎬 Pilih gerakan & mulai! 💪</>
+                        ) : (
+                          <>Siap latihan {activity} Lv.{level}? Tekan Mulai! 🌟</>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick tips */}
+                <div className="bg-white rounded-2xl p-4 shadow-soft border-3 border-purple-200 animate-slide-up relative overflow-hidden">
+                  <SparkleDots count={3} />
+                  <h3 className="font-extrabold mb-2 flex items-center gap-2 text-xs relative z-10">
+                    <span className="text-lg animate-wiggle">💡</span>
+                    <Sparkles className="w-4 h-4 text-accent" /> Tips Cepat
+                  </h3>
+                  <ul className="text-xs space-y-1.5 font-bold text-muted-foreground relative z-10">
+                    <li>🟢 Skor ≥85: Gerakan sempurna!</li>
+                    <li>🟡 Skor 60-84: Cukup bagus, tingkatkan</li>
+                    <li>🔴 Skor {'<'}60: Perlu perbaikan</li>
+                    <li>⏱️ Tahan posisi sesuai target waktu</li>
+                    <li>🔄 Ulangi untuk menambah repetisi</li>
+                    <li>⌨️ SPACE = Mulai/Stop, ESC = Keluar Full Screen</li>
+                  </ul>
+                </div>
+
+                {/* Audio Toggle */}
+                <button
+                  onClick={() => setAudioEnabled(!audioEnabled)}
+                  className={`w-full rounded-xl p-3 text-sm font-bold border-2 transition-all ${
+                    audioEnabled
+                      ? 'bg-green-50 border-green-300 text-green-700'
+                      : 'bg-muted border-border text-muted-foreground'
+                  }`}
+                >
+                  {audioEnabled ? '🔊 Suara Aktif' : '🔇 Suara Mati'}
+                </button>
+
+                {/* Calibration Panel (teacher only) */}
+                {(role === 'teacher' || role === 'admin') && (
+                  <div className="bg-white rounded-2xl p-4 shadow-soft border-2 border-amber-200">
+                    <button
+                      onClick={() => setShowCalibration(!showCalibration)}
+                      className="w-full text-left font-bold text-xs flex items-center gap-2"
+                    >
+                      ⚙️ Kalibrasi Threshold {showCalibration ? '▲' : '▼'}
+                    </button>
+                    {showCalibration && (
+                      <div className="mt-3 space-y-2 text-xs">
+                        <p className="text-muted-foreground font-medium">Atur threshold untuk {activity} Lv.{level}:</p>
+                        {[
+                          { key: `${activity}_minScore`, label: 'Min Score', def: [60,70,80,85,90][level-1] },
+                          { key: `${activity}_holdSec`, label: 'Hold (detik)', def: [3,5,5,3,2][level-1] },
+                        ].map(({ key, label, def }) => (
+                          <div key={key} className="flex items-center gap-2">
+                            <span className="font-bold flex-1">{label}:</span>
+                            <input
+                              type="number"
+                              defaultValue={savedThresholds?.[key] ?? def}
+                              className="w-16 text-center rounded-lg border-2 border-amber-300 px-2 py-1 font-bold"
+                              onChange={(e) => handleSaveThresholds(key, Number(e.target.value))}
+                            />
+                            <span className="text-muted-foreground">({def})</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Live Monitor Card (teacher/parent) */}
+                {((role as string) === 'teacher' || (role as string) === 'parent') && liveSessionData && (
+                  <div className="bg-white rounded-2xl p-4 shadow-soft border-2 border-sky-200">
+                    <h3 className="font-extrabold text-xs mb-2 flex items-center gap-2">
+                      📊 Live Monitor: {liveSessionData.name}
+                    </h3>
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="text-xl">{liveSessionData.avatar}</span>
+                      <div className="flex-1">
+                        <div className="font-bold">Lv.{liveSessionData.level} • {liveSessionData.xp} XP</div>
+                      </div>
+                    </div>
+                    {liveSessionData.physicalLiteracy && (
+                      <div className="mt-2 grid grid-cols-5 gap-1 text-center">
+                        {(['balance', 'coordination', 'agility', 'flexibility', 'strength'] as const).map((k) => (
+                          <div key={k} className="bg-sky-50 rounded-lg p-1">
+                            <div className="text-[10px] font-bold text-sky-700">{liveSessionData.physicalLiteracy![k]}</div>
+                            <div className="text-[8px] text-sky-500">{k.slice(0,3).toUpperCase()}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
