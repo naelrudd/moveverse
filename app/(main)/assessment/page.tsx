@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, useMemo, useCallback, useEffect } from 'react';
+import { Suspense, useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -339,6 +339,8 @@ function AssessmentContent() {
     saveThresholdsMutation({ userId: targetUserId as any, thresholds: { [key]: value } }).catch(console.error);
   }, [targetUserId, saveThresholdsMutation]);
 
+  const cameraRef = useRef<HTMLDivElement>(null);
+
   const coach = useLiveCoachEngine({
     activity,
     level,
@@ -346,6 +348,7 @@ function AssessmentContent() {
     role: (role as 'student' | 'teacher' | 'parent') ?? 'student',
     thresholds: savedThresholds,
     onComplete: handleComplete,
+    containerRef: cameraRef,
   });
 
   return (
@@ -506,10 +509,7 @@ function AssessmentContent() {
 
       {/* ── Camera + Panel (ALWAYS rendered — never unmount LivePoseCoach) ── */}
       {role !== 'parent' && (
-        <div className={coach.isFullScreen
-          ? 'fixed inset-0 z-[9999]'
-          : 'max-w-5xl mx-auto px-3 sm:px-4 pb-4 sm:pb-10'
-        }>
+        <div className="max-w-5xl mx-auto px-3 sm:px-4 pb-4 sm:pb-10">
           {/* Session result + Movement selector (hidden in fullscreen) */}
           {!coach.isFullScreen && (
             <>
@@ -533,18 +533,12 @@ function AssessmentContent() {
             </>
           )}
 
-          {/* Split View grid — CSS switches between fullscreen and split layout */}
-          <div className={coach.isFullScreen
-            ? 'w-full h-full'
-            : 'grid lg:grid-cols-5 gap-4 relative'
-          }>
-            {!coach.isFullScreen && <SparkleDots count={8} />}
+          {/* Split View grid */}
+          <div className="grid lg:grid-cols-5 gap-4 relative">
+            <SparkleDots count={8} />
 
-            {/* Camera — 60% in split, full viewport in fullscreen */}
-            <div className={coach.isFullScreen
-              ? 'w-full h-full'
-              : 'lg:col-span-3 animate-slide-up'
-            }>
+            {/* Camera — ref for Fullscreen API, 60% in split view */}
+            <div ref={cameraRef} className="lg:col-span-3 animate-slide-up">
               <LivePoseCoach state={coach} videoRef={coach.videoRef} canvasRef={coach.canvasRef} levelConfig={coach.levelConfig} />
             </div>
 

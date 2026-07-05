@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, type RefObject } from 'react';
 import { useMediaPipePose, type PoseLandmark } from './useMediaPipePose';
 import {
   type MovementType,
@@ -56,6 +56,7 @@ export interface UseLiveCoachEngineOptions {
   role: 'student' | 'teacher' | 'parent';
   thresholds?: Record<string, number>; // custom thresholds from Convex
   onComplete?: (result: SessionResult) => void;
+  containerRef?: RefObject<HTMLElement | null>; // element to fullscreen via Fullscreen API
 }
 
 /**
@@ -63,7 +64,7 @@ export interface UseLiveCoachEngineOptions {
  * Pure hook logic, portable ke Flutter (ganti MediaPipe source).
  */
 export function useLiveCoachEngine(options: UseLiveCoachEngineOptions) {
-  const { activity, level, userId, role, thresholds, onComplete } = options;
+  const { activity, level, userId, role, thresholds, onComplete, containerRef } = options;
 
   const [state, setState] = useState<CoachState>({
     isRecording: false,
@@ -288,11 +289,33 @@ export function useLiveCoachEngine(options: UseLiveCoachEngineOptions) {
     onComplete?.(result);
   }, [stopCamera, activity, level, onComplete]);
 
-  const toggleFullScreen = useCallback(() => {
-    setState((s) => ({ ...s, isFullScreen: !s.isFullScreen }));
+  // ── Fullscreen via browser Fullscreen API (no CSS hacks) ──
+  const isFullScreenRef = useRef(false);
+
+  useEffect(() => {
+    const sync = () => {
+      const fs = !!document.fullscreenElement;
+      isFullScreenRef.current = fs;
+      setState((s) => s.isFullScreen !== fs ? { ...s, isFullScreen: fs } : s);
+    };
+    document.addEventListener('fullscreenchange', sync);
+    return () => document.removeEventListener('fullscreenchange', sync);
   }, []);
 
-  // ── Keyboard shortcuts: SPACE=start/stop, ESC=fullscreen exit ──
+  const toggleFullScreen = useCallback(async () => {
+    const next = !isFullScreenRef.current;
+    isFullScreenRef.current = next;
+    try {
+      if (next && containerRef?.current) {
+        await containerRef.current.requestFullscreen();
+      } else if (!next && document.fullscreenElement) {
+        await document.exitFullscreen();
+      }
+    } catch { /* browser may reject fullscreen — state already toggled */ }
+    setState((s) => ({ ...s, isFullScreen: next }));
+  }, [containerRef]);
+
+  // ── Keyboard shortcuts: SPACE=start/stop ──
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       // ignore if typing in input/textarea
@@ -306,13 +329,11 @@ export function useLiveCoachEngine(options: UseLiveCoachEngineOptions) {
           start();
         }
       }
-      if (e.code === 'Escape' && state.isFullScreen) {
-        toggleFullScreen();
-      }
+      // ESC handled natively by browser Fullscreen API
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [state.isRecording, state.isFullScreen, isReady, start, stop, toggleFullScreen]);
+  }, [state.isRecording, isReady, start, stop]);
 
   return {
     ...state,
