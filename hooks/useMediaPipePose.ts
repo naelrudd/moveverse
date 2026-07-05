@@ -112,7 +112,7 @@ export function useMediaPipePose(
           }
         });
 
-        // Setup camera stream
+        // Setup camera stream — wait for metadata before starting detection loop
         const video = videoRef.current;
         if (video) {
           video.onloadedmetadata = () => {
@@ -123,18 +123,17 @@ export function useMediaPipePose(
             }
             setIsReady(true);
             setIsLoading(false);
+
+            // Start pose detection loop only after video has real dimensions
+            const processFrame = async () => {
+              if (videoRef.current && poseInstance && !videoRef.current.paused) {
+                await poseInstance.send({ image: videoRef.current });
+                requestAnimationFrame(processFrame);
+              }
+            };
+            processFrame();
           };
         }
-
-        // Pose detection loop
-        const processFrame = async () => {
-          if (videoRef.current && poseInstance) {
-            await poseInstance.send({ image: videoRef.current });
-            requestAnimationFrame(processFrame);
-          }
-        };
-
-        processFrame();
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to initialize pose';
