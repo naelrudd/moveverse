@@ -104,10 +104,15 @@ export const logMovementSession = mutation({
       todayActivities.add(activity);
       if (todayActivities.size >= 4 && !existing.has('all_rounder')) { newBadges.push('all_rounder'); existing.add('all_rounder'); }
 
+      // Update activity level on dashboard
+      const levels = { ...(user.activityLevels ?? {}) };
+      levels[activity] = Math.max(levels[activity] ?? 0, level);
+
       await ctx.db.patch(userId, {
         xp: user.xp + xpGain,
         coins: user.coins + Math.floor(xpGain / 10),
         badges: Array.from(existing),
+        activityLevels: levels,
         updatedAt: Date.now(),
       });
     }
