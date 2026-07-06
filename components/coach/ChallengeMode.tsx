@@ -41,7 +41,7 @@ export function ChallengeMode({ currentUserId, activity }: ChallengeModeProps) {
     <div className="bg-white rounded-2xl p-4 shadow-soft border-2 border-red-200">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full text-left font-bold text-xs flex items-center gap-2"
+        className="w-full text-left font-bold text-sm sm:text-base flex items-center gap-2"
       >
         ⚔️ Challenge Mode {expanded ? '▲' : '▼'}
       </button>
@@ -51,7 +51,7 @@ export function ChallengeMode({ currentUserId, activity }: ChallengeModeProps) {
           {/* Invite button */}
           <button
             onClick={generateInvite}
-            className="w-full py-2 rounded-xl font-bold text-xs bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 transition-all mb-3"
+            className="w-full py-2 rounded-xl font-bold text-xs sm:text-sm bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 transition-all mb-3"
           >
             📨 Undang Teman untuk Challenge
           </button>
@@ -66,7 +66,7 @@ export function ChallengeMode({ currentUserId, activity }: ChallengeModeProps) {
           {/* Challenge result (top 2) */}
           {leaderboard && leaderboard.length >= 2 ? (
             <div className="space-y-2">
-              <div className="text-center text-[10px] font-bold text-muted-foreground mb-2">
+              <div className="text-center text-[11px] sm:text-xs font-bold text-muted-foreground mb-2">
                 ⚔️ Top 2 Peringkat — {activity}
               </div>
 
@@ -81,9 +81,9 @@ export function ChallengeMode({ currentUserId, activity }: ChallengeModeProps) {
                   <div className="text-2xl mb-1">
                     {myEntry && opponentEntry && myEntry.score >= opponentEntry.score ? '👑' : '😤'}
                   </div>
-                  <div className="font-bold text-xs truncate">{myEntry?.userName ?? 'Kamu'}</div>
+                  <div className="font-bold text-xs sm:text-sm truncate">{myEntry?.userName ?? 'Kamu'}</div>
                   <div className="font-extrabold text-xl text-amber-600">{myEntry?.score ?? '-'}</div>
-                  <div className="text-[10px] text-muted-foreground">Lv.{myEntry?.level ?? '-'}</div>
+                  <div className="text-[11px] sm:text-xs text-muted-foreground">Lv.{myEntry?.level ?? '-'}</div>
                 </div>
 
                 {/* VS */}
@@ -98,15 +98,15 @@ export function ChallengeMode({ currentUserId, activity }: ChallengeModeProps) {
                   <div className="text-2xl mb-1">
                     {opponentEntry && myEntry && opponentEntry.score > myEntry.score ? '👑' : '😤'}
                   </div>
-                  <div className="font-bold text-xs truncate">{opponentEntry?.userName ?? 'Lawan'}</div>
+                  <div className="font-bold text-xs sm:text-sm truncate">{opponentEntry?.userName ?? 'Lawan'}</div>
                   <div className="font-extrabold text-xl text-amber-600">{opponentEntry?.score ?? '-'}</div>
-                  <div className="text-[10px] text-muted-foreground">Lv.{opponentEntry?.level ?? '-'}</div>
+                  <div className="text-[11px] sm:text-xs text-muted-foreground">Lv.{opponentEntry?.level ?? '-'}</div>
                 </div>
               </div>
 
               {/* Winner announcement */}
               {myEntry && opponentEntry && (
-                <div className={`text-center py-2 rounded-xl font-bold text-xs ${
+                <div className={`text-center py-2 rounded-xl font-bold text-xs sm:text-sm ${
                   myEntry.score >= opponentEntry.score
                     ? 'bg-amber-50 text-amber-700 border border-amber-200'
                     : 'bg-red-50 text-red-600 border border-red-200'

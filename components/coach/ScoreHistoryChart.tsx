@@ -54,7 +54,7 @@ export function ScoreHistoryChart({ userId }: ScoreHistoryChartProps) {
 
   return (
     <div className="bg-white rounded-2xl p-3 sm:p-4 shadow-soft border-2 border-orange-200">
-      <h3 className="font-extrabold text-xs flex items-center gap-1.5 mb-2">📈 Grafik Perkembangan</h3>
+      <h3 className="font-extrabold text-sm sm:text-base flex items-center gap-1.5 mb-2">📈 Grafik Perkembangan</h3>
 
       {/* Activity filter — tiny pills */}
       <div className="flex gap-1 mb-2 overflow-x-auto no-scrollbar">
@@ -62,7 +62,7 @@ export function ScoreHistoryChart({ userId }: ScoreHistoryChartProps) {
           <button
             key={key}
             onClick={() => setSelected(key)}
-            className={`px-2 py-0.5 rounded-full text-[10px] font-bold transition-all whitespace-nowrap ${
+            className={`px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold transition-all whitespace-nowrap ${
               selected === key
                 ? 'text-white shadow-sm'
                 : 'bg-muted hover:bg-orange-100'
@@ -95,7 +95,7 @@ export function ScoreHistoryChart({ userId }: ScoreHistoryChartProps) {
       ) : (
         <div className="text-center py-6 text-muted-foreground">
           <div className="text-2xl mb-1">📈</div>
-          <p className="text-[11px] font-bold">
+          <p className="text-xs sm:text-sm font-bold">
             {data.length === 0 ? 'Belum ada data' : 'Minimal 2 sesi dibutuhkan'}
           </p>
         </div>
@@ -103,7 +103,7 @@ export function ScoreHistoryChart({ userId }: ScoreHistoryChartProps) {
 
       {/* Stats summary */}
       {data.length > 0 && (
-        <div className="flex gap-1.5 mt-2 text-[10px] font-bold flex-wrap">
+        <div className="flex gap-1.5 mt-2 text-[10px] sm:text-xs font-bold flex-wrap">
           <span className="bg-orange-50 text-orange-700 px-2 py-0.5 rounded-full">
             Avg: {Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)}
           </span>

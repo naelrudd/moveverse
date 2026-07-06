@@ -35,7 +35,7 @@ export function Leaderboard({ activity }: LeaderboardProps) {
     <div className="bg-white rounded-2xl p-4 shadow-soft border-2 border-amber-200">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full text-left font-bold text-xs flex items-center gap-2"
+        className="w-full text-left font-bold text-sm sm:text-base flex items-center gap-2"
       >
         🏆 Leaderboard {expanded ? '▲' : '▼'}
       </button>
@@ -48,7 +48,7 @@ export function Leaderboard({ activity }: LeaderboardProps) {
               <button
                 key={a.id}
                 onClick={() => setSelectedActivity(a.id)}
-                className={`px-2 py-1 rounded-full text-[10px] font-bold transition-all ${
+                className={`px-2 py-1 rounded-full text-[10px] sm:text-xs font-bold transition-all ${
                   selectedActivity === a.id
                     ? 'bg-amber-500 text-white shadow-pop'
                     : 'bg-muted hover:bg-amber-100'
@@ -79,12 +79,12 @@ export function Leaderboard({ activity }: LeaderboardProps) {
                     {idx < 3 ? MEDALS[idx] : <span className="text-xs font-bold text-gray-400">#{idx + 1}</span>}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <div className="font-bold text-xs truncate">{entry.userName}</div>
-                    <div className="text-[10px] text-muted-foreground">Lv.{entry.level}</div>
+                    <div className="font-bold text-xs sm:text-sm truncate">{entry.userName}</div>
+                    <div className="text-[11px] sm:text-xs text-muted-foreground">Lv.{entry.level}</div>
                   </div>
                   <div className="text-right">
-                    <div className="font-extrabold text-sm text-amber-600">{entry.score}</div>
-                    <div className="text-[10px] text-muted-foreground">skor</div>
+                    <div className="font-extrabold text-sm sm:text-base text-amber-600">{entry.score}</div>
+                    <div className="text-[11px] sm:text-xs text-muted-foreground">skor</div>
                   </div>
                 </div>
               ))}
