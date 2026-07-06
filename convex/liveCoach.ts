@@ -77,6 +77,9 @@ export const logMovementSession = mutation({
     if (user) {
       const existing = new Set(user.badges ?? []);
 
+      // Activity badge (badge_menekuk, badge_meliuk, etc.)
+      const activityBadge = `badge_${activity}`;
+      if (!existing.has(activityBadge)) { newBadges.push(activityBadge); existing.add(activityBadge); }
       // Badge: first session ever
       if (!existing.has('first_session')) { newBadges.push('first_session'); existing.add('first_session'); }
       // Badge: score >= 95
