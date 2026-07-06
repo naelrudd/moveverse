@@ -128,20 +128,22 @@ export default function StatsPage() {
       </div>
 
       {/* Activity filter — compact pills */}
-      <div className="flex gap-1.5 py-3 overflow-x-auto no-scrollbar">
-        {ACTIVITIES.map((a) => (
-          <button
-            key={a.id}
-            onClick={() => setActivity(a.id)}
-            className={`px-3 py-1.5 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-all border-2 ${
-              activity === a.id
-                ? "gradient-sky text-white shadow-soft border-transparent scale-105"
-                : "bg-white text-gray-600 border-gray-200 hover:border-sky-300 hover:bg-sky-50"
-            }`}
-          >
-            {a.emoji} {a.label}
-          </button>
-        ))}
+      <div className="py-3">
+        <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
+          {ACTIVITIES.map((a) => (
+            <button
+              key={a.id}
+              onClick={() => setActivity(a.id)}
+              className={`px-3 py-1.5 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-all border-2 ${
+                activity === a.id
+                  ? "gradient-sky text-white shadow-soft border-transparent scale-105"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-sky-300 hover:bg-sky-50"
+              }`}
+            >
+              {a.emoji} {a.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* History + Chart side by side */}
