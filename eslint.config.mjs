@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Old backup / vendor / generated dirs
+    "lovable-project-c136ee78/**",
+    ".claude/**",
+    "convex/_generated/**",
   ]),
 ]);
 

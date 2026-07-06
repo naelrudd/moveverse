@@ -36,7 +36,7 @@ export const getByParent = query({
 
 export const getByParentAndChild = query({
   args: { parentId: v.id("users"), childId: v.id("users") },
-  handler: async (ctx, { parentId, childId }) => {
+  handler: async (ctx, { childId }) => {
     return await ctx.db
       .query("side_quests")
       .withIndex("by_childId", (q) => q.eq("childId", childId))

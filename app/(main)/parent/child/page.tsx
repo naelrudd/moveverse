@@ -2,10 +2,6 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useAuth } from '@clerk/nextjs';
-import { useQuery } from 'convex/react';
-import { api } from '@/convex/_generated/api';
-import Link from 'next/link';
 import { useState } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip,
@@ -78,8 +74,7 @@ const badges = [
 ];
 
 export default function ParentChildDashboard() {
-  const { userId } = useAuth();
-  const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
+  
   const [selectedChild, setSelectedChild] = useState('1');
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
@@ -88,7 +83,7 @@ export default function ParentChildDashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 space-y-5">
       {/* Top: child selector */}
-      <div className="flex items-center justify-between bg-gradient-to-r from-sky-400/20 to-purple-400/20 rounded-[2rem] p-4 border-2 border-white/40">
+      <div className="flex items-center justify-between bg-linear-to-r from-sky-400/20 to-purple-400/20 rounded-[2rem] p-4 border-2 border-white/40">
         <div className="flex items-center gap-3">
           <span className="text-3xl">👨‍👩‍👧</span>
           <div>
@@ -122,7 +117,7 @@ export default function ParentChildDashboard() {
           { l: '🔥 Streak', v: `${child.streak} hari`, c: 'from-red-500 to-rose-600', i: '' },
           { l: 'Lencana', v: `${child.badges}/6`, c: 'from-green-500 to-emerald-600', i: '🏅' },
         ].map((s, i) => (
-          <div key={i} className={`bg-gradient-to-br ${s.c} text-white rounded-2xl p-3 shadow-soft text-center`}>
+          <div key={i} className={`bg-linear-to-br ${s.c} text-white rounded-2xl p-3 shadow-soft text-center`}>
             {s.i && <div className="text-lg">{s.i}</div>}
             <div className="text-lg font-extrabold">{s.v}</div>
             <div className="text-[10px] font-bold opacity-80">{s.l}</div>
@@ -145,7 +140,7 @@ export default function ParentChildDashboard() {
                 <button
                   key={i}
                   onClick={() => setSelectedGame(selectedGame === g.name ? null : g.name)}
-                  className={`relative overflow-hidden rounded-2xl p-4 bg-gradient-to-br ${g.color} text-white text-left transition-all ${
+                  className={`relative overflow-hidden rounded-2xl p-4 bg-linear-to-br ${g.color} text-white text-left transition-all ${
                     selectedGame === g.name ? 'ring-4 ring-white shadow-lg scale-[1.03]' : 'hover:scale-[1.02]'
                   }`}
                 >

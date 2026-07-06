@@ -1,6 +1,7 @@
 'use client';
 
 import type { CoachState } from '@/hooks/useLiveCoachEngine';
+import Image from 'next/image';
 import type { LevelThreshold } from '@/lib/fms-scoring';
 
 // ── Live Metrics Panel: angle gauge, timer, reps, progress bar ──
@@ -73,8 +74,8 @@ export function RealTimeMetrics({ state, levelConfig, isFullScreen }: RealTimeMe
       {/* MOVA Feedback Bubble */}
       <div className="bg-primary/10 rounded-2xl p-4 border-2 border-primary/20">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft flex-shrink-0 overflow-hidden">
-            <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+          <div className="w-10 h-10 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft shrink-0 overflow-hidden">
+            <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
           </div>
           <div className="flex-1">
             <div className="text-[10px] font-extrabold text-primary mb-0.5">✨ MOVA berkata</div>

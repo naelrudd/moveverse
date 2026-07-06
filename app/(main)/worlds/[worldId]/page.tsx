@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useParams, notFound } from 'next/navigation';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
@@ -32,8 +33,8 @@ export default function WorldDetailPage() {
             <h1 className="text-5xl md:text-7xl font-extrabold leading-none">{world.name}</h1>
             <p className="text-xl mt-2 opacity-95">{world.tagline}</p>
           </div>
-          <div className="w-20 h-20 drop-shadow-2xl animate-float hidden md:block rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden">
-            <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+          <div className="w-20 h-20 relative drop-shadow-2xl animate-float hidden md:block rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden">
+            <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
           </div>
         </div>
 

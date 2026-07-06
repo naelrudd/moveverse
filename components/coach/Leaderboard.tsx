@@ -29,7 +29,6 @@ export function Leaderboard({ activity }: LeaderboardProps) {
   );
 
   // Auto-sync with selected activity
-  const act = ACTIVITIES.find((a) => a.id === selectedActivity) ?? ACTIVITIES[0];
 
   return (
     <div className="bg-white rounded-2xl p-4 shadow-soft border-2 border-amber-200">
@@ -67,7 +66,7 @@ export function Leaderboard({ activity }: LeaderboardProps) {
                   key={entry.userId}
                   className={`flex items-center gap-2 p-2 rounded-xl transition-all ${
                     idx === 0
-                      ? 'bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200'
+                      ? 'bg-linear-to-r from-amber-50 to-yellow-50 border border-amber-200'
                       : idx === 1
                       ? 'bg-gray-50 border border-gray-200'
                       : idx === 2

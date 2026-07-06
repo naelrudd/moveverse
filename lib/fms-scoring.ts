@@ -83,7 +83,6 @@ export function detectMemutar(landmarks: PoseLandmark[]): { rotationAngle: numbe
 
   // Rotation = perspective distortion of shoulder/hip line
   const shoulderWidth = Math.abs(leftShoulder.x - rightShoulder.x);
-  const hipWidth = Math.abs(leftHip.x - rightHip.x);
 
   // z-depth difference suggests rotation
   const shoulderZ = Math.abs(leftShoulder.z - rightShoulder.z);

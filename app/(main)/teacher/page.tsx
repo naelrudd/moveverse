@@ -3,9 +3,11 @@
 export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import { type Id } from '@/convex/_generated/dataModel';
 import Link from 'next/link';
 import { worlds, ALL_ACTIVITIES } from '@/lib/worlds';
 
@@ -29,8 +31,8 @@ function ConfettiBurst() {
 function MovaTip({ text }: { text: string }) {
   return (
     <div className="flex items-start gap-2 animate-slide-up" style={{ animationDelay: '0.8s' }}>
-      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft animate-float flex-shrink-0 overflow-hidden">
-        <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+      <div className="w-10 h-10 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft animate-float shrink-0 overflow-hidden">
+        <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
       </div>
       <div className="bg-white rounded-2xl rounded-bl-md px-3 py-2 shadow-soft text-xs font-bold text-foreground/80 relative">
         <span className="absolute -left-1 top-3 w-2 h-2 bg-white rotate-45 shadow-soft" />
@@ -111,7 +113,7 @@ export default function TeacherDashboard() {
 
   const students = useQuery(
     api.users.getUsersByClass,
-    selectedClassId ? { classId: selectedClassId as any } : 'skip'
+    selectedClassId ? { classId: selectedClassId as Id<"classes"> } : 'skip'
   );
 
   const selectedStudent = students?.find((s) => s._id === selectedStudentId);
@@ -126,13 +128,13 @@ export default function TeacherDashboard() {
 
   const handleUpdateClass = async () => {
     if (!editClass) return;
-    await updateClassMut({ classId: editClass.id as any, name: editClass.name, grade: editClass.grade });
+    await updateClassMut({ classId: editClass.id as Id<"classes">, name: editClass.name, grade: editClass.grade });
     setEditClass(null);
   };
 
   const handleDeleteClass = async (classId: string) => {
     if (!confirm('Yakin hapus kelas ini?')) return;
-    await deleteClassMut({ classId: classId as any });
+    await deleteClassMut({ classId: classId as Id<"classes"> });
     if (selectedClassId === classId) setSelectedClassId(null);
   };
 
@@ -155,12 +157,12 @@ export default function TeacherDashboard() {
         <Sparkle className="bottom-4 right-12 text-lg" delay={0.6} />
 
         <div className="flex items-center gap-6 relative z-10 flex-wrap">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-400 via-orange-400 to-red-400 p-1.5 shadow-pop animate-dance-slow flex-shrink-0 overflow-hidden relative">
-            <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain drop-shadow-lg" />
+          <div className="w-24 h-24 rounded-full bg-linear-to-br from-amber-400 via-orange-400 to-red-400 p-1.5 shadow-pop animate-dance-slow shrink-0 overflow-hidden relative">
+            <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain drop-shadow-lg" />
             <div className="absolute inset-0 rounded-full animate-pulse-glow" />
           </div>
           <div className="flex-1">
-            <h1 className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-extrabold bg-linear-to-r from-purple-600 via-pink-500 to-orange-400 bg-clip-text text-transparent">
               Selamat Mengajar, {userData?.name || 'Guru'}! 👩‍🏫
             </h1>
             <p className="text-sm font-bold text-foreground/60 mt-1">Pantau peserta didik, kelola kelas, analisis perkembangan 📚</p>
@@ -352,12 +354,12 @@ export default function TeacherDashboard() {
             </div>
           </div>
           {/* Contact Parent */}
-          {(selectedStudent as any).phone && (
+          {(((selectedStudent as { phone?: string }))).phone && (
             <div className="mt-3 p-3 bg-blue-50 rounded-2xl border-2 border-blue-200 flex items-center gap-3">
               <span className="text-lg">📞</span>
               <div>
                 <div className="font-extrabold text-sm">Hubungi Orang Tua</div>
-                <a href={`tel:${selectedStudent.phone}`} className="text-sm text-blue-600 font-bold underline">{(selectedStudent as any).phone}</a>
+                <a href={`tel:${selectedStudent.phone}`} className="text-sm text-blue-600 font-bold underline">{(((selectedStudent as { phone?: string }))).phone}</a>
               </div>
             </div>
           )}
@@ -405,8 +407,8 @@ export default function TeacherDashboard() {
             {/* Modal header */}
             <div className="p-5 border-b-2 border-primary/10 flex items-center justify-between" style={{ background: 'linear-gradient(135deg, oklch(0.92 0.12 230), oklch(0.95 0.1 60))' }}>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft overflow-hidden animate-dance-slow">
-                  <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+                <div className="w-10 h-10 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft overflow-hidden animate-dance-slow">
+                  <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
                 </div>
                 <div>
                   <h2 className="font-extrabold text-lg">📖 CP — Capaian Pembelajaran</h2>
@@ -422,7 +424,7 @@ export default function TeacherDashboard() {
             {/* World tabs — NOT CROPPED */}
             <div className="flex flex-wrap border-b-2 border-primary/10">
               {CP_DATA.map((r, i) => (
-                <button key={i} onClick={() => setCpWorldIdx(i)} className={`flex-1 py-3.5 px-5 font-extrabold text-sm transition-all border-b-4 whitespace-nowrap ${cpWorldIdx === i ? 'text-white border-primary bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 shadow-pop' : 'text-muted-foreground border-transparent hover:bg-muted/30 hover:text-foreground'}`}>
+                <button key={i} onClick={() => setCpWorldIdx(i)} className={`flex-1 py-3.5 px-5 font-extrabold text-sm transition-all border-b-4 whitespace-nowrap ${cpWorldIdx === i ? 'text-white border-primary bg-linear-to-r from-violet-500 via-purple-500 to-fuchsia-500 shadow-pop' : 'text-muted-foreground border-transparent hover:bg-muted/30 hover:text-foreground'}`}>
                   <span className="text-xl mr-2">{r.icon}</span> {r.dunia}
                 </button>
               ))}
@@ -435,7 +437,7 @@ export default function TeacherDashboard() {
                 <Sparkle className="top-4 left-8 text-lg" delay={0} />
                 <Sparkle className="top-8 right-12 text-sm" delay={0.5} />
                 <div className="text-7xl mb-3 animate-float-strong drop-shadow-lg">{currentCp.icon}</div>
-                <h2 className="text-3xl font-extrabold bg-gradient-to-r from-violet-600 via-purple-500 to-fuchsia-500 bg-clip-text text-transparent">{currentCp.dunia}</h2>
+                <h2 className="text-3xl font-extrabold bg-linear-to-r from-violet-600 via-purple-500 to-fuchsia-500 bg-clip-text text-transparent">{currentCp.dunia}</h2>
                 <p className="text-sm font-bold text-muted-foreground mt-1">{currentCp.materi}</p>
                 <div className="mt-3 inline-block px-4 py-1.5 rounded-full text-xs font-extrabold text-white shadow-soft" style={{ background: 'linear-gradient(135deg, #818cf8, #6366f1)' }}>{currentCp.kd}</div>
                 <p className="mt-4 text-sm font-bold text-foreground/80 max-w-lg mx-auto leading-relaxed">{currentCp.ringkasan}</p>

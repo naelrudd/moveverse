@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -14,8 +15,8 @@ export default function WorldsPage() {
   return (
     <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-10">
       <div className="text-center mb-6 sm:mb-8 animate-pop-in">
-        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden mx-auto mb-3 animate-float">
-          <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+        <div className="w-14 h-14 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden mx-auto mb-3 animate-float">
+          <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
         </div>
         <div className="inline-block bg-white/80 px-4 py-1 rounded-full text-sm font-bold mb-3">Peta Petualangan</div>
         <h1 className="text-4xl md:text-6xl font-extrabold">Dunia Gerak</h1>

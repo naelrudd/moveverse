@@ -1,9 +1,11 @@
 'use client';
 
-import { Suspense, useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { Suspense, useState, useMemo, useCallback, useRef } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import { type Id } from '@/convex/_generated/dataModel';
 import { Sparkles } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useLiveCoachEngine, type SessionResult } from '@/hooks/useLiveCoachEngine';
@@ -126,7 +128,7 @@ function SessionComplete({ result, newBadges, onDismiss }: { result: SessionResu
         )}
 
         {/* XP earned */}
-        <div className="bg-gradient-to-r from-amber-100 to-yellow-100 rounded-xl p-3 border-2 border-amber-300 mb-4">
+        <div className="bg-linear-to-r from-amber-100 to-yellow-100 rounded-xl p-3 border-2 border-amber-300 mb-4">
           <span className="text-sm font-extrabold text-amber-800">⭐ +{Math.round(result.avgScore * 0.5 + result.reps * 2 + result.level * 3)} XP</span>
           <span className="text-xs font-bold text-amber-600 ml-2">({result.reps} rep × 2 + Lv.{result.level} × 3 + avgScore × 0.5)</span>
         </div>
@@ -183,8 +185,8 @@ function SessionComplete({ result, newBadges, onDismiss }: { result: SessionResu
 
         {/* MOVA message */}
         <div className="flex items-start gap-3 text-left bg-primary/5 rounded-2xl p-4 border-2 border-primary/10 mb-4">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft flex-shrink-0 overflow-hidden">
-            <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+          <div className="w-12 h-12 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft shrink-0 overflow-hidden">
+            <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
           </div>
           <div className="flex-1">
             <div className="text-[10px] font-extrabold text-primary mb-0.5">✨ MOVA berkata</div>
@@ -252,9 +254,11 @@ function AssessmentContent() {
     role === 'teacher' && userData?.schoolId ? { schoolId: userData.schoolId } : 'skip'
   );
   const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
+  // Auto-select first class for teacher when none selected
+  const effectiveClassId = selectedClassId ?? (role === 'teacher' && classes?.length ? classes[0]._id : null);
   const students = useQuery(
     api.users.getUsersByClass,
-    selectedClassId ? { classId: selectedClassId as any } : 'skip'
+    effectiveClassId ? { classId: effectiveClassId as Id<"classes"> } : 'skip'
   );
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
 
@@ -287,7 +291,7 @@ function AssessmentContent() {
   // Thresholds from Convex (saved by guru)
   const savedThresholds = useQuery(
     api.users.getCoachThresholds,
-    targetUserId ? { userId: targetUserId as any } : 'skip'
+    targetUserId ? { userId: targetUserId as Id<"users"> } : 'skip'
   );
   const saveThresholdsMutation = useMutation(api.users.saveCoachThresholds);
 
@@ -295,7 +299,7 @@ function AssessmentContent() {
   const liveSessionData = useQuery(
     api.users.getLiveSessionData,
     (role === 'teacher' || role === 'parent') && targetUserId
-      ? { userId: targetUserId as any }
+      ? { userId: targetUserId as Id<"users"> }
       : 'skip'
   );
 
@@ -318,7 +322,7 @@ function AssessmentContent() {
     // Log to Convex in background + get new badges
     if (targetUserId) {
       logSession({
-        userId: targetUserId as any,
+        userId: targetUserId as Id<"users">,
         activity: result.activity,
         level: result.level,
         reps: result.reps,
@@ -336,7 +340,7 @@ function AssessmentContent() {
 
   const handleSaveThresholds = useCallback((key: string, value: number) => {
     if (!targetUserId) return;
-    saveThresholdsMutation({ userId: targetUserId as any, thresholds: { [key]: value } }).catch(console.error);
+    saveThresholdsMutation({ userId: targetUserId as Id<"users">, thresholds: { [key]: value } }).catch(console.error);
   }, [targetUserId, saveThresholdsMutation]);
 
   const cameraRef = useRef<HTMLDivElement>(null);
@@ -364,17 +368,17 @@ function AssessmentContent() {
             <div className="inline-block bg-white/80 px-5 py-1.5 rounded-full text-sm font-bold mb-3 shadow-soft border-2 border-amber-300">
               {role === 'parent' ? '📊 Analisis Gerak' : '🎥 AI Pose Coach'}
             </div>
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-amber-500 to-green-500 flex items-center justify-center gap-2 sm:gap-3">
-              <span className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-pop inline-block animate-float overflow-hidden flex-shrink-0">
-                <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-orange-500 via-amber-500 to-green-500 flex items-center justify-center gap-2 sm:gap-3">
+              <span className="w-16 h-16 md:w-20 md:h-20 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-1 shadow-pop inline-block animate-float overflow-hidden shrink-0">
+                <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
               </span>
               {role === 'teacher'
                 ? 'Rekam Peserta Didik'
                 : role === 'parent'
                   ? 'Analisis Anak'
                   : 'Tunjukkan Gerakanmu!'}
-              <span className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-pop inline-block animate-float overflow-hidden flex-shrink-0" style={{ animationDelay: '0.5s' }}>
-                <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+              <span className="w-16 h-16 md:w-20 md:h-20 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-1 shadow-pop inline-block animate-float overflow-hidden shrink-0" style={{ animationDelay: '0.5s' }}>
+                <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
               </span>
             </h1>
             <p className="text-muted-foreground mt-2 font-medium">
@@ -461,10 +465,10 @@ function AssessmentContent() {
 
           {/* Learning Objective Banner */}
           {activityObjective && (
-            <div className="mb-8 bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 rounded-[2rem] border-4 border-green-300 shadow-pop p-5 animate-pop-in relative overflow-hidden">
+            <div className="mb-8 bg-linear-to-r from-green-50 via-emerald-50 to-teal-50 rounded-[2rem] border-4 border-green-300 shadow-pop p-5 animate-pop-in relative overflow-hidden">
               <SparkleDots count={6} />
               <div className="flex items-start gap-4 relative z-10">
-                <span className="text-4xl animate-wiggle flex-shrink-0">🌍</span>
+                <span className="text-4xl animate-wiggle shrink-0">🌍</span>
                 <div className="flex-1">
                   <div className="inline-flex items-center gap-1 bg-green-500 text-white text-xs font-extrabold px-3 py-1 rounded-full mb-2">
                     <span>🎯</span> Tujuan Pembelajaran
@@ -474,7 +478,7 @@ function AssessmentContent() {
                   </div>
                   <div className="text-sm font-bold text-green-700 mt-1">{activityObjective}</div>
                 </div>
-                <span className="text-3xl animate-bounce-sm flex-shrink-0">✨</span>
+                <span className="text-3xl animate-bounce-sm shrink-0">✨</span>
               </div>
             </div>
           )}
@@ -485,8 +489,8 @@ function AssessmentContent() {
               <SparkleDots count={10} />
               <div className="bg-white rounded-2xl p-4 shadow-pop border-2 border-amber-200 animate-pop-in relative">
                 <div className="flex items-center gap-3 relative z-10">
-                  <div className="w-14 h-14 animate-dance-slow flex-shrink-0 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-pop overflow-hidden">
-                    <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+                  <div className="w-14 h-14 relative animate-dance-slow shrink-0 rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-1 shadow-pop overflow-hidden">
+                    <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
                   </div>
                   <div className="bg-primary/10 rounded-xl rounded-tl-none px-3 py-2 flex-1 shadow-soft">
                     <div className="font-extrabold text-xs text-primary mb-0.5 flex items-center gap-1">
@@ -550,8 +554,8 @@ function AssessmentContent() {
                 {/* MOVA bubble */}
                 <div className="bg-white rounded-2xl p-3 shadow-pop border-2 border-amber-200 animate-pop-in relative overflow-hidden">
                   <div className="flex items-center gap-2 relative z-10">
-                    <div className="w-10 h-10 animate-wobble flex-shrink-0 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-0.5 shadow-pop overflow-hidden">
-                      <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+                    <div className="w-10 h-10 relative animate-wobble shrink-0 rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-0.5 shadow-pop overflow-hidden">
+                      <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
                     </div>
                     <div className="bg-primary/10 rounded-xl rounded-tl-none px-3 py-2 flex-1 shadow-soft">
                       <div className="font-extrabold text-[10px] text-primary mb-0.5 flex items-center gap-1">

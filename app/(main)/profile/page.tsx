@@ -30,7 +30,6 @@ export default function ProfilePage() {
   const cls = useQuery(api.classes.getClass, userData?.classId ? { classId: userData.classId } : 'skip');
   const schools = useQuery(api.schools.getAllSchools);
   const classes = useQuery(api.classes.getClassesBySchool, userData?.schoolId ? { schoolId: userData.schoolId } : 'skip');
-  const updateAvatar = useMutation(api.users.updateAvatar);
   const updateUser = useMutation(api.users.updateUser);
   const [editing, setEditing] = useState(false);
   const [newAvatar, setNewAvatar] = useState('🦊');
@@ -62,10 +61,6 @@ export default function ProfilePage() {
   const role = userData.role ?? 'student';
   const badges = userData.badges ?? [];
 
-  const handleSaveAvatar = async () => {
-    await updateAvatar({ userId: userData._id, avatar: newAvatar });
-    setEditing(false);
-  };
 
   const handleSaveProfile = async () => {
     setSaving(true);

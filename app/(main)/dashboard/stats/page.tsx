@@ -1,45 +1,59 @@
-'use client';
+"use client";
 
-import { useAuth } from '@clerk/nextjs';
-import { useQuery } from 'convex/react';
-import { api } from '@/convex/_generated/api';
-import { ScoreHistoryChart } from '@/components/coach/ScoreHistoryChart';
-import { Leaderboard } from '@/components/coach/Leaderboard';
-import { ChallengeMode } from '@/components/coach/ChallengeMode';
-import type { MovementType } from '@/lib/fms-scoring';
-import { useState } from 'react';
+import { useAuth } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
+import { ScoreHistoryChart } from "@/components/coach/ScoreHistoryChart";
+import { Leaderboard } from "@/components/coach/Leaderboard";
+import { ChallengeMode } from "@/components/coach/ChallengeMode";
+import type { MovementType } from "@/lib/fms-scoring";
+import { useState } from "react";
 
 // ── Stats Page: compact, no accordion, mobile-first ──
 
 const ACTIVITIES: { id: MovementType; label: string; emoji: string }[] = [
-  { id: 'menekuk', label: 'Menekuk', emoji: '🦵' },
-  { id: 'meliuk', label: 'Meliuk', emoji: '🐍' },
-  { id: 'memutar', label: 'Memutar', emoji: '🌀' },
-  { id: 'keseimbangan', label: 'Keseimbangan', emoji: '⚖️' },
+  { id: "menekuk", label: "Menekuk", emoji: "🦵" },
+  { id: "meliuk", label: "Meliuk", emoji: "🐍" },
+  { id: "memutar", label: "Memutar", emoji: "🌀" },
+  { id: "keseimbangan", label: "Keseimbangan", emoji: "⚖️" },
 ];
 
 function SessionHistory({ userId }: { userId: string }) {
-  const history = useQuery(api.liveCoach.getSessionHistory, { userId: userId as any, limit: 30 });
+  const history = useQuery(api.liveCoach.getSessionHistory, {
+    userId: userId as Id<"users">,
+    limit: 30,
+  });
 
   const exportCSV = () => {
     if (!history?.length) return;
-    const header = 'Aktivitas,Level,Skor,Durasi (detik),Tanggal\n';
-    const rows = history.map((h) =>
-      `${h.activity},${h.level},${h.score},${h.duration.toFixed(0)},${new Date(h.timestamp).toLocaleDateString('id-ID')}`
-    ).join('\n');
-    const blob = new Blob([header + rows], { type: 'text/csv' });
+    const header = "Aktivitas,Level,Skor,Durasi (detik),Tanggal\n";
+    const rows = history
+      .map(
+        (h) =>
+          `${h.activity},${h.level},${h.score},${h.duration.toFixed(0)},${new Date(h.timestamp).toLocaleDateString("id-ID")}`,
+      )
+      .join("\n");
+    const blob = new Blob([header + rows], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `riwayat-coach-${new Date().toISOString().slice(0,10)}.csv`;
-    a.click(); URL.revokeObjectURL(url);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `riwayat-coach-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
     <div className="bg-white rounded-2xl p-3 sm:p-4 shadow-soft border-2 border-purple-200">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="font-extrabold text-sm sm:text-base flex items-center gap-1.5">📋 Riwayat Sesi</h3>
+        <h3 className="font-extrabold text-sm sm:text-base flex items-center gap-1.5">
+          📋 Riwayat Sesi
+        </h3>
         {history && history.length > 0 && (
-          <button onClick={exportCSV} className="text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full hover:bg-purple-100 transition">
+          <button
+            onClick={exportCSV}
+            className="text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full hover:bg-purple-100 transition"
+          >
             📥 CSV
           </button>
         )}
@@ -47,19 +61,39 @@ function SessionHistory({ userId }: { userId: string }) {
       <div className="space-y-1.5 max-h-64 overflow-y-auto">
         {history && history.length > 0 ? (
           history.map((h) => (
-            <div key={h._id} className="flex items-center gap-2 p-2 bg-purple-50/50 rounded-lg border border-purple-100">
+            <div
+              key={h._id}
+              className="flex items-center gap-2 p-2 bg-purple-50/50 rounded-lg border border-purple-100"
+            >
               <span className="text-base">
-                {h.activity === 'menekuk' ? '🦵' : h.activity === 'meliuk' ? '🐍' : h.activity === 'memutar' ? '🌀' : '⚖️'}
+                {h.activity === "menekuk"
+                  ? "🦵"
+                  : h.activity === "meliuk"
+                    ? "🐍"
+                    : h.activity === "memutar"
+                      ? "🌀"
+                      : "⚖️"}
               </span>
               <div className="flex-1 min-w-0">
-                <div className="font-bold text-xs sm:text-sm capitalize truncate">{h.activity} Lv.{h.level}</div>
+                <div className="font-bold text-xs sm:text-sm capitalize truncate">
+                  {h.activity} Lv.{h.level}
+                </div>
                 <div className="text-[10px] text-muted-foreground">
-                  {new Date(h.timestamp).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  {new Date(h.timestamp).toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "short",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </div>
               </div>
-              <div className="text-right flex-shrink-0">
-                <div className="font-extrabold text-xs text-primary">{h.score}</div>
-                <div className="text-[10px] text-muted-foreground">{h.duration.toFixed(0)}s</div>
+              <div className="text-right shrink-0">
+                <div className="font-extrabold text-xs text-primary">
+                  {h.score}
+                </div>
+                <div className="text-[10px] text-muted-foreground">
+                  {h.duration.toFixed(0)}s
+                </div>
               </div>
             </div>
           ))
@@ -67,7 +101,9 @@ function SessionHistory({ userId }: { userId: string }) {
           <div className="text-center py-6 text-muted-foreground">
             <div className="text-2xl mb-1">📊</div>
             <p className="text-xs sm:text-sm font-bold">Belum ada sesi</p>
-            <p className="text-[11px] sm:text-xs mt-0.5">Mulai latihan di AI Coach untuk melihat riwayat</p>
+            <p className="text-[11px] sm:text-xs mt-0.5">
+              Mulai latihan di AI Coach untuk melihat riwayat
+            </p>
           </div>
         )}
       </div>
@@ -77,7 +113,7 @@ function SessionHistory({ userId }: { userId: string }) {
 
 export default function StatsPage() {
   const { userId } = useAuth();
-  const [activity, setActivity] = useState<MovementType>('menekuk');
+  const [activity, setActivity] = useState<MovementType>("menekuk");
 
   if (!userId) return null;
 
@@ -86,19 +122,21 @@ export default function StatsPage() {
       {/* Compact title — no giant hero */}
       <div className="flex items-center gap-2">
         <span className="text-xl">📊</span>
-        <h1 className="font-extrabold text-lg sm:text-xl">Statistik & Kompetisi</h1>
+        <h1 className="font-extrabold text-lg sm:text-xl">
+          Statistik & Kompetisi
+        </h1>
       </div>
 
       {/* Activity filter — compact pills */}
-      <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
+      <div className="flex gap-1.5 py-3 overflow-x-auto no-scrollbar">
         {ACTIVITIES.map((a) => (
           <button
             key={a.id}
             onClick={() => setActivity(a.id)}
             className={`px-3 py-1.5 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-all border-2 ${
               activity === a.id
-                ? 'gradient-sky text-white shadow-soft border-transparent scale-105'
-                : 'bg-white text-gray-600 border-gray-200 hover:border-sky-300 hover:bg-sky-50'
+                ? "gradient-sky text-white shadow-soft border-transparent scale-105"
+                : "bg-white text-gray-600 border-gray-200 hover:border-sky-300 hover:bg-sky-50"
             }`}
           >
             {a.emoji} {a.label}

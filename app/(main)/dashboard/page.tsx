@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -32,8 +33,8 @@ export default function DashboardRouter() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden animate-bounce">
-        <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+      <div className="w-16 h-16 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden animate-bounce">
+        <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useAuth } from '@clerk/nextjs';
+import Image from 'next/image';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import Link from 'next/link';
@@ -47,8 +48,8 @@ function Sparkle({ className = '', delay = 0 }: { className?: string; delay?: nu
 function MovaTip({ text }: { text: string }) {
   return (
     <div className="flex items-start gap-2 animate-slide-up" style={{ animationDelay: '0.8s' }}>
-      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft animate-float flex-shrink-0 overflow-hidden">
-        <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+      <div className="w-10 h-10 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft animate-float shrink-0 overflow-hidden">
+        <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
       </div>
       <div className="bg-white rounded-2xl rounded-bl-md px-3 py-2 shadow-soft text-xs font-bold text-foreground/80 relative">
         <span className="absolute -left-1 top-3 w-2 h-2 bg-white rotate-45 shadow-soft" />
@@ -96,22 +97,22 @@ export default function StudentDashboard() {
 
         <div className="flex items-center gap-6 relative z-10">
           {/* MOVA — 2x bigger, stronger dance */}
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-amber-400 via-orange-400 to-red-400 p-1.5 shadow-pop animate-dance-slow flex-shrink-0 overflow-hidden relative">
-              <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain drop-shadow-lg" />
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="w-32 h-32 rounded-full bg-linear-to-br from-amber-400 via-orange-400 to-red-400 p-1.5 shadow-pop animate-dance-slow shrink-0 overflow-hidden relative">
+              <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain drop-shadow-lg" />
               {/* Glow ring */}
               <div className="absolute inset-0 rounded-full animate-pulse-glow" />
             </div>
             {/* Crystals — bigger, shinier */}
             <div className="relative">
-              <img src="/crystals.png" alt="Energy Crystals" className="h-20 w-auto drop-shadow-lg animate-float" />
+              <Image src="/crystals.png" alt="Energy Crystals" width={80} height={80} className="h-20 w-auto drop-shadow-lg animate-float" />
               <Sparkle className="-top-2 -right-1 text-xl" delay={0.3} />
               <Sparkle className="bottom-2 -left-2 text-sm" delay={1.0} />
             </div>
           </div>
 
           <div className="flex-1">
-            <h1 className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 bg-clip-text text-transparent drop-shadow-sm flex items-center gap-3">
+            <h1 className="text-4xl font-extrabold bg-linear-to-r from-purple-600 via-pink-500 to-orange-400 bg-clip-text text-transparent drop-shadow-sm flex items-center gap-3">
               <span className="text-5xl inline-block animate-wobble">{userData?.avatar || '🦊'}</span>
               Halo, {userData?.name || 'Explorer'}! 🎉
             </h1>
@@ -350,8 +351,8 @@ export default function StudentDashboard() {
 
                     {/* Hover bounce MOVA tip */}
                     <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 animate-bounce-sm overflow-hidden shadow-sm">
-                        <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+                      <div className="w-6 h-6 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 animate-bounce-sm overflow-hidden shadow-sm">
+                        <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
                       </div>
                     </div>
                   </Link>

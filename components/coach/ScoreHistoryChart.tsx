@@ -28,7 +28,7 @@ const LABELS: Record<string, string> = {
 export function ScoreHistoryChart({ userId }: ScoreHistoryChartProps) {
   const [selected, setSelected] = useState<MovementType>('menekuk');
 
-  const history = useQuery(api.liveCoach.getSessionHistory, { userId: userId as any, limit: 30 });
+  const history = useQuery(api.liveCoach.getSessionHistory, { userId, limit: 30 });
 
   const data = (history ?? [])
     .filter((h) => h.activity === selected)

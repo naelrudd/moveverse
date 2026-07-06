@@ -1,7 +1,7 @@
 'use client';
 
-import { Camera, Maximize2, Minimize2, Pause, Play, Square, Loader2, AlertTriangle, Move } from 'lucide-react';
 import type { CoachState, CoachActions } from '@/hooks/useLiveCoachEngine';
+import { Move, Loader2, Camera, Play, Pause, Square, Maximize2, Minimize2 } from 'lucide-react';
 import { RealTimeMetrics } from './RealTimeMetrics';
 import type { LevelThreshold } from '@/lib/fms-scoring';
 

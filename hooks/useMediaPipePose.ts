@@ -9,6 +9,10 @@ export interface PoseLandmark {
   visibility?: number;
 }
 
+interface MediaPipeResults {
+  poseLandmarks?: PoseLandmark[];
+}
+
 interface UseMediaPipePoseReturn {
   videoRef: React.RefObject<HTMLVideoElement>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -20,8 +24,8 @@ interface UseMediaPipePoseReturn {
   pose: PoseLandmark[] | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- MediaPipe CDN script exposes globals
 let poseModule: any = null;
-let pose: any = null;
 
 async function loadMediaPipe() {
   if (poseModule) return poseModule;
@@ -30,8 +34,10 @@ async function loadMediaPipe() {
   script.src = 'https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js';
   document.body.appendChild(script);
 
-  return new Promise((resolve) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- resolve with any MediaPipe pose constructor
+  return new Promise<any>((resolve) => {
     script.onload = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic CDN global
       poseModule = (window as any).Pose;
       resolve(poseModule);
     };
@@ -55,8 +61,8 @@ export function useMediaPipePose(
         videoRef.current.srcObject = stream;
       }
       setIsReady(true);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Camera access denied');
     }
   };
 
@@ -67,7 +73,7 @@ export function useMediaPipePose(
   };
 
   useEffect(() => {
-    let camera: any = null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- MediaPipe Pose instance
     let poseInstance: any = null;
 
     async function initPose() {
@@ -100,7 +106,7 @@ export function useMediaPipePose(
           minTrackingConfidence: 0.5,
         });
 
-        poseInstance.onResults((results: any) => {
+        poseInstance.onResults((results: MediaPipeResults) => {
           if (results.poseLandmarks) {
             setPose(results.poseLandmarks);
             onPoseDetected?.(results.poseLandmarks);
@@ -145,8 +151,9 @@ export function useMediaPipePose(
     initPose();
 
     return () => {
-      if (videoRef.current?.srcObject) {
-        (videoRef.current.srcObject as MediaStream)
+      const video = videoRef.current;
+      if (video?.srcObject) {
+        (video.srcObject as MediaStream)
           .getTracks()
           .forEach((track) => track.stop());
       }
@@ -165,7 +172,7 @@ export function useMediaPipePose(
   };
 };
 
-function drawSkeleton(canvas: HTMLCanvasElement, results: any) {
+function drawSkeleton(canvas: HTMLCanvasElement, results: MediaPipeResults) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
@@ -204,8 +211,8 @@ function drawSkeleton(canvas: HTMLCanvasElement, results: any) {
 
     ctx.strokeStyle = '#00ff00';
     connections.forEach(([start, end]) => {
-      const p1 = results.poseLandmarks[start];
-      const p2 = results.poseLandmarks[end];
+      const p1 = results.poseLandmarks![start];
+      const p2 = results.poseLandmarks![end];
       ctx.beginPath();
       ctx.moveTo(p1.x * canvas.width, p1.y * canvas.height);
       ctx.lineTo(p2.x * canvas.width, p2.y * canvas.height);

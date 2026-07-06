@@ -104,6 +104,7 @@ export function useJumpDetector(landmarks: PoseLandmark[] | null) {
           const valid = squatDepth > 30 && landingBalance > 50; // ponytail: thresholds tunable
 
           if (valid) {
+              // eslint-disable-next-line react-hooks/set-state-in-effect
             setJumpCount((prev) => prev + 1);
             setIsValidJump(true);
             

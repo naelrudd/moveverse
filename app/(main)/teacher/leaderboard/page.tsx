@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import { type Id } from '@/convex/_generated/dataModel';
 import { useState } from 'react';
 
 const dummyLeaderboard: { _id?: string; rank: number; name: string; avatar: string; level: number; xp: number; badges?: string[]; trend?: string }[] = [
@@ -27,14 +28,13 @@ export default function TeacherLeaderboardPage() {
 
   const leaderboard = useQuery(
     api.users.getLeaderboardByClass,
-    selectedClassId ? { classId: selectedClassId as any } : 'skip'
+    selectedClassId ? { classId: selectedClassId as Id<"classes"> } : 'skip'
   );
 
   const sorted = leaderboard
     ? [...leaderboard].sort((a, b) => sortBy === 'xp' ? b.xp - a.xp : b.level - a.level)
     : dummyLeaderboard;
 
-  const selectedClassName = classes?.find((c) => c._id === selectedClassId)?.name;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-5">

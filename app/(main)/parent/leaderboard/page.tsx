@@ -2,9 +2,6 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useAuth } from '@clerk/nextjs';
-import { useQuery } from 'convex/react';
-import { api } from '@/convex/_generated/api';
 import { useState } from 'react';
 
 const dummyChildren = [
@@ -24,8 +21,7 @@ const dummyLeaderboard = [
 ];
 
 export default function ParentLeaderboardPage() {
-  const { userId } = useAuth();
-  const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
+  
 
   // In real app, fetch children from Convex using userData.childIds
   const children = dummyChildren;
@@ -116,7 +112,7 @@ export default function ParentLeaderboardPage() {
       </div>
 
       {/* Motivation */}
-      <div className="bg-gradient-to-r from-violet-500 to-purple-600 rounded-3xl p-5 shadow-soft text-white">
+      <div className="bg-linear-to-r from-violet-500 to-purple-600 rounded-3xl p-5 shadow-soft text-white">
         <div className="flex items-center gap-4">
           <span className="text-4xl">💪</span>
           <div>

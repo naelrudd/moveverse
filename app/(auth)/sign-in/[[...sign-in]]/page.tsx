@@ -1,6 +1,6 @@
 // app/(auth)/sign-in/[[...sign-in]]/page.tsx
-import { SignIn } from "@clerk/nextjs";
 import Image from "next/image";
+import { SignIn } from "@clerk/nextjs";
 
 export default function SignInPage() {
   return (
@@ -19,8 +19,8 @@ export default function SignInPage() {
 
         {/* MOVA mascot — big & dancing */}
         <div className="relative z-10 mb-8">
-          <div className="w-48 h-48 rounded-full bg-gradient-to-br from-amber-300 via-orange-400 to-red-400 p-2 shadow-pop animate-dance-slow relative overflow-hidden">
-            <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain drop-shadow-lg" />
+          <div className="w-48 h-48 rounded-full bg-linear-to-br from-amber-300 via-orange-400 to-red-400 p-2 shadow-pop animate-dance-slow relative overflow-hidden">
+            <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain drop-shadow-lg" />
             <div className="absolute inset-0 rounded-full animate-pulse-glow" />
           </div>
           {/* Sparkles around MOVA */}
@@ -82,8 +82,8 @@ export default function SignInPage() {
       <div className="w-[480px] bg-slate-50 flex flex-col items-center justify-center p-8 relative">
         {/* Top MOVA peek */}
         <div className="absolute top-6 left-6 flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft overflow-hidden animate-float">
-            <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+          <div className="w-10 h-10 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft overflow-hidden animate-float">
+            <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
           </div>
           <span className="text-xs font-bold text-muted-foreground">MOVA menyapa! 👋</span>
         </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useAuth, useUser } from '@clerk/nextjs';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -74,8 +75,8 @@ export default function OnboardingPage() {
   if (existingUser === undefined) {
     return (
       <div className="flex items-center justify-center min-h-screen gradient-sky">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden animate-bounce mx-auto mb-4">
-          <img src="/mova-hero.png" alt="MOVA" className="w-full h-full object-contain" />
+        <div className="w-16 h-16 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden animate-bounce mx-auto mb-4">
+          <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
         </div>
       </div>
     );
@@ -85,7 +86,7 @@ export default function OnboardingPage() {
     <div className="min-h-screen flex items-center justify-center gradient-sky p-4">
       <div className="w-full max-w-lg bg-white rounded-[2rem] p-8 shadow-pop border-4 border-white animate-pop-in">
         <div className="text-center mb-6">
-          <img src="/logo.png" alt="MOVEVERSE" className="h-14 mx-auto mb-3 object-contain" />
+          <Image src="/logo.png" alt="MOVEVERSE" width={56} height={56} className="h-14 mx-auto mb-3 object-contain" />
           <h1 className="text-2xl font-extrabold">Selamat datang!</h1>
           <p className="text-sm text-muted-foreground mt-1">Lengkapi profilmu dulu ya 😊</p>
         </div>

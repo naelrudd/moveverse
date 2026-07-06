@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useAuth, UserButton as ClerkUserButton } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
@@ -41,11 +42,13 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-white/70 border-b-4 border-primary/20">
-      <div className="flex-1 flex items-center gap-1 overflow-x-auto no-scrollbar max-w-7xl mx-auto px-4 items-center gap-3 md:gap-6">
+      <div className="flex-1 flex items-center overflow-x-auto no-scrollbar max-w-7xl mx-auto px-4 gap-3 md:gap-6">
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <img
+          <Image
             src="/logo.png"
             alt="MOVEVERSE"
+            width={24}
+            height={24}
             className="h-6 w-auto object-contain"
           />
           <div className="text-xs font-bold hidden sm:block">

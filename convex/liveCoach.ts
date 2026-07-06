@@ -19,7 +19,7 @@ export const logMovementSession = mutation({
     scoreHistory: v.array(v.number()),
   },
   handler: async (ctx, args) => {
-    const { userId, activity, level, reps, avgScore, holdTime, duration, scoreHistory } = args;
+    const { userId, activity, level, reps, avgScore, duration,  } = args;
 
     // 1. Insert movement record
     const movementId = await ctx.db.insert("movements", {

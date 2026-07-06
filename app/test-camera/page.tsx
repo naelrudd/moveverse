@@ -72,7 +72,7 @@ export default function TestCameraPage() {
         <div className="mt-6 p-4 bg-gray-800 rounded">
           <h3 className="font-semibold mb-2">Instructions:</h3>
           <ol className="list-decimal list-inside space-y-1 text-sm">
-            <li>Click "Start Camera" and allow camera access</li>
+            <li>Click &quot;Start Camera&quot; and allow camera access</li>
             <li>Step back so your full body is visible</li>
             <li>Perform a squat jump (squat down, then jump up)</li>
             <li>Watch the counter increment on valid jumps</li>

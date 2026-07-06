@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback, type RefObject } from 'react';
-import { useMediaPipePose, type PoseLandmark } from './useMediaPipePose';
+import { useMediaPipePose } from './useMediaPipePose';
 import {
   type MovementType,
   detectMenekuk,
@@ -9,7 +9,6 @@ import {
   detectMemutar,
   detectKeseimbangan,
   MOVEMENT_LEVELS,
-  countReps,
   getMovementFeedback,
 } from '@/lib/fms-scoring';
 
@@ -64,7 +63,7 @@ export interface UseLiveCoachEngineOptions {
  * Pure hook logic, portable ke Flutter (ganti MediaPipe source).
  */
 export function useLiveCoachEngine(options: UseLiveCoachEngineOptions) {
-  const { activity, level, userId, role, thresholds, onComplete, containerRef } = options;
+  const { activity, level, onComplete, containerRef } = options;
 
   const [state, setState] = useState<CoachState>({
     isRecording: false,
@@ -94,10 +93,7 @@ export function useLiveCoachEngine(options: UseLiveCoachEngineOptions) {
   const { videoRef, canvasRef, isReady, isLoading, error, startCamera, stopCamera, pose } =
     useMediaPipePose();
 
-  // Sync MediaPipe ready state
-  useEffect(() => {
-    setState((s) => ({ ...s, isReady, isLoading, error }));
-  }, [isReady, isLoading, error]);
+  // isReady, isLoading, error are derived directly from useMediaPipePose — no useEffect sync needed
 
   // ── Frame Processing (continuous, setiap frame) ──
   // TODO Flutter: ganti dengan onResults callback dari MediaPipe Flutter plugin
@@ -105,7 +101,6 @@ export function useLiveCoachEngine(options: UseLiveCoachEngineOptions) {
     if (!pose || !isRecordingRef.current || isPausedRef.current) return;
 
     frameCountRef.current++;
-    const frame = frameCountRef.current;
 
     let score = 0;
     let feedback = '';
@@ -337,6 +332,9 @@ export function useLiveCoachEngine(options: UseLiveCoachEngineOptions) {
 
   return {
     ...state,
+    isReady,
+    isLoading,
+    error,
     videoRef,
     canvasRef,
     start,

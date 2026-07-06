@@ -26,7 +26,7 @@ const WORLD_THEMES: Record<
   }
 > = {
   "pulau-naga": {
-    bg: "bg-gradient-to-br from-green-50 to-emerald-50",
+    bg: "bg-linear-to-br from-green-50 to-emerald-50",
     border: "border-green-300",
     accent: "text-green-700",
     levelActive:
@@ -35,7 +35,7 @@ const WORLD_THEMES: Record<
     headerBg: "bg-green-600",
   },
   "hutan-harimau": {
-    bg: "bg-gradient-to-br from-sky-50 to-blue-50",
+    bg: "bg-linear-to-br from-sky-50 to-blue-50",
     border: "border-sky-300",
     accent: "text-sky-700",
     levelActive: "bg-sky-600 text-white border-sky-500 ring-2 ring-sky-300",
@@ -43,7 +43,7 @@ const WORLD_THEMES: Record<
     headerBg: "bg-sky-600",
   },
   "gunung-elang": {
-    bg: "bg-gradient-to-br from-purple-50 to-fuchsia-50",
+    bg: "bg-linear-to-br from-purple-50 to-fuchsia-50",
     border: "border-purple-300",
     accent: "text-purple-700",
     levelActive:
@@ -55,7 +55,7 @@ const WORLD_THEMES: Record<
 };
 
 const DEFAULT_THEME = {
-  bg: "bg-gradient-to-br from-sky-50 to-blue-50",
+  bg: "bg-linear-to-br from-sky-50 to-blue-50",
   border: "border-sky-300",
   accent: "text-sky-700",
   levelActive:
