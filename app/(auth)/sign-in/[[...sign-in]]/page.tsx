@@ -13,9 +13,9 @@ export default function SignInPage() {
         }}
       >
         {/* Animated blobs */}
-        <div className="absolute w-[500px] h-[500px] rounded-full bg-white/5 -top-24 -left-24 animate-float" />
-        <div className="absolute w-[300px] h-[300px] rounded-full bg-white/5 bottom-[-80px] right-[-40px] animate-float" style={{ animationDelay: '1s' }} />
-        <div className="absolute w-[200px] h-[200px] rounded-full bg-white/8 top-1/3 right-1/4 animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute w-125 h-125 rounded-full bg-white/5 -top-24 -left-24 animate-float" />
+        <div className="absolute w-75 h-75 rounded-full bg-white/5 -bottom-20 -right-10 animate-float" style={{ animationDelay: '1s' }} />
+        <div className="absolute w-50 h-50 rounded-full bg-white/8 top-1/3 right-1/4 animate-float" style={{ animationDelay: '2s' }} />
 
         {/* MOVA mascot — big & dancing */}
         <div className="relative z-10 mb-8">
