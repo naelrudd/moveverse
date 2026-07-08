@@ -153,7 +153,7 @@ export function useMediaPipePose(
       // Wait for video metadata before starting detection loop
       const video = videoRef.current;
       if (video) {
-        video.onloadedmetadata = () => {
+        const onReady = () => {
           const canvas = canvasRef.current;
           if (canvas) {
             canvas.width = video.videoWidth;
@@ -174,6 +174,13 @@ export function useMediaPipePose(
           };
           rafRef.current = requestAnimationFrame(processFrame);
         };
+
+        // If metadata already loaded, proceed immediately
+        if (video.readyState >= 1) {
+          onReady();
+        } else {
+          video.addEventListener('loadedmetadata', onReady, { once: true });
+        }
       }
     } catch (err) {
       const message =
