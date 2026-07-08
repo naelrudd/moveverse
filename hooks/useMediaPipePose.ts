@@ -30,6 +30,19 @@ let poseModule: any = null;
 async function loadMediaPipe() {
   if (poseModule) return poseModule;
 
+  // Skip if script already in DOM
+  const existing = document.querySelector('script[src*="@mediapipe/pose/pose.js"]');
+  if (existing) {
+    return new Promise<any>((resolve) => {
+      const check = () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic CDN global
+        if ((window as any).Pose) resolve((window as any).Pose);
+        else setTimeout(check, 50);
+      };
+      check();
+    });
+  }
+
   const script = document.createElement('script');
   script.src = 'https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js';
   document.body.appendChild(script);
@@ -50,115 +63,144 @@ export function useMediaPipePose(
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isReady, setIsReady] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pose, setPose] = useState<PoseLandmark[] | null>(null);
 
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-      setIsReady(true);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Camera access denied');
-    }
-  };
+  // Refs for cleanup
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- MediaPipe Pose instance
+  const poseInstanceRef = useRef<any>(null);
+  const rafRef = useRef<number>(0);
+  const streamRef = useRef<MediaStream | null>(null);
+  const stoppingRef = useRef(false);
 
   const stopCamera = () => {
-    const stream = videoRef.current?.srcObject as MediaStream;
-    stream?.getTracks().forEach(track => track.stop());
+    stoppingRef.current = true;
+
+    // Cancel animation frame loop
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = 0;
+    }
+
+    // Close MediaPipe
+    if (poseInstanceRef.current) {
+      try { poseInstanceRef.current.close(); } catch { /* ignore */ }
+      poseInstanceRef.current = null;
+    }
+
+    // Stop camera tracks
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current?.srcObject) {
+      (videoRef.current.srcObject as MediaStream)
+        .getTracks()
+        .forEach((track) => track.stop());
+      videoRef.current.srcObject = null;
+    }
+
     setIsReady(false);
   };
 
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- MediaPipe Pose instance
-    let poseInstance: any = null;
+  const startCamera = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      stoppingRef.current = false;
 
-    async function initPose() {
-      try {
-        setIsLoading(true);
+      // Load MediaPipe
+      const Pose = await loadMediaPipe();
+      if (!Pose) throw new Error('Failed to load MediaPipe');
 
-        // Load MediaPipe Pose
-        const Pose = await loadMediaPipe();
-        if (!Pose) throw new Error('Failed to load MediaPipe');
+      // Request camera
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: { ideal: 640 }, height: { ideal: 480 } },
+      });
+      streamRef.current = stream;
 
-        // Request camera permission
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: { ideal: 640 }, height: { ideal: 480 } },
-        });
-
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-
-        // Initialize Pose
-        poseInstance = new Pose({
-          locateFile: (file: string) =>
-            `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-        });
-
-        poseInstance.setOptions({
-          modelComplexity: 1,
-          smoothLandmarks: true,
-          minDetectionConfidence: 0.5,
-          minTrackingConfidence: 0.5,
-        });
-
-        poseInstance.onResults((results: MediaPipeResults) => {
-          if (results.poseLandmarks) {
-            setPose(results.poseLandmarks);
-            onPoseDetected?.(results.poseLandmarks);
-
-            // Draw skeleton
-            if (canvasRef.current) {
-              drawSkeleton(canvasRef.current, results);
-            }
-          }
-        });
-
-        // Setup camera stream — wait for metadata before starting detection loop
-        const video = videoRef.current;
-        if (video) {
-          video.onloadedmetadata = () => {
-            const canvas = canvasRef.current;
-            if (canvas) {
-              canvas.width = video.videoWidth;
-              canvas.height = video.videoHeight;
-            }
-            setIsReady(true);
-            setIsLoading(false);
-
-            // Start pose detection loop only after video has real dimensions
-            const processFrame = async () => {
-              if (videoRef.current && poseInstance && !videoRef.current.paused) {
-                await poseInstance.send({ image: videoRef.current });
-                requestAnimationFrame(processFrame);
-              }
-            };
-            processFrame();
-          };
-        }
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Failed to initialize pose';
-        setError(message);
-        setIsLoading(false);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
       }
-    }
 
-    initPose();
+      // Initialize Pose
+      const poseInstance = new Pose({
+        locateFile: (file: string) =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+      });
+      poseInstanceRef.current = poseInstance;
 
-    return () => {
+      poseInstance.setOptions({
+        modelComplexity: 1,
+        smoothLandmarks: true,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5,
+      });
+
+      poseInstance.onResults((results: MediaPipeResults) => {
+        if (results.poseLandmarks) {
+          setPose(results.poseLandmarks);
+          onPoseDetected?.(results.poseLandmarks);
+
+          // Draw skeleton
+          if (canvasRef.current) {
+            drawSkeleton(canvasRef.current, results);
+          }
+        }
+      });
+
+      // Wait for video metadata before starting detection loop
       const video = videoRef.current;
-      if (video?.srcObject) {
-        (video.srcObject as MediaStream)
+      if (video) {
+        video.onloadedmetadata = () => {
+          const canvas = canvasRef.current;
+          if (canvas) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+          }
+          setIsReady(true);
+          setIsLoading(false);
+
+          // Start pose detection loop
+          const processFrame = async () => {
+            if (stoppingRef.current) return;
+            if (videoRef.current && poseInstanceRef.current && !videoRef.current.paused) {
+              try {
+                await poseInstanceRef.current.send({ image: videoRef.current });
+              } catch { /* ignore frame errors */ }
+              rafRef.current = requestAnimationFrame(processFrame);
+            }
+          };
+          rafRef.current = requestAnimationFrame(processFrame);
+        };
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Failed to initialize pose';
+      setError(message);
+      setIsLoading(false);
+    }
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      stoppingRef.current = true;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (poseInstanceRef.current) {
+        try { poseInstanceRef.current.close(); } catch { /* ignore */ }
+      }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+      if (videoRef.current?.srcObject) {
+        (videoRef.current.srcObject as MediaStream)
           .getTracks()
           .forEach((track) => track.stop());
       }
     };
-  }, [onPoseDetected]);
+  }, []);
 
   return {
     videoRef: videoRef as React.RefObject<HTMLVideoElement>,
@@ -170,7 +212,7 @@ export function useMediaPipePose(
     error,
     pose,
   };
-};
+}
 
 function drawSkeleton(canvas: HTMLCanvasElement, results: MediaPipeResults) {
   const ctx = canvas.getContext('2d');
