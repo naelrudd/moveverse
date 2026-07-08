@@ -7,6 +7,7 @@ import { useAuth } from '@clerk/nextjs';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+import CopyButton from '@/components/CopyButton';
 
 type Tab = 'overview' | 'users' | 'logs' | 'schools';
 
@@ -31,6 +32,7 @@ const AVATARS = ['🤖', '👾', '🦊', '🐱', '🐶', '🦁', '🐸', '🐧',
 export default function AdminPage() {
   const { userId } = useAuth();
   const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
+  const updateUser = useMutation(api.admin.updateUser);
   const [tab, setTab] = useState<Tab>('overview');
 
   if (!userData) {
@@ -46,6 +48,15 @@ export default function AdminPage() {
         <div className="text-5xl mb-4">🔒</div>
         <h1 className="text-2xl font-extrabold">Akses Ditolak</h1>
         <p className="text-muted-foreground mt-2">Hanya admin yang bisa mengakses halaman ini.</p>
+        <button
+          onClick={async () => {
+            await updateUser({ userId: userData._id, name: userData.name, role: 'admin' });
+            window.location.reload();
+          }}
+          className="mt-6 gradient-sky text-white px-6 py-3 rounded-full font-bold text-sm"
+        >
+          👑 Promote ke Admin
+        </button>
       </div>
     );
   }
@@ -449,7 +460,12 @@ function UsersTab({ isDevAdmin, schoolId }: { isDevAdmin: boolean; schoolId?: Id
                       {ROLE_LABELS[user.role || 'student']}
                     </span>
                     {user.nis && <span>NIS: {user.nis}</span>}
-                    {'childCode' in user && String(user.childCode ?? '') && <span className="text-amber-600">Kode: {String(user.childCode)}</span>}
+                    {'childCode' in user && String(user.childCode ?? '') && (
+                      <span className="text-amber-600 flex items-center gap-1">
+                        Kode: {String(user.childCode)}
+                        <CopyButton text={String(user.childCode)} label="" />
+                      </span>
+                    )}
                     {'className' in user && user.className && <span>Kelas: {user.className}</span>}
                     {'schoolName' in user && user.schoolName && <span>• {user.schoolName}</span>}
                   </div>
@@ -590,7 +606,7 @@ function SchoolsTab() {
       alert(result.error);
       return;
     }
-    alert(`Akun admin sekolah dibuat! Clerk ID: ${result.clerkId}`);
+    alert(`Akun admin sekolah dibuat! Clerk ID: ${result.clerkId}\n\nBagikan ID ini ke admin sekolah untuk login.`);
     setAdminForm({ name: '', phone: '' });
     setShowAdminForm(null);
   };
@@ -667,8 +683,10 @@ function SchoolsTab() {
                 <div className="text-3xl">🏫</div>
                 <div>
                   <div className="font-extrabold text-lg">{school.name}</div>
-                  <div className="text-xs text-muted-foreground">
-                    NPSN: {school.npsn || '-'} • Slug: {school.slug}
+                  <div className="text-xs text-muted-foreground flex items-center gap-2">
+                    NPSN: {school.npsn || '-'}
+                    {school.npsn && <CopyButton text={school.npsn} label="Salin" />}
+                    • Slug: {school.slug}
                   </div>
                   {school.address && (
                     <div className="text-xs text-muted-foreground mt-1">{school.address}</div>

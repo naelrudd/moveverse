@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import CopyButton from '@/components/CopyButton';
 import {
   ResponsiveContainer,
   Tooltip,
@@ -214,6 +215,12 @@ export default function SchoolDashboard() {
                   XP {cls.avgXp}
                 </span>
               </div>
+              {cls.code && (
+                <div className="flex items-center justify-between mb-2 p-2 bg-amber-50 rounded-xl">
+                  <span className="text-xs font-bold text-amber-700">Kode: {cls.code}</span>
+                  <CopyButton text={cls.code} label="Salin" />
+                </div>
+              )}
               <div className="space-y-1 text-xs text-muted-foreground">
                 <div className="flex justify-between">
                   <span>Peserta Didik</span>

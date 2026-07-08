@@ -85,6 +85,7 @@ export const getSchoolDashboard = query({
           id: cls._id,
           name: cls.name,
           grade: cls.grade,
+          code: cls.code,
           students: classStudents.length,
           active: activeToday,
           avgXp:
