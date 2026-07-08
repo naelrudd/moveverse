@@ -140,11 +140,11 @@ export function LivePoseCoach({ state, videoRef, canvasRef, levelConfig }: LiveP
         {!isRecording ? (
           <button
             onClick={start}
-            disabled={!isReady}
-            className="flex-1 rounded-full font-bold gradient-sunset text-white border-0 h-11 flex items-center justify-center shadow-pop transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+            disabled={isLoading}
+            className="flex-1 rounded-full font-bold gradient-sunset text-white border-0 h-11 flex items-center justify-center shadow-pop transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
           >
             <Camera className="w-4 h-4 mr-1.5" />
-            Mulai Rekam
+            {isLoading ? 'Memuat Kamera...' : 'Mulai Rekam'}
           </button>
         ) : (
           <>
