@@ -1,6 +1,16 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
+/** Generate a unique 8-char uppercase code for parent-child linking */
+function generateChildCode(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for (let i = 0; i < 8; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
 export const getUser = query({
   args: { clerkId: v.string() },
   handler: async (ctx, { clerkId }) => {
@@ -8,6 +18,24 @@ export const getUser = query({
       .query("users")
       .withIndex("by_clerkId", (q) => q.eq("clerkId", clerkId))
       .first();
+  },
+});
+
+export const lookupByChildCode = query({
+  args: { childCode: v.string() },
+  handler: async (ctx, { childCode }) => {
+    const student = await ctx.db
+      .query("users")
+      .withIndex("by_childCode", (q) => q.eq("childCode", childCode.toUpperCase()))
+      .first();
+    if (!student) return null;
+    const school = student.schoolId ? await ctx.db.get(student.schoolId) : null;
+    return {
+      _id: student._id,
+      name: student.name,
+      avatar: student.avatar,
+      schoolName: school?.name,
+    };
   },
 });
 
@@ -101,7 +129,7 @@ export const createUser = mutation({
     nis: v.optional(v.string()),
     phone: v.optional(v.string()),
     avatar: v.string(),
-    role: v.union(v.literal("student"), v.literal("parent"), v.literal("teacher"), v.literal("admin")),
+    role: v.union(v.literal("student"), v.literal("parent"), v.literal("teacher"), v.literal("admin"), v.literal("school_admin")),
     schoolId: v.id("schools"),
     classId: v.optional(v.id("classes")),
     childIds: v.optional(v.array(v.id("users"))),
@@ -114,10 +142,28 @@ export const createUser = mutation({
 
     if (existing) return existing._id;
 
+    // Generate unique childCode for students
+    let childCode: string | undefined;
+    if (role === "student") {
+      childCode = generateChildCode();
+      let existingCode = await ctx.db
+        .query("users")
+        .withIndex("by_childCode", (q) => q.eq("childCode", childCode!))
+        .first();
+      while (existingCode) {
+        childCode = generateChildCode();
+        existingCode = await ctx.db
+          .query("users")
+          .withIndex("by_childCode", (q) => q.eq("childCode", childCode!))
+          .first();
+      }
+    }
+
     return await ctx.db.insert("users", {
       clerkId,
       name,
       nis,
+      childCode,
       phone,
       avatar,
       role,
@@ -131,6 +177,53 @@ export const createUser = mutation({
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
+  },
+});
+
+/** Claim an existing account: student enters NIS, parent enters phone, teacher enters phone.
+ *  Links the Clerk userId to the pre-created user record. */
+export const claimAccount = mutation({
+  args: {
+    clerkId: v.string(),
+    identifier: v.string(), // NIS for student, phone for parent/teacher
+    role: v.union(
+      v.literal("student"),
+      v.literal("parent"),
+      v.literal("teacher"),
+      v.literal("admin"),
+      v.literal("school_admin"),
+    ),
+  },
+  handler: async (ctx, { clerkId, identifier, role }) => {
+    // Find user by NIS (student) or phone (parent/teacher)
+    let existing = null;
+    if (role === "student") {
+      existing = await ctx.db
+        .query("users")
+        .withIndex("by_nis", (q) => q.eq("nis", identifier))
+        .first();
+    } else {
+      // parent/teacher: find by phone
+      const allUsers = await ctx.db.query("users").take(500);
+      existing = allUsers.find(
+        (u) => u.phone === identifier && u.role === role,
+      );
+    }
+
+    if (!existing) return { error: "Akun tidak ditemukan. Hubungi admin." };
+
+    // Check if already claimed
+    if (existing.clerkId && !existing.clerkId.startsWith("pending_")) {
+      return { error: "Akun sudah terpakai." };
+    }
+
+    // Link Clerk account
+    await ctx.db.patch(existing._id, {
+      clerkId,
+      updatedAt: Date.now(),
+    });
+
+    return { userId: existing._id, role: existing.role, schoolId: existing.schoolId };
   },
 });
 

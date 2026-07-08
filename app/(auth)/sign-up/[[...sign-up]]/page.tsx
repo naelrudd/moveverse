@@ -175,11 +175,12 @@ export default function SignUpPage() {
       <div
         style={{
           width: 480,
-          background: "#f8fafc",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "2rem",
+          background: '#f8fafc',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '2rem',
         }}
       >
         <SignUp
@@ -191,6 +192,14 @@ export default function SignUpPage() {
             },
           }}
         />
+        <div className="mt-6 text-center">
+          <a
+            href="mailto:natanaelrudyhadinata@gmail.com?subject=Daftar Sekolah di Moveverse&body=Halo, saya ingin mendaftarkan sekolah saya:%0A%0ANama Sekolah: %0ANPSN: %0A%0ATerima kasih."
+            className="text-xs text-primary font-bold hover:underline"
+          >
+            📧 Belum punya akun sekolah? Hubungi Admin
+          </a>
+        </div>
       </div>
     </div>
   );

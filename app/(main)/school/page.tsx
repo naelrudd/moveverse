@@ -7,185 +7,179 @@ import { useAuth } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import {
-  AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip,
-  PieChart, Pie, Cell, BarChart, Bar,
+  ResponsiveContainer,
+  Tooltip,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Cell,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
 } from 'recharts';
 
-const trend = Array.from({ length: 12 }, (_, i) => ({
-  m: `M${i + 1}`,
-  s: 60 + Math.round(Math.sin(i / 2) * 5 + i * 1.5),
-}));
+const SKILL_LABELS: Record<string, string> = {
+  balance: 'Keseimbangan',
+  coordination: 'Koordinasi',
+  agility: 'Kelincahan',
+  flexibility: 'Fleksibilitas',
+  strength: 'Kekuatan',
+};
 
-const byGender = [
-  { name: 'Perempuan', value: 52, fill: '#ec4899' },
-  { name: 'Laki-laki', value: 48, fill: '#3b82f6' },
-];
-
-const gradeStats = [
-  { grade: 'Kelas 1-2', total: 128, avgPL: 71, active: 120, trend: 5 },
-  { grade: 'Kelas 3-4', total: 156, avgPL: 78, active: 148, trend: 8 },
-  { grade: 'Kelas 5-6', total: 132, avgPL: 82, active: 125, trend: 6 },
-];
-
-const classesManaged = [
-  { id: '1A', name: '1A', grade: 1, students: 24, avgPL: 68, teacher: 'Bu Sari', active: 22 },
-  { id: '1B', name: '1B', grade: 1, students: 22, avgPL: 65, teacher: 'Pak Budi', active: 20 },
-  { id: '2A', name: '2A', grade: 2, students: 26, avgPL: 72, teacher: 'Bu Rina', active: 25 },
-  { id: '2B', name: '2B', grade: 2, students: 24, avgPL: 70, teacher: 'Bu Dewi', active: 23 },
-  { id: '3A', name: '3A', grade: 3, students: 28, avgPL: 78, teacher: 'Pak Joko', active: 26 },
-  { id: '3B', name: '3B', grade: 3, students: 26, avgPL: 71, teacher: 'Bu Lina', active: 24 },
-  { id: '4A', name: '4A', grade: 4, students: 30, avgPL: 83, teacher: 'Bu Ratna', active: 28 },
-  { id: '4B', name: '4B', grade: 4, students: 27, avgPL: 76, teacher: 'Pak Rian', active: 25 },
-  { id: '5A', name: '5A', grade: 5, students: 25, avgPL: 80, teacher: 'Bu Maya', active: 24 },
-  { id: '5B', name: '5B', grade: 5, students: 24, avgPL: 74, teacher: 'Pak Adi', active: 22 },
-  { id: '6A', name: '6A', grade: 6, students: 22, avgPL: 85, teacher: 'Bu Nina', active: 21 },
-  { id: '6B', name: '6B', grade: 6, students: 20, avgPL: 81, teacher: 'Bu Sari', active: 19 },
-];
-
-const plBySkill = [
-  { skill: 'Keseimbangan', school: 76, national: 68 },
-  { skill: 'Koordinasi', school: 70, national: 62 },
-  { skill: 'Kelincahan', school: 74, national: 65 },
-  { skill: 'Kekuatan', school: 65, national: 60 },
-  { skill: 'Fleksibilitas', school: 62, national: 58 },
-];
+const SKILL_COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'];
 
 export default function SchoolDashboard() {
   const { userId } = useAuth();
   const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
+  const dashboard = useQuery(
+    api.schools.getSchoolDashboard,
+    userData?.schoolId ? { schoolId: userData.schoolId } : 'skip',
+  );
   const [selectedGrade, setSelectedGrade] = useState<number | null>(null);
-  const [showAllClasses, setShowAllClasses] = useState(false);
 
-  const totalStudents = classesManaged.reduce((a, c) => a + c.students, 0);
-  const activeStudents = classesManaged.reduce((a, c) => a + c.active, 0);
-  const avgSchoolPL = Math.round(classesManaged.reduce((a, c) => a + c.avgPL, 0) / classesManaged.length);
-  const filteredClasses = selectedGrade ? classesManaged.filter((c) => c.grade === selectedGrade) : classesManaged;
+  if (!userData || !dashboard) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-10 text-center text-muted-foreground">
+        Memuat data sekolah...
+      </div>
+    );
+  }
+
+  if (!userData.schoolId) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-10 text-center">
+        <div className="text-5xl mb-4">🏫</div>
+        <h1 className="text-2xl font-extrabold">Belum Terdaftar di Sekolah</h1>
+        <p className="text-muted-foreground mt-2">
+          Akun Anda belum terkait dengan sekolah manapun.
+        </p>
+      </div>
+    );
+  }
+
+  const { school, classes, totalStudents, activeToday, avgXp, avgPl } = dashboard;
+  const filteredClasses = selectedGrade
+    ? classes.filter((c) => c.grade === selectedGrade)
+    : classes;
+
+  const grades = [...new Set(classes.map((c) => c.grade))].sort((a, b) => a - b);
+  const gradeStats = grades.map((g) => {
+    const gradeClasses = classes.filter((c) => c.grade === g);
+    const total = gradeClasses.reduce((a, c) => a + c.students, 0);
+    const active = gradeClasses.reduce((a, c) => a + c.active, 0);
+    const avgXpGrade =
+      total > 0
+        ? Math.round(gradeClasses.reduce((a, c) => a + c.avgXp * c.students, 0) / total)
+        : 0;
+    return { grade: g, total, active, avgXp: avgXpGrade };
+  });
+
+  const plRadar = avgPl
+    ? Object.entries(avgPl).map(([key, val]) => ({
+        skill: SKILL_LABELS[key] || key,
+        value: val,
+      }))
+    : [];
+
+  const plBar = avgPl
+    ? Object.entries(avgPl).map(([key, val], i) => ({
+        name: SKILL_LABELS[key] || key,
+        value: val,
+        fill: SKILL_COLORS[i % SKILL_COLORS.length],
+      }))
+    : [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10 space-y-6">
-      {/* Hero */}
       <div className="bg-white rounded-[2rem] p-6 shadow-pop border-4 border-white animate-pop-in flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-4">
           <div className="text-5xl">🏫</div>
           <div>
             <div className="text-xs font-bold text-muted-foreground">Analitik Sekolah</div>
-            <h1 className="text-3xl font-extrabold">{userData?.name || 'SDN Moveverse Academy'}</h1>
-            <p className="text-sm text-foreground/70">Laporan performa PJOK seluruh sekolah · Evaluasi program berskala besar</p>
+            <h1 className="text-3xl font-extrabold">{school.name}</h1>
+            {school.address && (
+              <p className="text-sm text-foreground/70">{school.address}</p>
+            )}
           </div>
-        </div>
-        <div className="flex gap-2">
-          <button className="rounded-full font-bold bg-white border-2 border-border px-4 py-2 text-sm">📄 Export PDF</button>
-          <button className="rounded-full font-bold bg-white border-2 border-border px-4 py-2 text-sm">📊 Export Excel</button>
         </div>
       </div>
 
-      {/* Stat cards */}
       <div className="grid sm:grid-cols-4 gap-4">
-        {[
-          { l: 'Total Peserta Didik', v: totalStudents.toLocaleString(), t: 'gradient-sky' },
-          { l: 'Aktif Hari Ini', v: activeStudents.toLocaleString(), t: 'gradient-grass' },
-          { l: 'Rata-rata PL', v: avgSchoolPL.toString(), t: 'gradient-sunset' },
-          { l: 'Total Kelas', v: classesManaged.length.toString(), t: 'gradient-magic' },
-        ].map((s) => (
-          <div key={s.l} className={`${s.t} text-white rounded-3xl p-5 shadow-soft`}>
-            <div className="text-xs font-bold opacity-90">{s.l}</div>
-            <div className="text-3xl font-extrabold">{s.v}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* 12-month trend + Gender */}
-      <div className="grid lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2 bg-white rounded-3xl p-6 shadow-soft">
-          <h3 className="font-extrabold text-lg mb-4">Trend PL 12 Bulan</h3>
-          <div className="h-64">
-            <ResponsiveContainer>
-              <AreaChart data={trend}>
-                <defs>
-                  <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.6} />
-                    <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="m" tick={{ fontSize: 11 }} />
-                <YAxis domain={[50, 100]} />
-                <Tooltip />
-                <Area dataKey="s" stroke="#3b82f6" fill="url(#g)" strokeWidth={3} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+        <div className="gradient-sky text-white rounded-3xl p-5 shadow-soft">
+          <div className="text-xs font-bold opacity-90">Total Peserta Didik</div>
+          <div className="text-3xl font-extrabold">{totalStudents.toLocaleString()}</div>
         </div>
-        <div className="bg-white rounded-3xl p-6 shadow-soft">
-          <h3 className="font-extrabold text-lg mb-4">Distribusi Jenis Kelamin</h3>
-          <div className="h-48">
-            <ResponsiveContainer>
-              <PieChart>
-                <Pie data={byGender} dataKey="value" innerRadius={50} outerRadius={85}>
-                  {byGender.map((g) => <Cell key={g.name} fill={g.fill} />)}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="flex gap-4 justify-center text-xs font-bold">
-            {byGender.map((g) => (
-              <span key={g.name} className="flex items-center gap-1">
-                <span className="w-3 h-3 rounded-full" style={{ background: g.fill }}></span> {g.name} ({g.value})
-              </span>
-            ))}
-          </div>
+        <div className="gradient-grass text-white rounded-3xl p-5 shadow-soft">
+          <div className="text-xs font-bold opacity-90">Aktif Hari Ini</div>
+          <div className="text-3xl font-extrabold">{activeToday.toLocaleString()}</div>
+        </div>
+        <div className="gradient-sunset text-white rounded-3xl p-5 shadow-soft">
+          <div className="text-xs font-bold opacity-90">Rata-rata XP</div>
+          <div className="text-3xl font-extrabold">{avgXp.toLocaleString()}</div>
+        </div>
+        <div className="gradient-magic text-white rounded-3xl p-5 shadow-soft">
+          <div className="text-xs font-bold opacity-90">Total Kelas</div>
+          <div className="text-3xl font-extrabold">{classes.length.toString()}</div>
         </div>
       </div>
 
-      {/* PL vs National benchmark */}
+      {plRadar.length > 0 && (
+        <div className="grid lg:grid-cols-2 gap-5">
+          <div className="bg-white rounded-3xl p-6 shadow-soft">
+            <h3 className="font-extrabold text-lg mb-4">Rata-rata PL Sekolah</h3>
+            <div className="h-64">
+              <ResponsiveContainer>
+                <RadarChart data={plRadar}>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="skill" tick={{ fontSize: 11, fontWeight: 700 }} />
+                  <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
+                  <Radar name="Sekolah" dataKey="value" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} strokeWidth={2} />
+                  <Tooltip />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-6 shadow-soft">
+            <h3 className="font-extrabold text-lg mb-4">Skor PL per Keterampilan</h3>
+            <div className="h-64">
+              <ResponsiveContainer>
+                <BarChart data={plBar}>
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fontWeight: 700 }} />
+                  <YAxis domain={[0, 100]} />
+                  <Tooltip />
+                  <Bar dataKey="value" radius={[6, 6, 0, 0]}>
+                    {plBar.map((entry, i) => (
+                      <Cell key={i} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {gradeStats.length > 0 && (
+        <div className="grid md:grid-cols-3 gap-4">
+          {gradeStats.map((g) => (
+            <div key={g.grade} className="bg-white rounded-3xl p-5 shadow-soft">
+              <div className="text-sm font-bold text-muted-foreground">Kelas {g.grade}</div>
+              <div className="text-3xl font-extrabold mt-1">{g.avgXp} XP</div>
+              <div className="text-xs text-muted-foreground mt-2">
+                {g.active}/{g.total} peserta didik aktif
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="bg-white rounded-3xl p-6 shadow-soft">
-        <h3 className="font-extrabold text-lg mb-4">📊 Skor PL vs Benchmark Nasional</h3>
-        <div className="h-52">
-          <ResponsiveContainer>
-            <BarChart data={plBySkill}>
-              <XAxis dataKey="skill" tick={{ fontSize: 12, fontWeight: 700 }} />
-              <YAxis domain={[0, 100]} />
-              <Tooltip />
-              <Bar dataKey="school" name="Sekolah" radius={[6, 6, 0, 0]} fill="#3b82f6" />
-              <Bar dataKey="national" name="Nasional" radius={[6, 6, 0, 0]} fill="#cbd5e1" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="flex gap-4 justify-center text-xs font-bold mt-2">
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-500"></span> Sekolah</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-slate-300"></span> Rata-rata Nasional</span>
-        </div>
-      </div>
+        <h3 className="font-extrabold text-lg mb-4">Manajemen Kelas</h3>
 
-      {/* Grade breakdown */}
-      <div className="grid md:grid-cols-3 gap-4">
-        {gradeStats.map((g) => (
-          <div key={g.grade} className="bg-white rounded-3xl p-5 shadow-soft">
-            <div className="text-sm font-bold text-muted-foreground">{g.grade}</div>
-            <div className="text-3xl font-extrabold mt-1">{g.avgPL}</div>
-            <div className="text-xs text-secondary-foreground font-bold mt-1">▲ +{g.trend}% vs semester lalu</div>
-            <div className="text-xs text-muted-foreground mt-2">{g.active}/{g.total} peserta didik aktif</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Class Management */}
-      <div className="bg-white rounded-3xl p-6 shadow-soft">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-extrabold text-lg">📋 Manajemen Kelas</h3>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setShowAllClasses(!showAllClasses)}
-              className={`px-4 py-2 rounded-full font-bold text-sm transition-all ${
-                showAllClasses ? 'gradient-sky text-white' : 'bg-muted'
-              }`}
-            >
-              {showAllClasses ? 'Semua Kelas' : 'Tampilkan Semua'}
-            </button>
-          </div>
-        </div>
-
-        {/* Grade filter pills */}
         <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setSelectedGrade(null)}
@@ -195,7 +189,7 @@ export default function SchoolDashboard() {
           >
             Semua
           </button>
-          {[1, 2, 3, 4, 5, 6].map((g) => (
+          {grades.map((g) => (
             <button
               key={g}
               onClick={() => setSelectedGrade(g)}
@@ -208,35 +202,54 @@ export default function SchoolDashboard() {
           ))}
         </div>
 
-        {/* Class cards grid */}
-        <div className={`grid ${showAllClasses ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2 lg:grid-cols-4'} gap-3`}>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredClasses.map((cls) => (
-            <div key={cls.id} className="bg-muted/40 rounded-2xl p-4 hover:shadow-soft transition-all border-2 border-transparent hover:border-primary/20">
+            <div
+              key={cls.id}
+              className="bg-muted/40 rounded-2xl p-4 hover:shadow-soft transition-all border-2 border-transparent hover:border-primary/20"
+            >
               <div className="flex items-center justify-between mb-2">
                 <span className="font-extrabold text-lg">Kelas {cls.name}</span>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-                  cls.avgPL >= 80 ? 'bg-green-100 text-green-700' : cls.avgPL >= 70 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
-                }`}>
-                  PL {cls.avgPL}
+                <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-blue-100 text-blue-700">
+                  XP {cls.avgXp}
                 </span>
               </div>
               <div className="space-y-1 text-xs text-muted-foreground">
-                <div className="flex justify-between"><span>👩‍🏫 Guru</span><span className="font-bold text-foreground">{cls.teacher}</span></div>
-                <div className="flex justify-between"><span>👤 Peserta Didik</span><span className="font-bold text-foreground">{cls.students}</span></div>
-                <div className="flex justify-between"><span>🟢 Aktif</span><span className="font-bold text-foreground">{cls.active}</span></div>
+                <div className="flex justify-between">
+                  <span>Peserta Didik</span>
+                  <span className="font-bold text-foreground">{cls.students}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Aktif</span>
+                  <span className="font-bold text-foreground">{cls.active}</span>
+                </div>
               </div>
               <div className="mt-3">
                 <div className="flex justify-between text-[10px] font-bold mb-1">
                   <span>Partisipasi</span>
-                  <span>{Math.round((cls.active / cls.students) * 100)}%</span>
+                  <span>
+                    {cls.students > 0
+                      ? Math.round((cls.active / cls.students) * 100)
+                      : 0}
+                    %
+                  </span>
                 </div>
                 <div className="w-full h-2 bg-white rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(cls.active / cls.students) * 100}%` }} />
+                  <div
+                    className="h-full bg-blue-500 rounded-full"
+                    style={{
+                      width: `${cls.students > 0 ? (cls.active / cls.students) * 100 : 0}%`,
+                    }}
+                  />
                 </div>
               </div>
             </div>
           ))}
         </div>
+
+        {filteredClasses.length === 0 && (
+          <p className="text-center text-muted-foreground py-6">Tidak ada kelas di grade ini</p>
+        )}
       </div>
     </div>
   );

@@ -1,16 +1,25 @@
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 
+/** Generate a unique 6-char uppercase code */
+function generateCode(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for (let i = 0; i < 6; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
 export const seedAll = mutation({
   handler: async (ctx) => {
     const existing = await ctx.db.query("schools").first();
     if (existing) return "Already seeded";
 
-    const schoolIds: string[] = [];
     const schools = [
-      { name: "SDN Sawojajar 1", slug: "sdn-sawojajar-1", address: "Malang" },
-      { name: "SDN Lowokwaru 1", slug: "sdn-lowokwaru-1", address: "Malang" },
-      { name: "SDN Blimbing 1", slug: "sdn-blimbing-1", address: "Malang" },
+      { name: "SDN Sawojajar 1", slug: "sdn-sawojajar-1", npsn: "20533811", address: "Malang" },
+      { name: "SDN Lowokwaru 1", slug: "sdn-lowokwaru-1", npsn: "20533812", address: "Malang" },
+      { name: "SDN Blimbing 1", slug: "sdn-blimbing-1", npsn: "20533813", address: "Malang" },
     ];
 
     const classData = [
@@ -22,15 +31,21 @@ export const seedAll = mutation({
       { name: "6A", grade: 6 }, { name: "6B", grade: 6 },
     ];
 
+    const usedCodes = new Set<string>();
+
     for (const school of schools) {
       const schoolId = await ctx.db.insert("schools", school);
-      schoolIds.push(schoolId);
       for (const cls of classData) {
-        await ctx.db.insert("classes", { schoolId, name: cls.name, grade: cls.grade });
+        let code = generateCode();
+        while (usedCodes.has(code)) {
+          code = generateCode();
+        }
+        usedCodes.add(code);
+        await ctx.db.insert("classes", { schoolId, name: cls.name, grade: cls.grade, code });
       }
     }
 
-    return `Seeded ${schools.length} schools x ${classData.length} classes`;
+    return `Seeded ${schools.length} schools x ${classData.length} classes (with codes)`;
   },
 });
 
@@ -89,7 +104,7 @@ export const seedDummyPL = mutation({
 
 export const clearAll = mutation({
   handler: async (ctx) => {
-    const tables = ["users", "classes", "schools", "physical_literacy", "quests", "movements", "daily_quests"] as const;
+    const tables = ["users", "classes", "schools", "physical_literacy", "quests", "movements", "daily_quests", "side_quests", "activity_logs"] as const;
     for (const t of tables) {
       const items = await ctx.db.query(t).collect();
       for (const i of items) await ctx.db.delete(i._id);
@@ -137,5 +152,44 @@ export const seedMovementSamples = mutation({
       }
     }
     return `Seeded ${count} movements for user`;
+  },
+});
+
+/** Add class codes to existing classes that don't have them */
+export const fixClassCodes = mutation({
+  handler: async (ctx) => {
+    const classes = await ctx.db.query("classes").collect();
+    const usedCodes = new Set<string>();
+    let count = 0;
+    for (const cls of classes) {
+      if (cls.code) {
+        usedCodes.add(cls.code);
+        continue;
+      }
+      let code = generateCode();
+      while (usedCodes.has(code)) {
+        code = generateCode();
+      }
+      usedCodes.add(code);
+      await ctx.db.patch(cls._id, { code });
+      count++;
+    }
+    return `Fixed ${count} classes without codes`;
+  },
+});
+
+/** Add NPSN to schools that don't have it */
+export const fixNpsn = mutation({
+  handler: async (ctx) => {
+    const schools = await ctx.db.query("schools").collect();
+    let count = 0;
+    for (const school of schools) {
+      if (school.npsn) continue;
+      // Generate a fake NPSN based on slug
+      const npsn = "205" + String(school._id).slice(-5).padStart(5, "0");
+      await ctx.db.patch(school._id, { npsn });
+      count++;
+    }
+    return `Fixed ${count} schools without NPSN`;
   },
 });

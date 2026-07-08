@@ -13,20 +13,29 @@ const navByRole: Record<string, { label: string; href: string }[]> = {
     { label: "Statistik", href: "/dashboard/stats" },
     { label: "Dunia", href: "/worlds" },
     { label: "AI Coach", href: "/assessment" },
+    { label: "Sekolah", href: "/school" },
   ],
   parent: [
     { label: "Aktivitas", href: "/parent" },
     { label: "Leaderboard", href: "/parent/leaderboard" },
+    { label: "Sekolah", href: "/school" },
   ],
   teacher: [
     { label: "Kelas", href: "/teacher" },
     { label: "Leaderboard", href: "/teacher/leaderboard" },
     { label: "AI Coach", href: "/assessment" },
+    { label: "Sekolah", href: "/school" },
   ],
   admin: [
+    { label: "Admin", href: "/admin" },
     { label: "Sekolah", href: "/school" },
     { label: "Guru", href: "/teacher" },
     { label: "Dunia", href: "/worlds" },
+  ],
+  school_admin: [
+    { label: "Dashboard", href: "/admin" },
+    { label: "Sekolah", href: "/school" },
+    { label: "Guru", href: "/teacher" },
   ],
 };
 

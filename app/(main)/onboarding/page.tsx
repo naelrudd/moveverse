@@ -24,15 +24,22 @@ export default function OnboardingPage() {
   const [role, setRole] = useState<'student' | 'parent' | 'teacher' | ''>('');
   const [avatar, setAvatar] = useState('🦊');
   const [schoolId, setSchoolId] = useState<Id<'schools'> | ''>('');
-  const [classId, setClassId] = useState<Id<'classes'> | ''>('');
+  const [classCode, setClassCode] = useState('');
+  const [classInfo, setClassInfo] = useState<{ name: string } | null>(null);
+  const [childCode, setChildCode] = useState('');
+  const [childInfo, setChildInfo] = useState<{ name: string; avatar: string } | null>(null);
   const [nis, setNis] = useState('');
   const [phone, setPhone] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const existingUser = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
   const schools = useQuery(api.schools.getAllSchools);
-  const classes = useQuery(api.classes.getClassesBySchool, schoolId ? { schoolId } : 'skip');
+  const lookupClass = useQuery(api.classes.getClassByCode, classCode.length >= 4 ? { code: classCode } : 'skip');
+  const lookupChild = useQuery(api.users.lookupByChildCode, childCode.length >= 4 ? { childCode } : 'skip');
   const createUser = useMutation(api.users.createUser);
+  const linkChild = useMutation(api.classes.linkChildByNis);
+  const joinClass = useMutation(api.classes.joinClassByCode);
 
   useEffect(() => {
     if (!existingUser) return;
@@ -40,34 +47,73 @@ export default function OnboardingPage() {
       student: '/dashboard/student',
       parent: '/parent',
       teacher: '/teacher',
-      admin: '/school',
+      admin: '/admin',
+      school_admin: '/admin',
     };
     router.replace(roleRedirect[existingUser.role ?? 'student'] || '/dashboard/student');
   }, [existingUser, router]);
 
+  // Lookup class by code
+  useEffect(() => {
+    if (lookupClass) {
+      setClassInfo({ name: lookupClass.name });
+    } else if (classCode && lookupClass === null) {
+      setClassInfo(null);
+    }
+  }, [lookupClass]);
+
+  // Lookup child by code
+  useEffect(() => {
+    if (lookupChild) {
+      setChildInfo({ name: lookupChild.name, avatar: lookupChild.avatar });
+    } else if (childCode && lookupChild === null) {
+      setChildInfo(null);
+    }
+  }, [lookupChild]);
+
   const handleSubmit = async () => {
-    if (!userId || !role || !schoolId) return;
+    if (!userId || !role) return;
     setSubmitting(true);
+    setError('');
+
     try {
-      await createUser({
-        clerkId: userId,
-        name: user?.firstName || user?.username || 'Petualang',
-        avatar,
-        role,
-        schoolId,
-        classId: classId || undefined,
-        nis: nis || undefined,
-        phone: phone || undefined,
-      });
-      const roleRedirect: Record<string, string> = {
-        student: '/dashboard/student',
-        parent: '/parent',
-        teacher: '/teacher',
-        admin: '/school',
-      };
-      router.replace(roleRedirect[role] || '/dashboard/student');
+      if (role === 'parent') {
+        if (!childInfo) {
+          setError('Kode anak tidak valid');
+          setSubmitting(false);
+          return;
+        }
+        router.replace('/parent');
+      } else {
+        if (!schoolId) {
+          setError('Pilih sekolah terlebih dahulu');
+          setSubmitting(false);
+          return;
+        }
+
+        const result = await createUser({
+          clerkId: userId,
+          name: user?.firstName || user?.username || 'Petualang',
+          avatar,
+          role,
+          schoolId,
+          nis: role === 'student' ? nis || undefined : undefined,
+          phone: role === 'teacher' ? phone || undefined : undefined,
+        });
+
+        if (role === 'student' && classInfo && result) {
+          await joinClass({ userId: result as Id<'users'>, code: classCode.toUpperCase() });
+        }
+
+        const roleRedirect: Record<string, string> = {
+          student: '/dashboard/student',
+          teacher: '/teacher',
+        };
+        router.replace(roleRedirect[role] || '/dashboard/student');
+      }
     } catch (err) {
       console.error(err);
+      setError('Terjadi kesalahan. Coba lagi.');
       setSubmitting(false);
     }
   };
@@ -82,6 +128,8 @@ export default function OnboardingPage() {
     );
   }
 
+  const maxSteps = role === 'parent' ? 3 : 4;
+
   return (
     <div className="min-h-screen flex items-center justify-center gradient-sky p-4">
       <div className="w-full max-w-lg bg-white rounded-[2rem] p-8 shadow-pop border-4 border-white animate-pop-in">
@@ -93,12 +141,18 @@ export default function OnboardingPage() {
 
         {/* Step indicators */}
         <div className="flex justify-center gap-2 mb-8">
-          {[1, 2, 3, 4].map((s) => (
+          {Array.from({ length: maxSteps }, (_, i) => i + 1).map((s) => (
             <div key={s} className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${step >= s ? 'gradient-sky text-white' : 'bg-muted text-muted-foreground'}`}>
               {s}
             </div>
           ))}
         </div>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border-2 border-red-200 rounded-xl text-sm text-red-700 font-bold">
+            {error}
+          </div>
+        )}
 
         {/* Step 1: Role */}
         {step === 1 && (
@@ -124,63 +178,120 @@ export default function OnboardingPage() {
         {step === 2 && (
           <div className="space-y-4 animate-pop-in">
             <p className="text-sm font-bold text-foreground">Pilih avatar hewanmu!</p>
-            <p className="text-xs text-muted-foreground">Pilih hewan yang kamu suka sebagai karaktermu.</p>
             <AvatarPicker selected={avatar} onSelect={setAvatar} />
             <div className="flex justify-center mt-2">
               <div className="text-6xl animate-float">{avatar}</div>
             </div>
             <div className="flex gap-2 pt-2">
               <button onClick={() => setStep(1)} className="px-5 py-2 rounded-full font-bold border-2 border-border">Kembali</button>
-              <button onClick={() => setStep(3)} className="flex-1 py-2 rounded-full font-bold gradient-sky text-white">
-                Selanjutnya →
-              </button>
+              <button onClick={() => setStep(3)} className="flex-1 py-2 rounded-full font-bold gradient-sky text-white">Selanjutnya →</button>
             </div>
           </div>
         )}
 
-        {/* Step 3: School + extra fields */}
+        {/* Step 3: School / Child Code */}
         {step === 3 && (
           <div className="space-y-4 animate-pop-in">
-            <p className="text-sm font-bold text-foreground">Pilih sekolah</p>
-            <select
-              value={schoolId}
-              onChange={(e) => { setSchoolId(e.target.value as Id<'schools'>); setClassId(''); }}
-              className="w-full p-4 rounded-2xl border-2 border-border bg-white font-bold"
-            >
-              <option value="">Pilih sekolah...</option>
-              {schools?.map((s) => <option key={s._id} value={s._id}>{s.name}</option>)}
-            </select>
-
-            {role === 'student' && (
-              <div>
-                <label className="text-sm font-bold text-muted-foreground">NIS (Nomor Induk Peserta Didik)</label>
+            {role === 'parent' ? (
+              <>
+                <p className="text-sm font-bold text-foreground">Masukkan kode anakmu</p>
+                <p className="text-xs text-muted-foreground">Kode unik 8 karakter yang tertera di profil anak kamu</p>
                 <input
-                  value={nis}
-                  onChange={(e) => setNis(e.target.value)}
-                  placeholder="Contoh: 2024001"
-                  className="mt-1 w-full p-4 rounded-2xl border-2 border-border font-bold"
+                  value={childCode}
+                  onChange={(e) => setChildCode(e.target.value.toUpperCase())}
+                  placeholder="Contoh: A1B2C3D4"
+                  maxLength={8}
+                  className="w-full p-4 rounded-2xl border-2 border-border font-bold text-center text-lg tracking-widest uppercase"
                 />
-              </div>
-            )}
+                {childInfo && (
+                  <div className="p-3 bg-green-50 border-2 border-green-200 rounded-xl flex items-center gap-3">
+                    <span className="text-3xl">{childInfo.avatar}</span>
+                    <div>
+                      <div className="font-extrabold text-sm">{childInfo.name}</div>
+                      <div className="text-xs text-green-700 font-bold">✓ Anak ditemukan</div>
+                    </div>
+                  </div>
+                )}
+                {childCode.length >= 4 && lookupChild === null && (
+                  <div className="p-3 bg-red-50 border-2 border-red-200 rounded-xl text-sm text-red-700 font-bold">
+                    Kode tidak ditemukan. Pastikan kode benar.
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <p className="text-sm font-bold text-foreground">Pilih sekolahmu</p>
+                <select
+                  value={schoolId}
+                  onChange={(e) => setSchoolId(e.target.value as Id<'schools'>)}
+                  className="w-full p-4 rounded-2xl border-2 border-border bg-white font-bold"
+                >
+                  <option value="">Pilih sekolah...</option>
+                  {schools?.map((s) => (
+                    <option key={s._id} value={s._id}>{s.name}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-muted-foreground">
+                  Sekolah belum ada?{' '}
+                  <a
+                    href="mailto:natanaelrudyhadinata@gmail.com?subject=Daftar Sekolah di Moveverse&body=Halo, saya ingin mendaftarkan sekolah saya:%0A%0ANama Sekolah: %0ANPSN: %0A%0ATerima kasih."
+                    className="text-primary font-bold hover:underline"
+                  >
+                    Hubungi Admin
+                  </a>
+                </p>
 
-            {role === 'parent' && (
-              <div>
-                <label className="text-sm font-bold text-muted-foreground">Nomor HP</label>
-                <input
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Contoh: 08123456789"
-                  type="tel"
-                  className="mt-1 w-full p-4 rounded-2xl border-2 border-border font-bold"
-                />
-              </div>
+                {role === 'student' && schoolId && (
+                  <div className="mt-4 space-y-3">
+                    <div>
+                      <label className="text-sm font-bold text-muted-foreground">NIS (Nomor Induk Siswa)</label>
+                      <input
+                        value={nis}
+                        onChange={(e) => setNis(e.target.value)}
+                        placeholder="NIS dari sekolah"
+                        className="mt-1 w-full p-4 rounded-2xl border-2 border-border font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-bold text-muted-foreground">Kode Kelas</label>
+                      <input
+                        value={classCode}
+                        onChange={(e) => setClassCode(e.target.value.toUpperCase())}
+                        placeholder="Kode 6 karakter dari guru"
+                        maxLength={6}
+                        className="mt-1 w-full p-4 rounded-2xl border-2 border-border font-bold text-center tracking-widest uppercase"
+                      />
+                      {classInfo && (
+                        <div className="mt-1 text-xs text-green-700 font-bold">✓ Kelas {classInfo.name}</div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {role === 'teacher' && schoolId && (
+                  <div className="mt-4">
+                    <label className="text-sm font-bold text-muted-foreground">Nomor HP</label>
+                    <input
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="08xxx"
+                      type="tel"
+                      className="mt-1 w-full p-4 rounded-2xl border-2 border-border font-bold"
+                    />
+                  </div>
+                )}
+              </>
             )}
 
             <div className="flex gap-2 pt-2">
               <button onClick={() => setStep(2)} className="px-5 py-2 rounded-full font-bold border-2 border-border">Kembali</button>
               <button
-                onClick={() => setStep(4)}
-                disabled={!schoolId}
+                onClick={() => setStep(maxSteps)}
+                disabled={
+                  role === 'parent'
+                    ? !childInfo
+                    : !schoolId || (role === 'student' && !nis) || (role === 'teacher' && !phone)
+                }
                 className="flex-1 py-2 rounded-full font-bold gradient-sky text-white disabled:opacity-50"
               >
                 Selanjutnya →
@@ -189,50 +300,39 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* Step 4: Class (student only) or confirm */}
-        {step === 4 && (
+        {/* Step 4: Confirm (student/teacher) */}
+        {step === 4 && role !== 'parent' && (
           <div className="space-y-4 animate-pop-in">
-            {role === 'student' && (
-              <>
-                <p className="text-sm font-bold text-foreground">Pilih kelas</p>
-                {classes === undefined ? (
-                  <div className="text-center py-8 text-muted-foreground text-sm">
-                    <div className="animate-bounce text-2xl mb-2">⏳</div>
-                    Memuat daftar kelas...
-                  </div>
-                ) : classes.length === 0 ? (
-                  <div className="text-center py-8">
-                    <div className="text-2xl mb-2">📚</div>
-                    <p className="text-sm font-bold">Belum ada kelas di sekolah ini.</p>
-                    <p className="text-xs text-muted-foreground mt-1">Hubungi admin untuk tambah kelas.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-2">
-                    {classes.map((cls) => (
-                      <button
-                        key={cls._id}
-                        onClick={() => setClassId(cls._id)}
-                        className={`py-3 rounded-2xl font-extrabold border-2 transition-all ${
-                          classId === cls._id ? 'gradient-sky text-white border-transparent' : 'border-border hover:border-primary/40'
-                        }`}
-                      >
-                        {cls.name}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
+            <p className="text-sm font-bold text-foreground">Konfirmasi data kamu</p>
 
-            {role === 'parent' && (
-              <div className="p-4 bg-primary/5 rounded-2xl text-sm font-bold text-foreground">
-                ✅ Kamu bisa link ke anak setelah daftar melalui halaman Aktivitas
+            <div className="p-4 bg-muted/40 rounded-2xl space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Role</span>
+                <span className="font-bold">{role === 'student' ? 'Peserta Didik' : 'Guru'}</span>
               </div>
-            )}
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Sekolah</span>
+                <span className="font-bold">{schools?.find(s => s._id === schoolId)?.name}</span>
+              </div>
+              {role === 'student' && (
+                <>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">NIS</span>
+                    <span className="font-bold">{nis}</span>
+                  </div>
+                  {classInfo && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Kelas</span>
+                      <span className="font-bold">{classInfo.name}</span>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
 
-            {role === 'teacher' && (
-              <div className="p-4 bg-primary/5 rounded-2xl text-sm font-bold text-foreground">
-                ✅ Kamu bisa kelola kelas setelah daftar melalui Teacher Dashboard
+            {role === 'student' && !classInfo && classCode && (
+              <div className="p-3 bg-amber-50 border-2 border-amber-200 rounded-xl text-sm text-amber-700 font-bold">
+                ⚠ Kamu belum join kelas. Kamu bisa join nanti dari dashboard.
               </div>
             )}
 
@@ -240,10 +340,41 @@ export default function OnboardingPage() {
               <button onClick={() => setStep(3)} className="px-5 py-2 rounded-full font-bold border-2 border-border">Kembali</button>
               <button
                 onClick={handleSubmit}
-                disabled={submitting || (role === 'student' && !classId)}
+                disabled={submitting}
                 className="flex-1 py-2 rounded-full font-bold gradient-grass text-white disabled:opacity-50"
               >
                 {submitting ? 'Menyiapkan...' : 'Mulai Petualangan! 🚀'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3 confirm for parent */}
+        {step === 3 && role === 'parent' && (
+          <div className="space-y-4 animate-pop-in">
+            <p className="text-sm font-bold text-foreground">Konfirmasi</p>
+            <div className="p-4 bg-muted/40 rounded-2xl space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Role</span>
+                <span className="font-bold">Orang Tua</span>
+              </div>
+              {childInfo && (
+                <>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Anak</span>
+                    <span className="font-bold">{childInfo.name}</span>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="flex gap-2 pt-2">
+              <button onClick={() => setStep(2)} className="px-5 py-2 rounded-full font-bold border-2 border-border">Kembali</button>
+              <button
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="flex-1 py-2 rounded-full font-bold gradient-grass text-white disabled:opacity-50"
+              >
+                {submitting ? 'Menyiapkan...' : 'Hubungkan ke Anak 👨‍👩‍👧'}
               </button>
             </div>
           </div>

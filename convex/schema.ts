@@ -5,21 +5,26 @@ export default defineSchema({
   schools: defineTable({
     name: v.string(),
     slug: v.string(),
+    npsn: v.optional(v.string()),
     address: v.optional(v.string()),
   })
-    .index("by_slug", ["slug"]),
+    .index("by_slug", ["slug"])
+    .index("by_npsn", ["npsn"]),
 
   classes: defineTable({
     schoolId: v.id("schools"),
     name: v.string(),
     grade: v.number(),
+    code: v.optional(v.string()),
   })
-    .index("by_schoolId", ["schoolId"]),
+    .index("by_schoolId", ["schoolId"])
+    .index("by_code", ["code"]),
 
   users: defineTable({
     clerkId: v.string(),
     name: v.string(),
     nis: v.optional(v.string()),
+    childCode: v.optional(v.string()),
     phone: v.optional(v.string()),
     avatar: v.string(),
     xp: v.number(),
@@ -30,7 +35,7 @@ export default defineSchema({
     activityLevels: v.optional(v.record(v.string(), v.number())),
     coachThresholds: v.optional(v.record(v.string(), v.number())), // e.g. { "menekuk_minScore": 65, "keseimbangan_holdSec": 8 }
     pets: v.optional(v.array(v.string())),
-    role: v.optional(v.union(v.literal("student"), v.literal("parent"), v.literal("teacher"), v.literal("admin"))),
+    role: v.optional(v.union(v.literal("student"), v.literal("parent"), v.literal("teacher"), v.literal("admin"), v.literal("school_admin"))),
     schoolId: v.optional(v.id("schools")),
     classId: v.optional(v.id("classes")),
     childIds: v.optional(v.array(v.id("users"))),
@@ -42,6 +47,7 @@ export default defineSchema({
     .index("by_schoolId", ["schoolId"])
     .index("by_classId", ["classId"])
     .index("by_nis", ["nis"])
+    .index("by_childCode", ["childCode"])
     .index("by_createdAt", ["createdAt"]),
 
   quests: defineTable({
@@ -120,4 +126,15 @@ export default defineSchema({
     .index("by_childId", ["childId"])
     .index("by_parentId", ["parentId"])
     .index("by_child_completed", ["childId", "completed"]),
+
+  activity_logs: defineTable({
+    userId: v.id("users"),
+    action: v.string(),
+    details: v.optional(v.string()),
+    metadata: v.optional(v.record(v.string(), v.string())),
+    timestamp: v.number(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_timestamp", ["timestamp"])
+    .index("by_action", ["action"]),
 });
