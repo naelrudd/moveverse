@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 export interface PoseLandmark {
   x: number;
@@ -74,7 +74,9 @@ export function useMediaPipePose(
   const streamRef = useRef<MediaStream | null>(null);
   const stoppingRef = useRef(false);
 
-  const stopCamera = () => {
+  // Use ref for stopCamera so cleanup effect is stable
+  const stopCameraRef = useRef<() => void>(() => {});
+  const stopCamera = useCallback(() => {
     stoppingRef.current = true;
 
     // Cancel animation frame loop
@@ -102,7 +104,7 @@ export function useMediaPipePose(
     }
 
     setIsReady(false);
-  };
+  }, []);
 
   const startCamera = async () => {
     try {

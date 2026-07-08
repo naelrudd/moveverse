@@ -330,17 +330,6 @@ export function useLiveCoachEngine(options: UseLiveCoachEngineOptions) {
     return () => window.removeEventListener('keydown', handleKey);
   }, [state.isRecording, isReady, start, stop]);
 
-  // Cleanup camera on unmount
-  useEffect(() => {
-    return () => {
-      stopCamera();
-      // Exit fullscreen if active
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
-      }
-    };
-  }, [stopCamera]);
-
   return {
     ...state,
     isReady,
