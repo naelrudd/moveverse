@@ -2,13 +2,13 @@
 
 export const dynamic = 'force-dynamic';
 
+import { useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import Image from 'next/image';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import Link from 'next/link';
 import { worlds, ALL_ACTIVITIES } from '@/lib/worlds';
-// ponytail: useState/useEffect not needed; removed
 
 /* ── Inline confetti burst component ── */
 function ConfettiBurst() {
@@ -71,6 +71,10 @@ export default function StudentDashboard() {
     userData?._id ? { childId: userData._id } : 'skip'
   );
   const markQuestComplete = useMutation(api.sideQuests.markComplete);
+  const joinClassByCode = useMutation(api.classes.joinClassByCode);
+  const [classCode, setClassCode] = useState('');
+  const [joinError, setJoinError] = useState('');
+  const [joinSuccess, setJoinSuccess] = useState('');
 
   const xp = userData?.xp ?? 0;
   const currentLevel = levelStatus?.level ?? userData?.level ?? 1;
@@ -373,6 +377,68 @@ export default function StudentDashboard() {
           </section>
         );
       })}
+
+      {/* ══════════════════════════════════════════
+          JOIN CLASS — Input class code
+          ══════════════════════════════════════════ */}
+      <section>
+        <div className="bg-white rounded-3xl p-6 shadow-pop border-2 border-primary/10">
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="font-extrabold text-xl">📚 Join Kelas</h2>
+            {userData?.classId && (
+              <span className="text-xs font-extrabold bg-green-100 text-green-700 px-2.5 py-1 rounded-full">
+                ✓ Sudah ada kelas
+              </span>
+            )}
+          </div>
+          {!userData?.classId ? (
+            <>
+              <p className="text-xs text-muted-foreground mb-3 font-bold">
+                Masukkan kode kelas dari guru untuk bergabung 🎯
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={classCode}
+                  onChange={(e) => { setClassCode(e.target.value.toUpperCase()); setJoinError(''); setJoinSuccess(''); }}
+                  placeholder="Contoh: ABC123"
+                  className="flex-1 px-4 py-2.5 rounded-xl border-2 border-border focus:border-primary outline-none text-sm font-mono font-bold uppercase"
+                  maxLength={6}
+                />
+                <button
+                  onClick={async () => {
+                    if (!userData?._id || classCode.length < 4) return;
+                    setJoinError('');
+                    setJoinSuccess('');
+                    const result = await joinClassByCode({ userId: userData._id, code: classCode });
+                    if ('error' in result) {
+                      setJoinError(result.error ?? 'Gagal join kelas');
+                    } else {
+                      setJoinSuccess(`Berhasil join Kelas ${result.className}! 🎉`);
+                      setClassCode('');
+                    }
+                  }}
+                  disabled={classCode.length < 4}
+                  className="gradient-grass text-white px-5 py-2 rounded-full font-bold text-sm disabled:opacity-40"
+                >
+                  Join 🚀
+                </button>
+              </div>
+              {joinError && <div className="mt-2 text-xs font-bold text-red-500">❌ {joinError}</div>}
+              {joinSuccess && <div className="mt-2 text-xs font-bold text-green-600">{joinSuccess}</div>}
+            </>
+          ) : (
+            <div className="p-4 bg-green-50 rounded-2xl border-2 border-green-200">
+              <div className="text-sm font-bold text-green-700">
+                ✅ Kamu sudah terdaftar di kelas!
+              </div>
+              <div className="text-xs text-green-600 mt-1">
+                Ingin ganti kelas? Hubungi guru atau admin sekolah.
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* ══════════════════════════════════════════
           SIDE QUEST — Candy card

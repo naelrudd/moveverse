@@ -241,12 +241,40 @@ export const updateSchool = mutation({
     schoolId: v.id("schools"),
     name: v.optional(v.string()),
     address: v.optional(v.string()),
+    npsn: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const patch: Record<string, unknown> = {};
     if (args.name !== undefined) patch.name = args.name;
     if (args.address !== undefined) patch.address = args.address;
+    if (args.npsn !== undefined) patch.npsn = args.npsn;
     await ctx.db.patch(args.schoolId, patch);
+    return { ok: true };
+  },
+});
+
+export const deleteSchool = mutation({
+  args: { schoolId: v.id("schools") },
+  handler: async (ctx, { schoolId }) => {
+    // Delete all classes in this school
+    const classes = await ctx.db
+      .query("classes")
+      .withIndex("by_schoolId", (q) => q.eq("schoolId", schoolId))
+      .collect();
+    for (const cls of classes) {
+      await ctx.db.delete(cls._id);
+    }
+
+    // Remove schoolId from all users in this school
+    const users = await ctx.db
+      .query("users")
+      .withIndex("by_schoolId", (q) => q.eq("schoolId", schoolId))
+      .collect();
+    for (const user of users) {
+      await ctx.db.patch(user._id, { schoolId: undefined });
+    }
+
+    await ctx.db.delete(schoolId);
     return { ok: true };
   },
 });

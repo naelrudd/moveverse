@@ -7,36 +7,44 @@ import { useAuth, UserButton as ClerkUserButton } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
-const navByRole: Record<string, { label: string; href: string }[]> = {
+const navByRole: Record<string, { label: string; href: string; emoji?: string }[]> = {
   student: [
-    { label: "Dashboard", href: "/dashboard/student" },
-    { label: "Statistik", href: "/dashboard/stats" },
-    { label: "Dunia", href: "/worlds" },
-    { label: "AI Coach", href: "/assessment" },
-    { label: "Sekolah", href: "/school" },
+    { label: "Dashboard", href: "/dashboard/student", emoji: "🏠" },
+    { label: "Statistik", href: "/dashboard/stats", emoji: "📊" },
+    { label: "Dunia", href: "/worlds", emoji: "🌍" },
+    { label: "AI Coach", href: "/assessment", emoji: "🤖" },
+    { label: "Sekolah", href: "/school", emoji: "🏫" },
   ],
   parent: [
-    { label: "Aktivitas", href: "/parent" },
-    { label: "Leaderboard", href: "/parent/leaderboard" },
-    { label: "Sekolah", href: "/school" },
+    { label: "Aktivitas", href: "/parent", emoji: "📊" },
+    { label: "Leaderboard", href: "/parent/leaderboard", emoji: "🏆" },
+    { label: "Sekolah", href: "/school", emoji: "🏫" },
   ],
   teacher: [
-    { label: "Kelas", href: "/teacher" },
-    { label: "Leaderboard", href: "/teacher/leaderboard" },
-    { label: "AI Coach", href: "/assessment" },
-    { label: "Sekolah", href: "/school" },
+    { label: "Kelas", href: "/teacher", emoji: "📚" },
+    { label: "Leaderboard", href: "/teacher/leaderboard", emoji: "🏆" },
+    { label: "AI Coach", href: "/assessment", emoji: "🤖" },
+    { label: "Sekolah", href: "/school", emoji: "🏫" },
   ],
   admin: [
-    { label: "Admin", href: "/admin" },
-    { label: "Sekolah", href: "/school" },
-    { label: "Guru", href: "/teacher" },
-    { label: "Dunia", href: "/worlds" },
+    { label: "Admin", href: "/admin", emoji: "👑" },
+    { label: "Sekolah", href: "/school", emoji: "🏫" },
+    { label: "Guru", href: "/teacher", emoji: "📚" },
+    { label: "Dunia", href: "/worlds", emoji: "🌍" },
   ],
   school_admin: [
-    { label: "Dashboard", href: "/admin" },
-    { label: "Sekolah", href: "/school" },
-    { label: "Guru", href: "/teacher" },
+    { label: "Dashboard", href: "/admin", emoji: "🏫" },
+    { label: "Sekolah", href: "/school", emoji: "🏫" },
+    { label: "Guru", href: "/teacher", emoji: "📚" },
   ],
+};
+
+const ROLE_BADGES: Record<string, { label: string; color: string }> = {
+  admin: { label: "Admin", color: "bg-amber-500 text-white" },
+  school_admin: { label: "Admin Sekolah", color: "bg-red-500 text-white" },
+  teacher: { label: "Guru", color: "bg-green-500 text-white" },
+  student: { label: "Siswa", color: "bg-blue-500 text-white" },
+  parent: { label: "Ortu", color: "bg-purple-500 text-white" },
 };
 
 export function Header() {
@@ -48,52 +56,67 @@ export function Header() {
   );
   const role = userData?.role ?? null;
   const navItems = role ? (navByRole[role] ?? navByRole.student) : [];
+  const badge = role ? ROLE_BADGES[role] : null;
 
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-md bg-white/70 border-b-4 border-primary/20">
-      <div className="flex-1 flex items-center overflow-x-auto no-scrollbar max-w-7xl mx-auto px-4 gap-3 md:gap-6">
+    <header className="sticky top-0 z-40 backdrop-blur-md bg-white/80 border-b-2 border-primary/10">
+      <div className="max-w-7xl mx-auto px-4 flex items-center h-14 gap-3">
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <Image
             src="/logo.png"
             alt="MOVEVERSE"
-            width={24}
-            height={24}
-            className="h-6 w-auto object-contain"
+            width={28}
+            height={28}
+            className="h-7 w-auto object-contain"
           />
-          <div className="text-xs font-bold hidden sm:block">
+          <div className="text-sm font-extrabold hidden sm:block">
             <span className="text-primary">MOVE</span>
             <span className="text-foreground">VERSE</span>
           </div>
         </Link>
 
-        <nav className="flex-1 flex py-3 items-center gap-1 overflow-x-auto no-scrollbar">
+        {/* Nav */}
+        <nav className="flex-1 flex items-center gap-1 overflow-x-auto no-scrollbar">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center justify-center whitespace-nowrap px-3 py-2 rounded-full text-sm font-bold transition-all ${
+                className={`flex items-center gap-1 whitespace-nowrap px-3 py-1.5 rounded-full text-sm font-bold transition-all ${
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-soft scale"
-                    : "text-foreground/70 hover:bg-primary/10 hover:text-primary"
+                    ? "bg-primary text-primary-foreground shadow-soft"
+                    : "text-foreground/60 hover:bg-primary/10 hover:text-primary"
                 }`}
               >
+                {item.emoji && <span className="text-xs">{item.emoji}</span>}
                 {item.label}
               </Link>
             );
           })}
         </nav>
 
+        {/* Right side */}
         <div className="shrink-0 flex items-center gap-2">
+          {/* Role badge */}
+          {badge && (
+            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide ${badge.color}`}>
+              {badge.label}
+            </span>
+          )}
+
+          {/* Coins (student only) */}
           {userData?.role === "student" && (
-            <div className="flex items-center gap-1 bg-sunny/30 px-3 py-1 rounded-full">
+            <div className="flex items-center gap-1 bg-sunny/30 px-2.5 py-1 rounded-full">
               <span className="text-sm">🪙</span>
               <span className="text-xs font-extrabold">
                 {userData.coins.toLocaleString()}
               </span>
             </div>
           )}
+
+          {/* Profile */}
           <Link
             href="/profile"
             className={`flex items-center justify-center whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-bold border-2 transition-all ${
@@ -104,6 +127,8 @@ export function Header() {
           >
             Profil
           </Link>
+
+          {/* Clerk User Button */}
           <ClerkUserButton
             appearance={{ elements: { avatarBox: "w-8 h-8" } }}
           />

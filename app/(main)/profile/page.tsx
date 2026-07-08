@@ -12,7 +12,8 @@ const roleLabels: Record<string, string> = {
   student: '🧒 Peserta Didik',
   parent: '👨‍👩‍👧 Orang Tua',
   teacher: '👩‍🏫 Guru',
-  admin: '🛠️ Admin',
+  admin: '👑 Admin',
+  school_admin: '🏫 Admin Sekolah',
 };
 
 const roleColors: Record<string, string> = {
@@ -20,6 +21,7 @@ const roleColors: Record<string, string> = {
   parent: 'gradient-sunset',
   teacher: 'gradient-grass',
   admin: 'gradient-magic',
+  school_admin: 'bg-red-500',
 };
 
 export default function ProfilePage() {
@@ -31,6 +33,7 @@ export default function ProfilePage() {
   const schools = useQuery(api.schools.getAllSchools);
   const classes = useQuery(api.classes.getClassesBySchool, userData?.schoolId ? { schoolId: userData.schoolId } : 'skip');
   const updateUser = useMutation(api.users.updateUser);
+  const joinClassByCode = useMutation(api.classes.joinClassByCode);
   const [editing, setEditing] = useState(false);
   const [newAvatar, setNewAvatar] = useState('🦊');
   const [editName, setEditName] = useState('');
@@ -39,6 +42,9 @@ export default function ProfilePage() {
   const [editSchoolId, setEditSchoolId] = useState<Id<'schools'> | ''>('');
   const [editClassId, setEditClassId] = useState<Id<'classes'> | ''>('');
   const [saving, setSaving] = useState(false);
+  const [classCode, setClassCode] = useState('');
+  const [joinError, setJoinError] = useState('');
+  const [joinSuccess, setJoinSuccess] = useState('');
 
   // Hydrate edit fields when userData loads
   if (userData && editSchoolId === '' && userData.schoolId) {
@@ -118,6 +124,46 @@ export default function ProfilePage() {
             <div className="bg-muted/50 rounded-2xl p-4">
               <div className="text-xs font-bold text-muted-foreground uppercase">Kelas</div>
               <div className="font-extrabold text-lg">{cls ? `Kelas ${cls.name}` : '-'}</div>
+            </div>
+          )}
+
+          {/* Join Kelas for students without class */}
+          {userData.role === 'student' && !userData.classId && (
+            <div className="bg-muted/50 rounded-2xl p-4">
+              <div className="text-xs font-bold text-muted-foreground uppercase mb-2">Join Kelas</div>
+              <p className="text-xs text-muted-foreground mb-2">
+                Masukkan kode kelas dari guru 🎯
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={classCode}
+                  onChange={(e) => { setClassCode(e.target.value.toUpperCase()); setJoinError(''); setJoinSuccess(''); }}
+                  placeholder="KODE KELAS"
+                  className="flex-1 px-3 py-2 rounded-xl border-2 border-border focus:border-primary outline-none text-sm font-mono font-bold uppercase"
+                  maxLength={6}
+                />
+                <button
+                  onClick={async () => {
+                    if (!userData._id || classCode.length < 4) return;
+                    setJoinError('');
+                    setJoinSuccess('');
+                    const result = await joinClassByCode({ userId: userData._id, code: classCode });
+                    if ('error' in result) {
+                      setJoinError(result.error ?? 'Gagal join kelas');
+                    } else {
+                      setJoinSuccess(`Berhasil join Kelas ${result.className}! 🎉`);
+                      setClassCode('');
+                    }
+                  }}
+                  disabled={classCode.length < 4}
+                  className="gradient-grass text-white px-4 py-2 rounded-full font-bold text-sm disabled:opacity-40"
+                >
+                  Join
+                </button>
+              </div>
+              {joinError && <div className="mt-2 text-xs font-bold text-red-500">❌ {joinError}</div>}
+              {joinSuccess && <div className="mt-2 text-xs font-bold text-green-600">{joinSuccess}</div>}
             </div>
           )}
 

@@ -215,7 +215,7 @@ export default function SchoolDashboard() {
                   XP {cls.avgXp}
                 </span>
               </div>
-              {cls.code && (
+              {(userData?.role === 'teacher' || userData?.role === 'admin' || userData?.role === 'school_admin') && cls.code && (
                 <div className="flex items-center justify-between mb-2 p-2 bg-amber-50 rounded-xl">
                   <span className="text-xs font-bold text-amber-700">Kode: {cls.code}</span>
                   <CopyButton text={cls.code} label="Salin" />

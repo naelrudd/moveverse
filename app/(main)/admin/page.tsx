@@ -631,10 +631,13 @@ function LogsTab({ isDevAdmin, schoolId }: { isDevAdmin: boolean; schoolId?: Id<
 function SchoolsTab() {
   const schools = useQuery(api.schools.getAllSchools);
   const createSchool = useMutation(api.admin.createSchool);
+  const updateSchool = useMutation(api.admin.updateSchool);
+  const deleteSchool = useMutation(api.admin.deleteSchool);
   const createSchoolAdmin = useMutation(api.admin.createSchoolAdmin);
   const [showForm, setShowForm] = useState(false);
+  const [editId, setEditId] = useState<Id<'schools'> | null>(null);
   const [showAdminForm, setShowAdminForm] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: '', slug: '', address: '', npsn: '' });
+  const [form, setForm] = useState({ name: '', address: '', npsn: '' });
   const [adminForm, setAdminForm] = useState({ name: '', phone: '' });
 
   if (!schools) {
@@ -642,14 +645,38 @@ function SchoolsTab() {
   }
 
   const handleCreate = async () => {
-    if (!form.name || !form.slug) return;
+    if (!form.name) return;
     await createSchool({
       name: form.name,
       address: form.address || undefined,
       npsn: form.npsn || undefined,
     });
-    setForm({ name: '', slug: '', address: '', npsn: '' });
+    setForm({ name: '', address: '', npsn: '' });
     setShowForm(false);
+  };
+
+  const handleUpdate = async () => {
+    if (!editId || !form.name) return;
+    await updateSchool({
+      schoolId: editId,
+      name: form.name,
+      address: form.address || undefined,
+      npsn: form.npsn || undefined,
+    });
+    setForm({ name: '', address: '', npsn: '' });
+    setEditId(null);
+    setShowForm(false);
+  };
+
+  const handleDelete = async (schoolId: Id<'schools'>) => {
+    if (!confirm('Yakin hapus sekolah ini? Semua kelas dan user di sekolah ini akan terhapus.')) return;
+    await deleteSchool({ schoolId });
+  };
+
+  const openEdit = (school: { _id: Id<'schools'>; name: string; address?: string; npsn?: string }) => {
+    setEditId(school._id);
+    setForm({ name: school.name, address: school.address || '', npsn: school.npsn || '' });
+    setShowForm(true);
   };
 
   const handleCreateSchoolAdmin = async (schoolId: Id<'schools'>) => {
@@ -664,7 +691,7 @@ function SchoolsTab() {
       alert(result.error);
       return;
     }
-    alert(`Akun admin sekolah dibuat! Clerk ID: ${result.clerkId}\n\nBagikan ID ini ke admin sekolah untuk login.`);
+    alert(`Akun admin sekolah dibuat!\n\nClerk ID: ${result.clerkId}\n\nBagikan ID ini ke admin sekolah untuk login.`);
     setAdminForm({ name: '', phone: '' });
     setShowAdminForm(null);
   };
@@ -674,79 +701,97 @@ function SchoolsTab() {
       <div className="flex justify-between items-center">
         <h2 className="font-extrabold text-xl">🏫 Manajemen Sekolah</h2>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => { setShowForm(!showForm); setEditId(null); setForm({ name: '', address: '', npsn: '' }); }}
           className="gradient-grass text-white px-5 py-2 rounded-full font-bold text-sm"
         >
           + Tambah Sekolah
         </button>
       </div>
 
+      {/* Create / Edit Form */}
       {showForm && (
         <div className="bg-white rounded-3xl p-6 shadow-soft border-2 border-primary/20">
-          <h3 className="font-extrabold text-lg mb-4">Tambah Sekolah Baru</h3>
+          <h3 className="font-extrabold text-lg mb-4">{editId ? '✏️ Edit Sekolah' : '➕ Tambah Sekolah Baru'}</h3>
           <div className="grid sm:grid-cols-2 gap-3">
-            <input
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="Nama Sekolah"
-              className="px-4 py-2.5 rounded-xl border-2 border-border focus:border-primary outline-none text-sm"
-            />
-            <input
-              value={form.slug}
-              onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
-              placeholder="slug (otomatis dari nama)"
-              className="px-4 py-2.5 rounded-xl border-2 border-border focus:border-primary outline-none text-sm"
-            />
-            <input
-              value={form.npsn}
-              onChange={(e) => setForm({ ...form, npsn: e.target.value })}
-              placeholder="NPSN (opsional)"
-              className="px-4 py-2.5 rounded-xl border-2 border-border focus:border-primary outline-none text-sm"
-            />
-            <input
-              value={form.address}
-              onChange={(e) => setForm({ ...form, address: e.target.value })}
-              placeholder="Alamat (opsional)"
-              className="px-4 py-2.5 rounded-xl border-2 border-border focus:border-primary outline-none text-sm"
-            />
+            <div>
+              <label className="text-xs font-bold text-muted-foreground mb-1 block">Nama Sekolah *</label>
+              <input
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="SMA Negeri 1"
+                className="w-full px-4 py-2.5 rounded-xl border-2 border-border focus:border-primary outline-none text-sm"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-bold text-muted-foreground mb-1 block">NPSN</label>
+              <input
+                value={form.npsn}
+                onChange={(e) => setForm({ ...form, npsn: e.target.value })}
+                placeholder="20405601"
+                className="w-full px-4 py-2.5 rounded-xl border-2 border-border focus:border-primary outline-none text-sm"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="text-xs font-bold text-muted-foreground mb-1 block">Alamat</label>
+              <input
+                value={form.address}
+                onChange={(e) => setForm({ ...form, address: e.target.value })}
+                placeholder="Jl. Merdeka No. 1"
+                className="w-full px-4 py-2.5 rounded-xl border-2 border-border focus:border-primary outline-none text-sm"
+              />
+            </div>
           </div>
           <div className="flex gap-2 mt-4">
-            <button onClick={handleCreate} className="gradient-sky text-white px-5 py-2 rounded-full font-bold text-sm">
-              Simpan
+            <button onClick={editId ? handleUpdate : handleCreate} className="gradient-sky text-white px-5 py-2 rounded-full font-bold text-sm">
+              {editId ? 'Simpan Perubahan' : 'Simpan'}
             </button>
-            <button onClick={() => setShowForm(false)} className="bg-muted px-5 py-2 rounded-full font-bold text-sm">
+            <button onClick={() => { setShowForm(false); setEditId(null); }} className="bg-muted px-5 py-2 rounded-full font-bold text-sm">
               Batal
             </button>
           </div>
         </div>
       )}
 
+      {/* School List */}
       <div className="space-y-3">
         {schools.map((school) => (
-          <div key={school._id} className="bg-white rounded-3xl p-6 shadow-soft">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className="text-3xl">🏫</div>
-                <div>
-                  <div className="font-extrabold text-lg">{school.name}</div>
-                  <div className="text-xs text-muted-foreground flex items-center gap-2">
-                    NPSN: {school.npsn || '-'}
-                    {school.npsn && <CopyButton text={school.npsn} label="Salin" />}
-                    • Slug: {school.slug}
-                  </div>
-                  {school.address && (
-                    <div className="text-xs text-muted-foreground mt-1">{school.address}</div>
-                  )}
+          <div key={school._id} className="bg-white rounded-3xl p-5 shadow-soft">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1">
+                <div className="font-extrabold text-lg">{school.name}</div>
+                <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                  <span>NPSN:</span>
+                  <code className="bg-muted px-2 py-0.5 rounded font-mono font-bold">{school.npsn || '-'}</code>
+                  {school.npsn && <CopyButton text={school.npsn} label="Salin" />}
                 </div>
+                {school.address && (
+                  <div className="text-xs text-muted-foreground mt-1">📍 {school.address}</div>
+                )}
+                <div className="text-[10px] text-muted-foreground mt-1 font-mono">Slug: {school.slug}</div>
               </div>
-              <button
-                onClick={() => setShowAdminForm(showAdminForm === school._id ? null : school._id)}
-                className="gradient-sunset text-white px-4 py-2 rounded-full font-bold text-sm shrink-0"
-              >
-                + Admin Sekolah
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => openEdit(school)}
+                  className="text-xs px-3 py-1.5 rounded-full bg-muted hover:bg-primary/10 font-bold"
+                >
+                  ✏️ Edit
+                </button>
+                <button
+                  onClick={() => setShowAdminForm(showAdminForm === school._id ? null : school._id)}
+                  className="gradient-sunset text-white text-xs px-3 py-1.5 rounded-full font-bold"
+                >
+                  + Admin
+                </button>
+                <button
+                  onClick={() => handleDelete(school._id)}
+                  className="text-xs px-3 py-1.5 rounded-full bg-red-50 hover:bg-red-100 text-red-600 font-bold"
+                >
+                  🗑️
+                </button>
+              </div>
             </div>
 
+            {/* Create Admin Form */}
             {showAdminForm === school._id && (
               <div className="mt-4 p-4 bg-muted/40 rounded-2xl border-2 border-primary/20">
                 <div className="text-sm font-bold mb-3">Buat Akun Admin Sekolah</div>
@@ -778,7 +823,7 @@ function SchoolsTab() {
         ))}
         {schools.length === 0 && (
           <div className="bg-white rounded-3xl p-6 shadow-soft text-center text-muted-foreground">
-            Belum ada sekolah
+            Belum ada sekolah. Klik &quot;+ Tambah Sekolah&quot; untuk menambahkan.
           </div>
         )}
       </div>
