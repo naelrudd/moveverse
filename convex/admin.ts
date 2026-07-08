@@ -205,17 +205,19 @@ export const getGlobalStats = query({
 export const createSchool = mutation({
   args: {
     name: v.string(),
-    npsn: v.string(),
+    npsn: v.optional(v.string()),
     address: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const slug = args.npsn.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const slug = (args.npsn || args.name).toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-    const existing = await ctx.db
-      .query("schools")
-      .withIndex("by_npsn", (q) => q.eq("npsn", args.npsn))
-      .first();
-    if (existing) return { error: "NPSN sudah terdaftar" };
+    if (args.npsn) {
+      const existing = await ctx.db
+        .query("schools")
+        .withIndex("by_npsn", (q) => q.eq("npsn", args.npsn!))
+        .first();
+      if (existing) return { error: "NPSN sudah terdaftar" };
+    }
 
     const existingSlug = await ctx.db
       .query("schools")
@@ -253,7 +255,7 @@ export const updateSchool = mutation({
 
 export const createUser = mutation({
   args: {
-    schoolId: v.id("schools"),
+    schoolId: v.optional(v.id("schools")),
     name: v.string(),
     role: adminRoles,
     nis: v.optional(v.string()),
