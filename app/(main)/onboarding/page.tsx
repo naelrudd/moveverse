@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { useAuth, useUser } from '@clerk/nextjs';
 import { useMutation, useQuery } from 'convex/react';
@@ -25,9 +25,7 @@ export default function OnboardingPage() {
   const [avatar, setAvatar] = useState('🦊');
   const [schoolId, setSchoolId] = useState<Id<'schools'> | ''>('');
   const [classCode, setClassCode] = useState('');
-  const [classInfo, setClassInfo] = useState<{ name: string } | null>(null);
   const [childCode, setChildCode] = useState('');
-  const [childInfo, setChildInfo] = useState<{ name: string; avatar: string } | null>(null);
   const [nis, setNis] = useState('');
   const [phone, setPhone] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -38,8 +36,20 @@ export default function OnboardingPage() {
   const lookupClass = useQuery(api.classes.getClassByCode, classCode.length >= 4 ? { code: classCode } : 'skip');
   const lookupChild = useQuery(api.users.lookupByChildCode, childCode.length >= 4 ? { childCode } : 'skip');
   const createUser = useMutation(api.users.createUser);
-  const linkChild = useMutation(api.classes.linkChildByNis);
   const joinClass = useMutation(api.classes.joinClassByCode);
+
+  // Derive class and child info from query results
+  const classInfo = useMemo(() => {
+    if (lookupClass) return { name: lookupClass.name };
+    if (classCode && lookupClass === null) return null;
+    return undefined;
+  }, [lookupClass, classCode]);
+
+  const childInfo = useMemo(() => {
+    if (lookupChild) return { name: lookupChild.name, avatar: lookupChild.avatar };
+    if (childCode && lookupChild === null) return null;
+    return undefined;
+  }, [lookupChild, childCode]);
 
   useEffect(() => {
     if (!existingUser) return;
@@ -52,24 +62,6 @@ export default function OnboardingPage() {
     };
     router.replace(roleRedirect[existingUser.role ?? 'student'] || '/dashboard/student');
   }, [existingUser, router]);
-
-  // Lookup class by code
-  useEffect(() => {
-    if (lookupClass) {
-      setClassInfo({ name: lookupClass.name });
-    } else if (classCode && lookupClass === null) {
-      setClassInfo(null);
-    }
-  }, [lookupClass]);
-
-  // Lookup child by code
-  useEffect(() => {
-    if (lookupChild) {
-      setChildInfo({ name: lookupChild.name, avatar: lookupChild.avatar });
-    } else if (childCode && lookupChild === null) {
-      setChildInfo(null);
-    }
-  }, [lookupChild]);
 
   const handleSubmit = async () => {
     if (!userId || !role) return;
