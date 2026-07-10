@@ -43,6 +43,7 @@ export default function ProfilePage() {
   const [editSchoolId, setEditSchoolId] = useState<Id<'schools'> | ''>('');
   const [editClassId, setEditClassId] = useState<Id<'classes'> | ''>('');
   const [saving, setSaving] = useState(false);
+  const role = userData?.role ?? 'student';
   const children = useQuery(
     api.users.getChildren,
     role === 'parent' && userData?._id ? { parentId: userData._id } : 'skip',
@@ -69,7 +70,6 @@ export default function ProfilePage() {
     );
   }
 
-  const role = userData.role ?? 'student';
   const badges = userData.badges ?? [];
 
 

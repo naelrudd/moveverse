@@ -123,10 +123,8 @@ export default function StatsPage() {
   if (!userId) return null;
 
   // Compute quick stats
-  const totalSessions = liveStats?.reduce((a, s) => a + s.count, 0) ?? 0;
-  const avgScore = liveStats && liveStats.length > 0
-    ? Math.round(liveStats.reduce((a, s) => a + s.avgScore, 0) / liveStats.length)
-    : 0;
+  const totalSessions = liveStats?.count ?? 0;
+  const avgScore = liveStats?.avgScore ?? 0;
 
   return (
     <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-5 bg-theme-forest min-h-screen">

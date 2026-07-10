@@ -59,19 +59,22 @@ export default function ParentLeaderboardPage() {
         </div>
         {/* Child selector */}
         <div className="flex gap-2 mt-3 flex-wrap">
-          {children.map((c, i) => (
-            <button
-              key={c._id}
-              onClick={() => setSelectedIdx(i)}
-              className={`px-4 py-2 rounded-full font-bold text-sm transition-all ${
-                selectedIdx === i
-                  ? 'gradient-sunset text-white'
-                  : 'bg-muted hover:bg-muted/80'
-              }`}
-            >
-              {c.avatar} {c.name}
-            </button>
-          ))}
+          {children.map((c, i) => {
+            if (!c) return null;
+            return (
+              <button
+                key={c._id}
+                onClick={() => setSelectedIdx(i)}
+                className={`px-4 py-2 rounded-full font-bold text-sm transition-all ${
+                  selectedIdx === i
+                    ? 'gradient-sunset text-white'
+                    : 'bg-muted hover:bg-muted/80'
+                }`}
+              >
+                {c.avatar} {c.name}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -80,7 +83,7 @@ export default function ParentLeaderboardPage() {
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-white rounded-3xl p-4 shadow-soft text-center border-4 border-yellow-300">
             <div className="text-3xl">🎖️</div>
-            <div className="text-3xl font-extrabold">{leaderboard?.find((l) => l._id === selectedChild._id)?.rank ?? '-'}</div>
+            <div className="text-3xl font-extrabold">{leaderboard?.find((l) => l.userId === selectedChild._id)?.rank ?? '-'}</div>
             <div className="text-xs font-bold text-muted-foreground">Rank di Kelas</div>
           </div>
           <div className="bg-white rounded-3xl p-4 shadow-soft text-center border-4 border-blue-200">
@@ -105,10 +108,10 @@ export default function ParentLeaderboardPage() {
         </div>
         {leaderboard && leaderboard.length > 0 ? (
           leaderboard.map((entry, i) => {
-            const isOwnChild = entry._id === selectedChild?._id;
+            const isOwnChild = entry.userId === selectedChild?._id;
             return (
               <div
-                key={entry._id}
+                key={entry.userId}
                 className={`flex items-center gap-4 px-4 sm:px-6 py-3 ${
                   isOwnChild
                     ? 'bg-blue-50 border-l-4 border-blue-500 font-bold'
@@ -128,7 +131,7 @@ export default function ParentLeaderboardPage() {
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-sm truncate">
                     {isOwnChild ? (
-                      <>{entry.name} <span className="ml-2 text-xs bg-blue-100 text-blue-700 rounded-full px-2 py-0.5">Anak kamu</span></>
+                      <>{entry.userName} <span className="ml-2 text-xs bg-blue-100 text-blue-700 rounded-full px-2 py-0.5">Anak kamu</span></>
                     ) : (
                       <span className="text-muted-foreground">Peserta Didik #{entry.rank}</span>
                     )}

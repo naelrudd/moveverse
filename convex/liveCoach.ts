@@ -265,6 +265,7 @@ export const getLeaderboard = query({
 
     return Array.from(bestByUser.values())
       .sort((a, b) => b.score - a.score)
-      .slice(0, lim ?? 10);
+      .slice(0, lim ?? 10)
+      .map((entry, i) => ({ ...entry, rank: i + 1 }));
   },
 });
