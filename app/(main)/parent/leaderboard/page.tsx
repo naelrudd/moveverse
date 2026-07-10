@@ -139,7 +139,7 @@ export default function ParentLeaderboardPage() {
                 </div>
                 {/* XP — only show for own child */}
                 {isOwnChild && (
-                  <div className="font-extrabold text-sm shrink-0">{entry.xp.toLocaleString()} XP</div>
+                  <div className="font-extrabold text-sm shrink-0">{entry.score.toLocaleString()} XP</div>
                 )}
                 {!isOwnChild && (
                   <div className="text-xs text-muted-foreground shrink-0">•••</div>

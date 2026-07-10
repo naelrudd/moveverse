@@ -150,11 +150,11 @@ export default function StatsPage() {
 
         {/* Quick stats row */}
         <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-4 mt-4">
-          {[
+          {([
             { icon: '🎯', label: 'Total Sesi', value: totalSessions, bg: 'linear-gradient(135deg, #6366f1, #818cf8)' },
             { icon: '⭐', label: 'Rata-rata Skor', value: avgScore, bg: 'linear-gradient(135deg, #f59e0b, #fbbf24)' },
             { icon: '🏆', label: 'Skor Terbaik', value: bestScore, bg: 'linear-gradient(135deg, #10b981, #34d399)' },
-          ].map((s, i) => (
+          ] as { icon: string; label: string; value: number; bg: string }[]).map((s, i) => (
             <div
               key={s.label}
               className="text-white rounded-2xl p-3 text-center shadow-soft relative overflow-hidden"
