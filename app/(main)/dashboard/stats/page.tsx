@@ -149,7 +149,7 @@ export default function StatsPage() {
           {[
             { icon: '🎯', label: 'Total Sesi', value: totalSessions, bg: 'linear-gradient(135deg, #6366f1, #818cf8)' },
             { icon: '⭐', label: 'Rata-rata Skor', value: avgScore, bg: 'linear-gradient(135deg, #f59e0b, #fbbf24)' },
-            { icon: '🏆', label: 'Aktivitas', value: liveStats?.length ?? 0, bg: 'linear-gradient(135deg, #10b981, #34d399)' },
+            { icon: '🏆', label: 'Skor Terbaik', value: liveStats?.bestScore ?? 0, bg: 'linear-gradient(135deg, #10b981, #34d399)' },
           ].map((s, i) => (
             <div
               key={s.label}
