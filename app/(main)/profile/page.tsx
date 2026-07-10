@@ -179,13 +179,16 @@ export default function ProfilePage() {
               <div className="font-extrabold text-lg">{children?.length ?? 0} anak</div>
               {children && children.length > 0 && (
                 <div className="mt-2 space-y-1.5">
-                  {children.map((c) => (
+                  {children.map((c) => {
+                    if (!c) return null;
+                    return (
                     <div key={c._id} className="flex items-center gap-2 text-sm">
                       <span className="text-lg">{c.avatar}</span>
                       <span className="font-bold">{c.name}</span>
                       <span className="text-xs text-muted-foreground">Lv.{c.level}</span>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
               {children && children.length === 0 && (
@@ -331,7 +334,7 @@ export default function ProfilePage() {
                     className="mt-1 w-full p-3 rounded-2xl border-2 border-border bg-white font-bold text-sm"
                   >
                     <option value="">Pilih kelas...</option>
-                    {classes?.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
+                    {classes?.map((c) => c ? <option key={c._id} value={c._id}>{c.name}</option> : null)}
                   </select>
                 </div>
               )}
