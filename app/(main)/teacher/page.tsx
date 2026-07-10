@@ -349,7 +349,10 @@ export default function TeacherDashboard() {
             <div className="font-extrabold text-sm mb-2">📋 Aktivitas Belum Selesai</div>
             <div className="flex flex-wrap gap-2">
               {ALL_ACTIVITIES.filter((a) => !selectedStudent.badges?.includes(a.badgeId)).map((a) => (
-                <span key={a.id} className="text-xs font-bold bg-white px-3 py-1 rounded-full border border-amber-200 shadow-sm">{a.icon} {a.name}</span>
+                <span key={a.id} className="text-xs font-bold bg-white px-3 py-1 rounded-full border border-amber-200 shadow-sm inline-flex items-center gap-1">
+                  {a.iconImage ? <Image src={a.iconImage} alt={a.name} width={14} height={14} className="object-contain" /> : a.icon}
+                  {a.name}
+                </span>
               ))}
             </div>
           </div>

@@ -9,6 +9,7 @@ import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import Link from 'next/link';
 import { worlds, ALL_ACTIVITIES } from '@/lib/worlds';
+import LearningObjectivesPopup from '@/components/LearningObjectivesPopup';
 
 /* ── Inline confetti burst component ── */
 function ConfettiBurst() {
@@ -86,6 +87,7 @@ export default function StudentDashboard() {
 
   return (
     <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-6 sm:space-y-8 bg-theme-forest min-h-screen">
+      <LearningObjectivesPopup />
       {/* ══════════════════════════════════════════
           HERO — Super kid entrance
           ══════════════════════════════════════════ */}
@@ -306,7 +308,13 @@ export default function StudentDashboard() {
                     />
 
                     <div className="flex items-center justify-between">
-                      <div className="text-4xl group-hover:animate-bounce-sm drop-shadow-sm">{a.icon}</div>
+                      {a.iconImage ? (
+                        <div className="w-10 h-10 relative group-hover:animate-bounce-sm drop-shadow-sm">
+                          <Image src={a.iconImage} alt={a.name} fill className="object-contain" />
+                        </div>
+                      ) : (
+                        <div className="text-4xl group-hover:animate-bounce-sm drop-shadow-sm">{a.icon}</div>
+                      )}
                       {earned && (
                         <span className="text-xs font-extrabold text-green-700 bg-green-100 px-2.5 py-1 rounded-full animate-pop-in border border-green-200 flex items-center gap-1">
                           <span className="animate-sparkle inline-block">✨</span> Dapat!
@@ -533,7 +541,13 @@ export default function StudentDashboard() {
                       : 'bg-muted/40 opacity-40 border-2 border-transparent'
                   }`}
                 >
-                  <div className="text-2xl mb-1 drop-shadow-sm">{earned ? a.icon : '🔒'}</div>
+                  {earned && a.iconImage ? (
+                    <div className="w-8 h-8 relative mx-auto mb-1 drop-shadow-sm">
+                      <Image src={a.iconImage} alt={a.name} fill className="object-contain" />
+                    </div>
+                  ) : (
+                    <div className="text-2xl mb-1 drop-shadow-sm">{earned ? a.icon : '🔒'}</div>
+                  )}
                   <div className="font-extrabold text-[10px] leading-tight">{a.badgeName}</div>
                   {earned && <Sparkle className="-top-1 -right-1 text-xs" delay={(a.id.charCodeAt(0) % 20) / 10} />}
                 </div>

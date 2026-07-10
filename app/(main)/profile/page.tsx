@@ -6,6 +6,7 @@ import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import AvatarPicker from '@/components/AvatarPicker';
+import Image from 'next/image';
 import { ACTIVITIES } from '@/lib/worlds';
 
 const roleLabels: Record<string, string> = {
@@ -42,6 +43,10 @@ export default function ProfilePage() {
   const [editSchoolId, setEditSchoolId] = useState<Id<'schools'> | ''>('');
   const [editClassId, setEditClassId] = useState<Id<'classes'> | ''>('');
   const [saving, setSaving] = useState(false);
+  const children = useQuery(
+    api.users.getChildren,
+    role === 'parent' && userData?._id ? { parentId: userData._id } : 'skip',
+  );
   const [classCode, setClassCode] = useState('');
   const [joinError, setJoinError] = useState('');
   const [joinSuccess, setJoinSuccess] = useState('');
@@ -167,6 +172,28 @@ export default function ProfilePage() {
             </div>
           )}
 
+          {/* Children linked (parent only) */}
+          {role === 'parent' && (
+            <div className="bg-muted/50 rounded-2xl p-4">
+              <div className="text-xs font-bold text-muted-foreground uppercase">Anak Tertaut</div>
+              <div className="font-extrabold text-lg">{children?.length ?? 0} anak</div>
+              {children && children.length > 0 && (
+                <div className="mt-2 space-y-1.5">
+                  {children.map((c) => (
+                    <div key={c._id} className="flex items-center gap-2 text-sm">
+                      <span className="text-lg">{c.avatar}</span>
+                      <span className="font-bold">{c.name}</span>
+                      <span className="text-xs text-muted-foreground">Lv.{c.level}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {children && children.length === 0 && (
+                <p className="text-xs text-muted-foreground mt-1">Hubungkan akun anak melalui kode unik</p>
+              )}
+            </div>
+          )}
+
           {userData.nis && (
             <div className="bg-muted/50 rounded-2xl p-4">
               <div className="text-xs font-bold text-muted-foreground uppercase">NIS</div>
@@ -204,8 +231,14 @@ export default function ProfilePage() {
               {ACTIVITIES.map((a) => {
                 const earned = badges.includes(a.badgeId);
                 return (
-                  <div key={a.id} className={`rounded-xl p-2 text-center text-2xl ${earned ? 'bg-amber-50 border border-amber-200' : 'bg-muted/40 opacity-40'}`}>
-                    {earned ? a.icon : '🔒'}
+                  <div key={a.id} className={`rounded-xl p-1.5 text-center ${earned ? 'bg-amber-50 border border-amber-200' : 'bg-muted/40 opacity-40'}`}>
+                    {earned && a.iconImage ? (
+                      <div className="w-8 h-8 relative mx-auto">
+                        <Image src={a.iconImage} alt={a.name} fill className="object-contain" />
+                      </div>
+                    ) : (
+                      earned ? a.icon : '🔒'
+                    )}
                   </div>
                 );
               })}

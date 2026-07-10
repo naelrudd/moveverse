@@ -569,7 +569,13 @@ export default function ParentDashboard() {
                               key={a.id}
                               className={`bg-white/20 backdrop-blur-sm rounded-xl p-2 text-center border border-white/20 transition-all ${earned ? "ring-2 ring-white shadow-soft" : "opacity-60"}`}
                             >
-                              <div className="text-lg">{a.icon}</div>
+                              {a.iconImage ? (
+                                <div className="w-7 h-7 relative mx-auto">
+                                  <Image src={a.iconImage} alt={a.name} fill className="object-contain" />
+                                </div>
+                              ) : (
+                                <div className="text-lg">{a.icon}</div>
+                              )}
                               <div className="text-[9px] font-bold mt-0.5 leading-tight">
                                 {a.name}
                               </div>

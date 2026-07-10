@@ -1,36 +1,53 @@
 'use client';
-
 export const dynamic = 'force-dynamic';
-
 import { useState } from 'react';
+import { useAuth } from '@clerk/nextjs';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import type { Id } from '@/convex/_generated/dataModel';
 
-const dummyChildren = [
-  { _id: '1', name: 'Adi', avatar: '🧒', level: 3, classId: '3A', xp: 2450, rank: 5, badgeCount: 3 },
-  { _id: '2', name: 'Sari', avatar: '👧', level: 2, classId: '2B', xp: 1800, rank: 8, badgeCount: 1 },
-];
-
-const dummyLeaderboard = [
-  { rank: 1, name: 'Mira', avatar: '👧', level: 4, xp: 4200 },
-  { rank: 2, name: 'Nina', avatar: '👧', level: 4, xp: 3800 },
-  { rank: 3, name: 'Rian', avatar: '🧒', level: 3, xp: 3100 },
-  { rank: 4, name: 'Putri', avatar: '👧', level: 3, xp: 2900 },
-  { rank: 5, name: 'Adi', avatar: '🧒', level: 3, xp: 2450 },
-  { rank: 6, name: 'Budi', avatar: '🧒', level: 2, xp: 2100 },
-  { rank: 7, name: 'Joko', avatar: '🧒', level: 2, xp: 1900 },
-  { rank: 8, name: 'Sari', avatar: '👧', level: 2, xp: 1800 },
-];
-
+/**
+ * Parent leaderboard — only shows full detail for own child.
+ * Other students: rank + anonymized name only (privacy).
+ */
 export default function ParentLeaderboardPage() {
-  
+  const { userId } = useAuth();
+  const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
+  const children = useQuery(
+    api.users.getChildren,
+    userData?._id ? { parentId: userData._id } : 'skip',
+  );
 
-  // In real app, fetch children from Convex using userData.childIds
-  const children = dummyChildren;
-  const [selectedChildId, setSelectedChildId] = useState(children[0]?._id ?? null);
+  const [selectedIdx, setSelectedIdx] = useState(0);
+  const selectedChild = children?.[selectedIdx];
 
-  const child = children.find((c) => c._id === selectedChildId) ?? children[0];
+  const leaderboard = useQuery(
+    api.liveCoach.getLeaderboard,
+    selectedChild?.classId ? { activity: 'all', classId: selectedChild.classId as Id<'classes'> } : 'skip',
+  );
+
+  if (!userData || !children) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-10 text-center text-muted-foreground">
+        Memuat data...
+      </div>
+    );
+  }
+
+  if (children.length === 0) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-10 text-center">
+        <div className="text-5xl mb-4">👨‍👩‍👧</div>
+        <h1 className="text-2xl font-extrabold">Belum Ada Anak Tertaut</h1>
+        <p className="text-muted-foreground mt-2">
+          Hubungkan akun anak terlebih dahulu melalui profil.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-5">
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-5">
       {/* Header */}
       <div className="bg-white rounded-[2rem] p-5 shadow-pop border-4 border-white">
         <div className="flex items-center gap-4">
@@ -41,15 +58,15 @@ export default function ParentLeaderboardPage() {
           </div>
         </div>
         {/* Child selector */}
-        <div className="flex gap-2 mt-3">
-          {children.map((c) => (
+        <div className="flex gap-2 mt-3 flex-wrap">
+          {children.map((c, i) => (
             <button
               key={c._id}
-              onClick={() => setSelectedChildId(c._id)}
+              onClick={() => setSelectedIdx(i)}
               className={`px-4 py-2 rounded-full font-bold text-sm transition-all ${
-                  selectedChildId === c._id
+                selectedIdx === i
                   ? 'gradient-sunset text-white'
-                  : 'bg-muted'
+                  : 'bg-muted hover:bg-muted/80'
               }`}
             >
               {c.avatar} {c.name}
@@ -58,57 +75,81 @@ export default function ParentLeaderboardPage() {
         </div>
       </div>
 
-      {/* Child rank card */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="bg-white rounded-3xl p-4 shadow-soft text-center border-4 border-yellow-300">
-          <div className="text-3xl">🎖️</div>
-          <div className="text-3xl font-extrabold">{child?.rank ?? '-'}</div>
-          <div className="text-xs font-bold text-muted-foreground">Rank di Kelas</div>
+      {/* Child stats — full detail */}
+      {selectedChild && (
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-white rounded-3xl p-4 shadow-soft text-center border-4 border-yellow-300">
+            <div className="text-3xl">🎖️</div>
+            <div className="text-3xl font-extrabold">{leaderboard?.find((l) => l._id === selectedChild._id)?.rank ?? '-'}</div>
+            <div className="text-xs font-bold text-muted-foreground">Rank di Kelas</div>
+          </div>
+          <div className="bg-white rounded-3xl p-4 shadow-soft text-center border-4 border-blue-200">
+            <div className="text-3xl">📊</div>
+            <div className="text-3xl font-extrabold">{selectedChild.xp?.toLocaleString() ?? 0}</div>
+            <div className="text-xs font-bold text-muted-foreground">Total XP</div>
+          </div>
+          <div className="bg-white rounded-3xl p-4 shadow-soft text-center border-4 border-purple-200">
+            <div className="text-3xl">🏅</div>
+            <div className="text-3xl font-extrabold">{selectedChild.badges?.length ?? 0}</div>
+            <div className="text-xs font-bold text-muted-foreground">Lencana</div>
+          </div>
         </div>
-        <div className="bg-white rounded-3xl p-4 shadow-soft text-center border-4 border-blue-200">
-          <div className="text-3xl">📊</div>
-          <div className="text-3xl font-extrabold">{child?.xp?.toLocaleString() ?? '-'}</div>
-          <div className="text-xs font-bold text-muted-foreground">Total XP</div>
-        </div>
-        <div className="bg-white rounded-3xl p-4 shadow-soft text-center border-4 border-purple-200">
-          <div className="text-3xl">🏅</div>
-          <div className="text-3xl font-extrabold">{child?.badgeCount ?? 0}/6</div>
-          <div className="text-xs font-bold text-muted-foreground">Lencana</div>
-        </div>
-      </div>
+      )}
 
-      {/* Class leaderboard */}
+      {/* Leaderboard — anonymized for other students */}
       <div className="bg-white rounded-3xl shadow-soft overflow-hidden">
         <div className="p-4 bg-muted/30 border-b border-border">
-          <span className="font-extrabold">Kelas {child?.classId} — {dummyLeaderboard.length} peserta didik</span>
+          <span className="font-extrabold">
+            {selectedChild?.classId ? `Kelas` : 'Papan Skor'} — {(leaderboard?.length ?? 0)} peserta didik
+          </span>
         </div>
-        {dummyLeaderboard.map((s, i) => (
-          <div
-            key={s.rank}
-            className={`flex items-center gap-4 px-6 py-3 ${
-              s.name === child?.name
-                ? 'bg-blue-50 border-l-4 border-blue-500 font-bold'
-                : i % 2 === 0 ? 'bg-white' : 'bg-muted/20'
-            }`}
-          >
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-sm ${
-              s.rank === 1 ? 'bg-amber-400 text-white' :
-              s.rank === 2 ? 'bg-gray-300 text-white' :
-              s.rank === 3 ? 'bg-amber-700 text-white' :
-              'bg-muted'
-            }`}>
-              {s.rank}
-            </div>
-            <div className="text-2xl">{s.avatar}</div>
-            <div className="flex-1">
-              <div className="font-bold text-sm">
-                {s.name}
-                {s.name === child?.name && <span className="ml-2 text-xs bg-blue-100 text-blue-700 rounded-full px-2 py-0.5">Anak kamu</span>}
+        {leaderboard && leaderboard.length > 0 ? (
+          leaderboard.map((entry, i) => {
+            const isOwnChild = entry._id === selectedChild?._id;
+            return (
+              <div
+                key={entry._id}
+                className={`flex items-center gap-4 px-4 sm:px-6 py-3 ${
+                  isOwnChild
+                    ? 'bg-blue-50 border-l-4 border-blue-500 font-bold'
+                    : i % 2 === 0 ? 'bg-white' : 'bg-muted/20'
+                }`}
+              >
+                {/* Rank badge */}
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-sm shrink-0 ${
+                  entry.rank === 1 ? 'bg-amber-400 text-white' :
+                  entry.rank === 2 ? 'bg-gray-300 text-white' :
+                  entry.rank === 3 ? 'bg-amber-700 text-white' :
+                  'bg-muted'
+                }`}>
+                  {entry.rank}
+                </div>
+                {/* Name — full for own child, anonymized for others */}
+                <div className="flex-1 min-w-0">
+                  <div className="font-bold text-sm truncate">
+                    {isOwnChild ? (
+                      <>{entry.name} <span className="ml-2 text-xs bg-blue-100 text-blue-700 rounded-full px-2 py-0.5">Anak kamu</span></>
+                    ) : (
+                      <span className="text-muted-foreground">Peserta Didik #{entry.rank}</span>
+                    )}
+                  </div>
+                </div>
+                {/* XP — only show for own child */}
+                {isOwnChild && (
+                  <div className="font-extrabold text-sm shrink-0">{entry.xp.toLocaleString()} XP</div>
+                )}
+                {!isOwnChild && (
+                  <div className="text-xs text-muted-foreground shrink-0">•••</div>
+                )}
               </div>
-            </div>
-            <div className="font-extrabold">{s.xp.toLocaleString()} XP</div>
+            );
+          })
+        ) : (
+          <div className="p-8 text-center text-muted-foreground">
+            <div className="text-3xl mb-2">📊</div>
+            <p className="text-sm font-bold">Belum ada data papan skor</p>
           </div>
-        ))}
+        )}
       </div>
 
       {/* Motivation */}
@@ -118,7 +159,7 @@ export default function ParentLeaderboardPage() {
           <div>
             <div className="font-extrabold text-lg">Khusus untuk orang tua</div>
             <p className="text-sm opacity-80">
-              Bantu {child?.name} naik rank dengan rutin latihan gerak di rumah.
+              Bantu {selectedChild?.name ?? 'anak'} naik rank dengan rutin latihan gerak di rumah.
             </p>
           </div>
         </div>

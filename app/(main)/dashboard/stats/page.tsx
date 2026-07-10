@@ -9,14 +9,15 @@ import { Leaderboard } from "@/components/coach/Leaderboard";
 import { ChallengeMode } from "@/components/coach/ChallengeMode";
 import type { MovementType } from "@/lib/fms-scoring";
 import { useState } from "react";
+import Image from "next/image";
 
-// ── Stats Page: compact, no accordion, mobile-first ──
+// ── Stats Page: kid-friendly, candy/game aesthetic ──
 
-const ACTIVITIES: { id: MovementType; label: string; emoji: string }[] = [
-  { id: "menekuk", label: "Menekuk", emoji: "🦵" },
-  { id: "meliuk", label: "Meliuk", emoji: "🐍" },
-  { id: "memutar", label: "Memutar", emoji: "🌀" },
-  { id: "keseimbangan", label: "Keseimbangan", emoji: "⚖️" },
+const ACTIVITIES: { id: MovementType; label: string; emoji: string; gradient: string }[] = [
+  { id: "menekuk", label: "Menekuk", emoji: "🦵", gradient: "linear-gradient(135deg, #4ade80, #22c55e)" },
+  { id: "meliuk", label: "Meliuk", emoji: "🐍", gradient: "linear-gradient(135deg, #60a5fa, #3b82f6)" },
+  { id: "memutar", label: "Memutar", emoji: "🌀", gradient: "linear-gradient(135deg, #c084fc, #a855f7)" },
+  { id: "keseimbangan", label: "Keseimbangan", emoji: "⚖️", gradient: "linear-gradient(135deg, #fb923c, #f97316)" },
 ];
 
 function SessionHistory({ userId }: { userId: string }) {
@@ -44,65 +45,64 @@ function SessionHistory({ userId }: { userId: string }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-3 sm:p-4 shadow-soft border-2 border-purple-200">
-      <div className="flex items-center justify-between mb-2">
+    <div className="bg-white rounded-3xl p-4 shadow-pop border-2 border-purple-200 relative overflow-hidden">
+      {/* Decorative gradient strip */}
+      <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-3xl" style={{ background: 'linear-gradient(90deg, #c084fc, #a855f7, #7c3aed)' }} />
+
+      <div className="flex items-center justify-between mb-3">
         <h3 className="font-extrabold text-sm sm:text-base flex items-center gap-1.5">
           📋 Riwayat Sesi
         </h3>
         {history && history.length > 0 && (
           <button
             onClick={exportCSV}
-            className="text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full hover:bg-purple-100 transition"
+            className="text-[10px] font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full hover:bg-purple-100 transition border border-purple-200"
           >
             📥 CSV
           </button>
         )}
       </div>
-      <div className="space-y-1.5 max-h-64 overflow-y-auto">
+      <div className="space-y-2 max-h-72 overflow-y-auto">
         {history && history.length > 0 ? (
-          history.map((h) => (
-            <div
-              key={h._id}
-              className="flex items-center gap-2 p-2 bg-purple-50/50 rounded-lg border border-purple-100"
-            >
-              <span className="text-base">
-                {h.activity === "menekuk"
-                  ? "🦵"
-                  : h.activity === "meliuk"
-                    ? "🐍"
-                    : h.activity === "memutar"
-                      ? "🌀"
-                      : "⚖️"}
-              </span>
-              <div className="flex-1 min-w-0">
-                <div className="font-bold text-xs sm:text-sm capitalize truncate">
-                  {h.activity} Lv.{h.level}
+          history.map((h) => {
+            const act = ACTIVITIES.find((a) => a.id === h.activity);
+            return (
+              <div
+                key={h._id}
+                className="flex items-center gap-2.5 p-2.5 bg-purple-50/60 rounded-xl border border-purple-100 hover:shadow-soft transition-all"
+              >
+                <div
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-lg shrink-0"
+                  style={{ background: act?.gradient ?? 'linear-gradient(135deg, #c084fc, #a855f7)' }}
+                >
+                  {act?.emoji ?? '🎯'}
                 </div>
-                <div className="text-[10px] text-muted-foreground">
-                  {new Date(h.timestamp).toLocaleDateString("id-ID", {
-                    day: "numeric",
-                    month: "short",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                <div className="flex-1 min-w-0">
+                  <div className="font-bold text-xs sm:text-sm capitalize truncate">
+                    {h.activity} Lv.{h.level}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {new Date(h.timestamp).toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "short",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </div>
                 </div>
-              </div>
-              <div className="text-right shrink-0">
-                <div className="font-extrabold text-xs text-primary">
-                  {h.score}
-                </div>
-                <div className="text-[10px] text-muted-foreground">
-                  {h.duration.toFixed(0)}s
+                <div className="text-right shrink-0">
+                  <div className="font-extrabold text-sm text-primary">{h.score}</div>
+                  <div className="text-[10px] text-muted-foreground">{h.duration.toFixed(0)}s</div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         ) : (
-          <div className="text-center py-6 text-muted-foreground">
-            <div className="text-2xl mb-1">📊</div>
-            <p className="text-xs sm:text-sm font-bold">Belum ada sesi</p>
-            <p className="text-[11px] sm:text-xs mt-0.5">
-              Mulai latihan di AI Coach untuk melihat riwayat
+          <div className="text-center py-8">
+            <div className="text-4xl mb-2 animate-float">📊</div>
+            <p className="text-sm font-bold text-muted-foreground">Belum ada sesi</p>
+            <p className="text-xs text-muted-foreground/60 mt-1">
+              Mulai latihan di Pelatih AI untuk melihat riwayat
             </p>
           </div>
         )}
@@ -114,46 +114,99 @@ function SessionHistory({ userId }: { userId: string }) {
 export default function StatsPage() {
   const { userId } = useAuth();
   const [activity, setActivity] = useState<MovementType>("menekuk");
+  const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : "skip");
+  const liveStats = useQuery(
+    api.liveCoach.getLiveStats,
+    userData?._id ? { userId: userData._id } : "skip",
+  );
 
   if (!userId) return null;
 
+  // Compute quick stats
+  const totalSessions = liveStats?.reduce((a, s) => a + s.count, 0) ?? 0;
+  const avgScore = liveStats && liveStats.length > 0
+    ? Math.round(liveStats.reduce((a, s) => a + s.avgScore, 0) / liveStats.length)
+    : 0;
+
   return (
-    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4">
-      {/* Compact title — no giant hero */}
-      <div className="flex items-center gap-2">
-        <span className="text-xl">📊</span>
-        <h1 className="font-extrabold text-lg sm:text-xl">
-          Statistik & Kompetisi
-        </h1>
+    <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-5 bg-theme-forest min-h-screen">
+      {/* ── Hero header ── */}
+      <div className="relative rounded-[2rem] p-5 sm:p-6 shadow-pop border-4 border-white overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, oklch(0.92 0.12 230), oklch(0.95 0.1 60))' }}
+      >
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-1 shadow-pop animate-float shrink-0 overflow-hidden">
+            <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
+          </div>
+          <div>
+            <h1 className="font-extrabold text-lg sm:text-xl">
+              📊 Statistik & Kompetisi
+            </h1>
+            <p className="text-xs font-bold text-foreground/60">Lihat perkembanganmu! 🚀</p>
+          </div>
+        </div>
+
+        {/* Quick stats row */}
+        <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-4 mt-4">
+          {[
+            { icon: '🎯', label: 'Total Sesi', value: totalSessions, bg: 'linear-gradient(135deg, #6366f1, #818cf8)' },
+            { icon: '⭐', label: 'Rata-rata Skor', value: avgScore, bg: 'linear-gradient(135deg, #f59e0b, #fbbf24)' },
+            { icon: '🏆', label: 'Aktivitas', value: liveStats?.length ?? 0, bg: 'linear-gradient(135deg, #10b981, #34d399)' },
+          ].map((s, i) => (
+            <div
+              key={s.label}
+              className="text-white rounded-2xl p-3 text-center shadow-soft relative overflow-hidden"
+              style={{ background: s.bg }}
+            >
+              <div className="text-xl mb-0.5">{s.icon}</div>
+              <div className="text-xl font-extrabold">{s.value}</div>
+              <div className="text-[10px] font-bold opacity-80">{s.label}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Activity filter — compact pills */}
-      <div className="flex gap-1.5 py-3 overflow-x-auto no-scrollbar">
+      {/* ── Activity filter — candy pills ── */}
+      <div className="flex gap-2 py-2 overflow-x-auto no-scrollbar">
         {ACTIVITIES.map((a) => (
           <button
             key={a.id}
             onClick={() => setActivity(a.id)}
-            className={`px-3 py-1.5 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-all border-2 ${
+            className={`px-4 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all border-2 ${
               activity === a.id
-                ? "gradient-sky text-white shadow-soft border-transparent scale-105"
-                : "bg-white text-gray-600 border-gray-200 hover:border-sky-300 hover:bg-sky-50"
+                ? "text-white shadow-pop scale-105 border-transparent"
+                : "bg-white text-gray-600 border-gray-200 hover:border-purple-300 hover:bg-purple-50"
             }`}
+            style={activity === a.id ? { background: a.gradient } : {}}
           >
             {a.emoji} {a.label}
           </button>
         ))}
       </div>
 
-      {/* History + Chart side by side */}
-      <div className="grid sm:grid-cols-2 gap-3">
+      {/* ── History + Chart ── */}
+      <div className="grid sm:grid-cols-2 gap-5">
         <SessionHistory userId={userId} />
         <ScoreHistoryChart userId={userId} />
       </div>
 
-      {/* Leaderboard + Challenge side by side — always visible */}
-      <div className="grid sm:grid-cols-2 gap-3">
+      {/* ── Leaderboard + Challenge ── */}
+      <div className="grid sm:grid-cols-2 gap-5">
         <Leaderboard activity={activity} />
         <ChallengeMode currentUserId={userId} activity={activity} />
+      </div>
+
+      {/* ── MOVA tip ── */}
+      <div className="flex justify-center">
+        <div className="flex items-start gap-2 animate-slide-up">
+          <div className="w-8 h-8 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft shrink-0 overflow-hidden">
+            <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
+          </div>
+          <div className="bg-white rounded-2xl rounded-bl-md px-3 py-2 shadow-soft text-xs font-bold text-foreground/80 relative">
+            <span className="absolute -left-1 top-3 w-2 h-2 bg-white rotate-45 shadow-soft" />
+            💡 Terus latihan supaya skor makin tinggi! 🌟
+          </div>
+        </div>
       </div>
     </div>
   );

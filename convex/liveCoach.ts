@@ -219,19 +219,36 @@ export const getLeaderboard = query({
   args: {
     activity: v.string(),
     limit: v.optional(v.number()),
+    classId: v.optional(v.id("classes")),
   },
   handler: async (ctx, { activity, limit: lim }) => {
-    const movements = await ctx.db
-      .query("movements")
-      .order("desc")
-      .take(500); // fetch recent, group in memory
+    let query = ctx.db.query("movements").order("desc");
+    if (classId) {
+      // Filter by class: get users in this class first
+      const classDoc = await ctx.db.get(classId);
+      if (!classDoc) return [];
+      // We need to filter movements by userIds in this class
+      // Fetch recent movements and filter in memory
+    }
+    const movements = await query.take(500); // fetch recent, group in memory
 
     // Group by userId, keep best score per activity
     const bestByUser = new Map<string, { userId: string; score: number; level: number; timestamp: number; userName: string }>();
 
+    // If classId, collect userIds in this class first
+    let classUserIds: Set<string> | null = null;
+    if (classId) {
+      const classUsers = await ctx.db
+        .query("users")
+        .filter((q) => q.eq(q.field("classId"), classId))
+        .collect();
+      classUserIds = new Set(classUsers.map((u) => u._id));
+    }
+
     for (const m of movements) {
       const act = m.activity ?? m.activityId.split("_")[0];
       if (act !== activity) continue;
+      if (classUserIds && !classUserIds.has(m.userId)) continue;
 
       const existing = bestByUser.get(m.userId);
       if (!existing || m.score > existing.score) {

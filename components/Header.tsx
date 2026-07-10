@@ -9,20 +9,20 @@ import { api } from "@/convex/_generated/api";
 
 const navByRole: Record<string, { label: string; href: string; emoji?: string }[]> = {
   student: [
-    { label: "Dashboard", href: "/dashboard/student", emoji: "🏠" },
-    { label: "Statistik", href: "/dashboard/stats", emoji: "📊" },
+    { label: "Beranda", href: "/dashboard/student", emoji: "🏠" },
+    { label: "Papan Skor", href: "/dashboard/stats", emoji: "📊" },
     { label: "Dunia", href: "/worlds", emoji: "🌍" },
     { label: "AI Coach", href: "/assessment", emoji: "🤖" },
     { label: "Sekolah", href: "/school", emoji: "🏫" },
   ],
   parent: [
-    { label: "Aktivitas", href: "/parent", emoji: "📊" },
-    { label: "Leaderboard", href: "/parent/leaderboard", emoji: "🏆" },
+    { label: "Aktivitas Anak", href: "/parent", emoji: "📊" },
+    { label: "Papan Skor", href: "/parent/leaderboard", emoji: "🏆" },
     { label: "Sekolah", href: "/school", emoji: "🏫" },
   ],
   teacher: [
     { label: "Kelas", href: "/teacher", emoji: "📚" },
-    { label: "Leaderboard", href: "/teacher/leaderboard", emoji: "🏆" },
+    { label: "Papan Skor", href: "/teacher/leaderboard", emoji: "🏆" },
     { label: "AI Coach", href: "/assessment", emoji: "🤖" },
     { label: "Sekolah", href: "/school", emoji: "🏫" },
   ],
@@ -33,7 +33,7 @@ const navByRole: Record<string, { label: string; href: string; emoji?: string }[
     { label: "Dunia", href: "/worlds", emoji: "🌍" },
   ],
   school_admin: [
-    { label: "Dashboard", href: "/admin", emoji: "🏫" },
+    { label: "Beranda", href: "/admin", emoji: "🏫" },
     { label: "Sekolah", href: "/school", emoji: "🏫" },
     { label: "Guru", href: "/teacher", emoji: "📚" },
   ],

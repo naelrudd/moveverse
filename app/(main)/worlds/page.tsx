@@ -54,7 +54,13 @@ export default function WorldsPage() {
                         const earned = badges.includes(a.badgeId);
                         return (
                           <div key={a.id} className={`bg-white/20 backdrop-blur-sm rounded-xl p-2 text-center border border-white/20 ${earned ? 'ring-2 ring-white' : 'opacity-60'}`}>
-                            <div className="text-lg">{a.icon}</div>
+                            {a.iconImage ? (
+                              <div className="w-8 h-8 relative mx-auto">
+                                <Image src={a.iconImage} alt={a.name} fill className="object-contain" />
+                              </div>
+                            ) : (
+                              <div className="text-lg">{a.icon}</div>
+                            )}
                             <div className="text-[10px] font-bold mt-0.5">{a.name}</div>
                           </div>
                         );

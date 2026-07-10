@@ -52,7 +52,13 @@ export default function WorldDetailPage() {
                     <Sparkles className="w-4 h-4 text-accent" />
                   )}
                 </div>
-                <div className="text-3xl mb-2">{a.icon}</div>
+                {a.iconImage ? (
+                  <div className="w-12 h-12 relative mb-2">
+                    <Image src={a.iconImage} alt={a.name} fill className="object-contain" />
+                  </div>
+                ) : (
+                  <div className="text-3xl mb-2">{a.icon}</div>
+                )}
                 <h3 className="text-xl font-extrabold">{a.name}</h3>
                 <p className="text-sm text-foreground/70 mt-1">{a.description}</p>
                 <div className="mt-2 text-xs font-bold text-accent bg-accent/5 rounded-xl px-3 py-1.5">🎯 {a.objective}</div>
@@ -78,7 +84,13 @@ export default function WorldDetailPage() {
                 const earned = badges.includes(a.badgeId);
                 return (
                   <div key={a.id} className={`rounded-2xl p-3 text-center ${earned ? 'bg-amber-50 border-2 border-amber-200' : 'bg-muted/40 opacity-50'}`}>
-                    <div className="text-2xl">{earned ? a.icon : '🔒'}</div>
+                    {earned && a.iconImage ? (
+                      <div className="w-10 h-10 relative mx-auto">
+                        <Image src={a.iconImage} alt={a.name} fill className="object-contain" />
+                      </div>
+                    ) : (
+                      <div className="text-2xl">{earned ? a.icon : '🔒'}</div>
+                    )}
                     <div className="text-[10px] font-bold mt-1">{a.badgeName}</div>
                   </div>
                 );
@@ -93,7 +105,7 @@ export default function WorldDetailPage() {
             <h3 className="text-2xl font-extrabold mt-1">Yang Akan Kamu Kuasai</h3>
             <ul className="mt-3 space-y-2 font-bold text-sm">
               {world.activities.map((a) => (
-                <li key={a.id}>{a.icon} {a.name} — {a.description}</li>
+                <li key={a.id}>• {a.name} — {a.description}</li>
               ))}
             </ul>
           </div>
