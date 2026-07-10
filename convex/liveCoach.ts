@@ -221,7 +221,7 @@ export const getLeaderboard = query({
     limit: v.optional(v.number()),
     classId: v.optional(v.id("classes")),
   },
-  handler: async (ctx, { activity, limit: lim }) => {
+  handler: async (ctx, { activity, limit: lim, classId }) => {
     let query = ctx.db.query("movements").order("desc");
     if (classId) {
       // Filter by class: get users in this class first
