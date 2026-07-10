@@ -122,9 +122,13 @@ export default function StatsPage() {
 
   if (!userId) return null;
 
-  // Compute quick stats
-  const totalSessions = liveStats?.count ?? 0;
-  const avgScore = liveStats?.avgScore ?? 0;
+  // Compute quick stats — liveStats is Record<activityId, {count, avgScore, bestScore}>
+  const statsValues = liveStats ? Object.values(liveStats) : [];
+  const totalSessions = statsValues.reduce((a, s) => a + s.count, 0);
+  const avgScore = statsValues.length > 0
+    ? Math.round(statsValues.reduce((a, s) => a + s.avgScore, 0) / statsValues.length)
+    : 0;
+  const bestScore = statsValues.reduce((a, s) => Math.max(a, s.bestScore), 0);
 
   return (
     <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-5 bg-theme-forest min-h-screen">
@@ -149,7 +153,7 @@ export default function StatsPage() {
           {[
             { icon: '🎯', label: 'Total Sesi', value: totalSessions, bg: 'linear-gradient(135deg, #6366f1, #818cf8)' },
             { icon: '⭐', label: 'Rata-rata Skor', value: avgScore, bg: 'linear-gradient(135deg, #f59e0b, #fbbf24)' },
-            { icon: '🏆', label: 'Skor Terbaik', value: liveStats?.bestScore ?? 0, bg: 'linear-gradient(135deg, #10b981, #34d399)' },
+            { icon: '🏆', label: 'Skor Terbaik', value: bestScore, bg: 'linear-gradient(135deg, #10b981, #34d399)' },
           ].map((s, i) => (
             <div
               key={s.label}
