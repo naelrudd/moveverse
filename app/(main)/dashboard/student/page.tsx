@@ -295,7 +295,17 @@ export default function StudentDashboard() {
                     key={a.id}
                     href={`/worlds/${w.id}`}
                     className={`block rounded-3xl p-5 shadow-soft hover:shadow-pop transition-all duration-300 border-2 hover:-translate-y-1.5 hover:scale-[1.03] group relative overflow-hidden ${
-                      earned
+                      actLevel === 5
+                        ? 'bg-gray-100 border-gray-600'
+                        : actLevel === 4
+                        ? 'bg-orange-50 border-orange-500'
+                        : actLevel === 3
+                        ? 'bg-gray-50 border-gray-300'
+                        : actLevel === 2
+                        ? 'bg-yellow-50 border-yellow-400'
+                        : actLevel === 1
+                        ? 'bg-teal-50 border-teal-400'
+                        : earned
                         ? 'bg-green-50 border-green-300'
                         : 'bg-white border-transparent hover:border-primary/20'
                     }`}
