@@ -238,10 +238,10 @@ export const updateXP = mutation({
 
     // Level table: [fullPassMin, condMin, condMax]
     const TABLE: [number, number, number][] = [
-      [50,  40,  49],   // Lv2
-      [100, 85,  99],   // Lv3
-      [160, 140, 159],  // Lv4
-      [250, 220, 249],  // Lv5
+      [100, 80,  99],   // Lv2
+      [250, 200, 249],  // Lv3
+      [450, 380, 449],  // Lv4
+      [700, 600, 699],  // Lv5
     ];
 
     let newLevel = 1;
@@ -349,7 +349,7 @@ export const levelUpActivity = mutation({
     const newXp = (user.xp ?? 0) + xpGain;
 
     // Promote overall level based on XP thresholds
-    const LEVEL_TABLE = [50, 100, 160, 250]; // min XP for Lv2, Lv3, Lv4, Lv5
+    const LEVEL_TABLE = [100, 250, 450, 700]; // min XP for Lv2, Lv3, Lv4, Lv5
     let newLevel = user.level ?? 1;
     while (newLevel < 5 && newXp >= LEVEL_TABLE[newLevel - 1]) {
       newLevel++;
@@ -375,15 +375,15 @@ export const getLevelStatus = query({
 
     // Level table: [fullPassMin, condMin, condMax]
     const TABLE: [number, number, number][] = [
-      [50,  40,  49],   // Lv2
-      [100, 85,  99],   // Lv3
-      [160, 140, 159],  // Lv4
-      [250, 220, 249],  // Lv5
+      [100, 80,  99],   // Lv2
+      [250, 200, 249],  // Lv3
+      [450, 380, 449],  // Lv4
+      [700, 600, 699],  // Lv5
     ];
 
     // Compute level from XP (source of truth)
     const xp = user.xp ?? 0;
-    const LEVEL_TABLE = [50, 100, 160, 250]; // min XP for Lv2, Lv3, Lv4, Lv5
+    const LEVEL_TABLE = [100, 250, 450, 700]; // min XP for Lv2, Lv3, Lv4, Lv5
     let level = 1;
     while (level < 5 && xp >= LEVEL_TABLE[level - 1]) {
       level++;
@@ -406,7 +406,7 @@ export const getLevelStatus = query({
     // idx into TABLE for the NEXT level's requirements
     const idx = level - 1;
     if (idx < 0 || idx >= TABLE.length) {
-      return { level: 1, xp, needsTutor: false, nextLevelXp: 50, xpToFull: 50, xpToCond: 40, status: "active" };
+      return { level: 1, xp, needsTutor: false, nextLevelXp: 100, xpToFull: 100, xpToCond: 80, status: "active" };
     }
 
     const [fullMin, condMin] = TABLE[idx];
