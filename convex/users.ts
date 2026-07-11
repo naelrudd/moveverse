@@ -346,10 +346,19 @@ export const levelUpActivity = mutation({
 
     // XP per level: L1=10, L2=20, L3=30, L4=40, L5=50
     const xpGain = next * 10;
+    const newXp = (user.xp ?? 0) + xpGain;
+
+    // Promote overall level based on XP thresholds
+    const LEVEL_TABLE = [50, 100, 160, 250]; // min XP for Lv2, Lv3, Lv4, Lv5
+    let newLevel = user.level ?? 1;
+    while (newLevel < 5 && newXp >= LEVEL_TABLE[newLevel - 1]) {
+      newLevel++;
+    }
 
     await ctx.db.patch(userId, {
       activityLevels: levels,
-      xp: user.xp + xpGain,
+      xp: newXp,
+      level: newLevel,
       coins: user.coins + Math.floor(xpGain / 5),
       updatedAt: Date.now(),
     });
@@ -372,8 +381,13 @@ export const getLevelStatus = query({
       [250, 220, 249],  // Lv5
     ];
 
-    const level = Math.max(user.level ?? 1, 1);
+    // Compute level from XP (source of truth)
     const xp = user.xp ?? 0;
+    const LEVEL_TABLE = [50, 100, 160, 250]; // min XP for Lv2, Lv3, Lv4, Lv5
+    let level = 1;
+    while (level < 5 && xp >= LEVEL_TABLE[level - 1]) {
+      level++;
+    }
     const needsTutor = user.needsTutor === true;
 
     // Max level
