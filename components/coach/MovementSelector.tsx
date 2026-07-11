@@ -71,6 +71,7 @@ interface MovementSelectorProps {
   onActivityChange: (a: MovementType) => void;
   onLevelChange: (l: number) => void;
   worldId?: string;
+  activityLevels?: Record<string, number>;
 }
 
 export function MovementSelector({
@@ -79,8 +80,10 @@ export function MovementSelector({
   onActivityChange,
   onLevelChange,
   worldId,
+  activityLevels = {},
 }: MovementSelectorProps) {
   const theme = (worldId && WORLD_THEMES[worldId]) || DEFAULT_THEME;
+  const actLevel = activityLevels[activity] ?? 0;
 
   // Swipe gesture
   const touchStart = useRef<{ x: number; y: number } | null>(null);
@@ -126,20 +129,26 @@ export function MovementSelector({
           </button>
         ))}
       </div>
-
       {/* Level pills */}
       <div className="flex px-2 py-1 gap-1.5 overflow-x-auto no-scrollbar">
-        {(MOVEMENT_LEVELS[activity] ?? []).map((lv) => (
-          <button
-            key={lv.level}
-            onClick={() => onLevelChange(lv.level)}
-            className={`px-2.5 py-1 rounded-full font-bold text-[11px] whitespace-nowrap transition-all border-2 ${
-              level === lv.level ? theme.levelActive : theme.levelInactive
-            }`}
-          >
-            Lv {lv.level}
-          </button>
-        ))}
+        {(MOVEMENT_LEVELS[activity] ?? []).map((lv) => {
+          const isLocked = lv.level > actLevel + 1;
+          return (
+            <button
+              key={lv.level}
+              onClick={() => !isLocked && onLevelChange(lv.level)}
+              className={`px-2.5 py-1 rounded-full font-bold text-[11px] whitespace-nowrap transition-all border-2 ${
+                isLocked
+                  ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+                  : level === lv.level
+                  ? theme.levelActive
+                  : theme.levelInactive
+              }`}
+            >
+              {isLocked ? `🔒 Lv ${lv.level}` : `Lv ${lv.level}`}
+            </button>
+          );
+        })}
       </div>
 
       {/* Level requirement + swipe hint */}

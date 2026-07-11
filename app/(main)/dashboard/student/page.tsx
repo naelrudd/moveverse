@@ -294,28 +294,30 @@ export default function StudentDashboard() {
                   <Link
                     key={a.id}
                     href={`/worlds/${w.id}`}
-                    className={`block rounded-3xl p-5 shadow-soft hover:shadow-pop transition-all duration-300 border-2 hover:-translate-y-1.5 hover:scale-[1.03] group relative overflow-hidden ${
+                    className={`block rounded-3xl p-5 shadow-soft hover:shadow-pop transition-all duration-300 border-3 hover:-translate-y-1.5 hover:scale-[1.03] group relative overflow-hidden ${
                       actLevel === 5
-                        ? 'bg-teal-50 border-teal-400'
+                        ? 'bg-white border-teal-500 shadow-teal-200'
                         : actLevel === 4
-                        ? 'bg-cyan-50 border-cyan-400'
+                        ? 'bg-white border-cyan-500 shadow-cyan-200'
                         : actLevel === 3
-                        ? 'bg-yellow-50 border-yellow-400'
+                        ? 'bg-white border-yellow-500 shadow-yellow-200'
                         : actLevel === 2
-                        ? 'bg-gray-50 border-gray-300'
+                        ? 'bg-white border-gray-400 shadow-gray-200'
                         : actLevel === 1
-                        ? 'bg-orange-50 border-orange-500'
+                        ? 'bg-white border-orange-500 shadow-orange-200'
                         : earned
-                        ? 'bg-green-50 border-green-300'
+                        ? 'bg-green-50 border-green-400'
                         : 'bg-white border-transparent hover:border-primary/20'
                     }`}
                     style={{ animationDelay: `${ai * 0.08}s` } as React.CSSProperties}
                   >
-                    {/* Gradient accent top strip */}
+                    {/* Gradient accent top strip — only for no-tier cards */}
+                    {actLevel === 0 && (
                     <div
                       className="absolute top-0 left-0 right-0 h-1.5 rounded-t-3xl opacity-60"
                       style={{ background: chibi.bg }}
                     />
+                    )}
 
                     <div className="flex items-center justify-between">
                       {a.iconImage ? (
@@ -344,8 +346,10 @@ export default function StudentDashboard() {
                     <div className="mt-2 flex items-center gap-1.5">
                       <div className="flex gap-0.5">
                         {Array.from({ length: maxLvl }, (_, i) => (
-                          <span key={i} className={`text-xs ${i < actLevel ? 'opacity-100' : 'opacity-25'}`}>
-                            ⭐
+                          <span key={i} className={`text-xs ${
+                            i < actLevel ? 'opacity-100' : i === actLevel ? 'opacity-60' : 'opacity-30'
+                          }`}>
+                            {i < actLevel ? '⭐' : i === actLevel ? '✨' : '🔒'}
                           </span>
                         ))}
                       </div>

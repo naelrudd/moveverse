@@ -241,6 +241,7 @@ function AssessmentContent() {
   const { userId } = useAuth();
   const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
   const role = userData?.role;
+  const activityLevels = userData?.activityLevels ?? {};
   const searchParams = useSearchParams();
   const activityObjective = searchParams?.get('objective') ?? null;
   const activityName = searchParams?.get('activity') ?? null;
@@ -532,6 +533,7 @@ function AssessmentContent() {
                   onActivityChange={setActivity}
                   onLevelChange={setLevel}
                   worldId={worldId ?? undefined}
+                  activityLevels={activityLevels}
                 />
               </div>
             </>

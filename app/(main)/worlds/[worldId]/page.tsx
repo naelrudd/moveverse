@@ -14,6 +14,7 @@ export default function WorldDetailPage() {
   const { userId } = useAuth();
   const userData = useQuery(api.users.getUser, userId ? { clerkId: userId } : 'skip');
   const badges = userData?.badges ?? [];
+  const activityLevels = userData?.activityLevels ?? {};
 
   const world = worlds.find((w) => w.id === params.worldId);
   if (!world) return notFound();
@@ -42,8 +43,12 @@ export default function WorldDetailPage() {
         <div className="grid md:grid-cols-3 gap-4 mb-10">
           {world.activities.map((a, i) => {
             const earned = badges.includes(a.badgeId);
+            const actLevel = activityLevels[a.id] ?? 0;
+            const maxLvl = a.maxLevel ?? 5;
             return (
-              <div key={a.id} className="bg-white text-foreground rounded-3xl p-5 shadow-pop border-4 border-white animate-pop-in" style={{ animationDelay: `${i * 0.1}s` } as React.CSSProperties}>
+              <div key={a.id} className={`bg-white text-foreground rounded-3xl p-5 shadow-pop border-4 animate-pop-in ${
+                actLevel >= 5 ? 'border-teal-500' : actLevel >= 4 ? 'border-cyan-500' : actLevel >= 3 ? 'border-yellow-500' : actLevel >= 2 ? 'border-gray-400' : actLevel >= 1 ? 'border-orange-500' : earned ? 'border-green-400' : 'border-white'
+              }`} style={{ animationDelay: `${i * 0.1}s` } as React.CSSProperties}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="text-xs font-bold text-muted-foreground">AKTIVITAS {i + 1}</div>
                   {earned ? (
@@ -64,9 +69,22 @@ export default function WorldDetailPage() {
                 <div className="mt-2 text-xs font-bold text-accent bg-accent/5 rounded-xl px-3 py-1.5">🎯 {a.objective}</div>
                 <div className="mt-3 flex items-center justify-between">
                   <span className="text-xs font-bold text-accent">+{a.xpReward} XP</span>
-                  <Link href={`/assessment?activity=${a.id}&objective=${encodeURIComponent(a.objective)}&world=${encodeURIComponent(world.name)}&worldId=${world.id}`} className="rounded-full font-bold gradient-sunset text-white border-0 px-4 py-2 text-sm inline-block">
-                    {earned ? 'Main Lagi' : 'Mulai'}
-                  </Link>
+                  {actLevel === 0 ? (
+                    <Link href={`/assessment?activity=${a.id}&objective=${encodeURIComponent(a.objective)}&world=${encodeURIComponent(world.name)}&worldId=${world.id}`} className="rounded-full font-bold gradient-sunset text-white border-0 px-4 py-2 text-sm inline-block">
+                      Mulai
+                    </Link>
+                  ) : (
+                    <div className="flex items-center gap-1.5">
+                      {Array.from({ length: maxLvl }, (_, j) => (
+                        <span key={j} className={`text-xs ${j < actLevel ? 'opacity-100' : j === actLevel ? 'opacity-60' : 'opacity-30'}`}>
+                          {j < actLevel ? '⭐' : j === actLevel ? '✨' : '🔒'}
+                        </span>
+                      ))}
+                      <Link href={`/assessment?activity=${a.id}&objective=${encodeURIComponent(a.objective)}&world=${encodeURIComponent(world.name)}&worldId=${world.id}`} className="rounded-full font-bold gradient-sunset text-white border-0 px-3 py-1.5 text-xs inline-block ml-1">
+                        Main Lagi
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             );
