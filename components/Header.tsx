@@ -77,7 +77,7 @@ export function Header() {
         </Link>
 
         {/* Nav */}
-        <nav className="flex-1 flex items-center gap-1 overflow-x-auto no-scrollbar">
+        <nav className="flex-1 py-3 flex items-center gap-1 overflow-x-auto no-scrollbar">
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (

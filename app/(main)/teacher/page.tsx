@@ -190,7 +190,7 @@ export default function TeacherDashboard() {
       </div>
 
       {/* ═══════ CLASS SELECTOR ═══════ */}
-      <div className="bg-white rounded-3xl p-5 shadow-pop border-2 border-primary/10">
+      <div className="bg-white rounded-3xl p-6 shadow-pop border-2 border-primary/10">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-extrabold text-lg">📌 Pilih Kelas</h3>
           <button onClick={() => setShowAddClass(!showAddClass)} className="px-4 py-2 rounded-full font-extrabold text-sm text-white shadow-soft hover:shadow-pop hover:scale-105 transition-all" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e, #16a34a)' }}>
@@ -209,7 +209,7 @@ export default function TeacherDashboard() {
           </div>
         )}
 
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-3 overflow-x-auto no-scrollbar py-1">
           {classes?.map((c) => (
             <div key={c._id} className="relative group flex flex-col items-center">
               <button onClick={() => { setSelectedClassId(c._id); setSelectedStudentId(null); }} className={`px-5 py-3 rounded-2xl font-extrabold text-sm whitespace-nowrap transition-all ${selectedClassId === c._id ? 'text-white shadow-pop' : 'bg-muted/60 hover:bg-muted hover:scale-105'}`} style={selectedClassId === c._id ? { background: 'linear-gradient(135deg, #818cf8, #6366f1)' } : {}}>
