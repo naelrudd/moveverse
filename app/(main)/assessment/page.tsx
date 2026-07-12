@@ -373,8 +373,8 @@ function AssessmentContent() {
             <div className="inline-block bg-white/80 px-5 py-1.5 rounded-full text-sm font-bold mb-3 shadow-soft border-2 border-amber-300">
               {role === 'parent' ? '📊 Analisis Gerak' : '🎥 AI Pose Coach'}
             </div>
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-orange-500 via-amber-500 to-green-500 flex items-center justify-center gap-2 sm:gap-3">
-              <span className="w-16 h-16 md:w-20 md:h-20 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-1 shadow-pop inline-block animate-float overflow-hidden shrink-0">
+            <h1 className="text-xl sm:text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-orange-500 via-amber-500 to-green-500 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
+              <span className="w-14 h-14 sm:w-16 md:w-20 sm:h-16 md:h-20 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-1 shadow-pop inline-block animate-float overflow-hidden shrink-0">
                 <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
               </span>
               {role === 'teacher'
@@ -382,7 +382,7 @@ function AssessmentContent() {
                 : role === 'parent'
                   ? 'Analisis Anak'
                   : 'Tunjukkan Gerakanmu!'}
-              <span className="w-16 h-16 md:w-20 md:h-20 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-1 shadow-pop inline-block animate-float overflow-hidden shrink-0" style={{ animationDelay: '0.5s' }}>
+              <span className="w-14 h-14 sm:w-16 md:w-20 sm:h-16 md:h-20 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-1 shadow-pop inline-block animate-float overflow-hidden shrink-0" style={{ animationDelay: '0.5s' }}>
                 <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
               </span>
             </h1>

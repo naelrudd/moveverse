@@ -107,28 +107,28 @@ export default function StudentDashboard() {
         <span className="absolute top-8 left-1/3 text-xs animate-sparkle-particle text-yellow-400 pointer-events-none" style={{ animationDelay: '0.3s' }}>✦</span>
         <span className="absolute bottom-12 right-1/4 text-sm animate-sparkle-particle text-amber-400 pointer-events-none" style={{ animationDelay: '1.1s' }}>✦</span>
 
-        <div className="flex items-center gap-6 relative z-10">
+        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 relative z-10">
           {/* MOVA — 2x bigger, stronger dance */}
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="w-32 h-32 rounded-full bg-linear-to-br from-amber-400 via-orange-400 to-red-400 p-1.5 shadow-pop animate-dance-slow shrink-0 overflow-hidden relative">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <div className="w-20 h-20 sm:w-32 sm:h-32 rounded-full bg-linear-to-br from-amber-400 via-orange-400 to-red-400 p-1.5 shadow-pop animate-dance-slow shrink-0 overflow-hidden relative">
               <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain drop-shadow-lg" />
               {/* Glow ring */}
               <div className="absolute inset-0 rounded-full animate-pulse-glow" />
             </div>
             {/* Crystals — bigger, shinier */}
             <div className="relative">
-              <Image src="/crystals.png" alt="Energy Crystals" width={80} height={80} className="h-20 w-auto drop-shadow-lg animate-float" />
+              <Image src="/crystals.png" alt="Energy Crystals" width={60} height={60} className="h-14 w-auto sm:h-20 sm:w-auto drop-shadow-lg animate-float" />
               <Sparkle className="-top-2 -right-1 text-xl" delay={0.3} />
               <Sparkle className="bottom-2 -left-2 text-sm" delay={1.0} />
             </div>
           </div>
 
           <div className="flex-1">
-            <h1 className="text-4xl font-extrabold bg-linear-to-r from-purple-600 via-pink-500 to-orange-400 bg-clip-text text-transparent drop-shadow-sm flex items-center gap-3">
-              <span className="text-5xl inline-block animate-wobble">{userData?.avatar || '🦊'}</span>
+            <h1 className="text-xl sm:text-4xl font-extrabold bg-linear-to-r from-purple-600 via-pink-500 to-orange-400 bg-clip-text text-transparent drop-shadow-sm flex items-center gap-2 sm:gap-3">
+              <span className="text-3xl sm:text-5xl inline-block animate-wobble">{userData?.avatar || '🦊'}</span>
               Halo, {userData?.name || 'Explorer'}! 🎉
             </h1>
-            <p className="text-base font-bold text-foreground/60 mt-1">
+            <p className="text-sm sm:text-base font-bold text-foreground/60 mt-0.5 sm:mt-1">
               Siap petualangan seru hari ini? 🚀
             </p>
             {/* Floating tip */}

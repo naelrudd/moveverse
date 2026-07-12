@@ -23,14 +23,14 @@ export default function WorldsPage() {
           <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
         </div>
         <div className="inline-block bg-white/80 px-4 py-1 rounded-full text-sm font-bold mb-3">🗺️ Peta Petualangan</div>
-        <h1 className="text-4xl md:text-6xl font-extrabold">Dunia Gerak</h1>
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold">Dunia Gerak</h1>
         <p className="text-muted-foreground mt-2">Pilih dunia dan kumpulkan semua badge!</p>
         {/* Star decorations */}
         <span className="absolute -top-2 left-1/4 text-lg animate-twinkle text-yellow-500 pointer-events-none">⭐</span>
         <span className="absolute top-2 right-1/4 text-sm animate-twinkle text-amber-400 pointer-events-none" style={{ animationDelay: '0.7s' }}>✨</span>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
         {worlds.map((w, i) => {
           const earnedCount = w.activities.filter((a) => badges.includes(a.badgeId)).length;
           const pct = Math.round((earnedCount / w.activities.length) * 100);
@@ -42,7 +42,7 @@ export default function WorldsPage() {
                 <div className="absolute inset-0 frosted-overlay" />
                 <div className="relative p-6 flex flex-col justify-end min-h-[320px]">
                   <div className="flex items-start justify-between absolute top-5 left-6 right-6">
-                    <div className="text-6xl drop-shadow-md animate-float">{w.emoji}</div>
+                    <div className="text-4xl sm:text-6xl drop-shadow-md animate-float">{w.emoji}</div>
                     <div className="bg-white/25 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-bold border border-white/30">
                       {earnedCount}/{w.activities.length} Badge
                     </div>
