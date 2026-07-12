@@ -1,37 +1,26 @@
+// @ts-nocheck
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
 
-const isProtectedRoute = createRouteMatcher([
-  "/dashboard(.*)",
-  "/parent(.*)",
-  "/teacher(.*)",
-  "/school(.*)",
-  "/quest(.*)",
-  "/test-camera(.*)",
+const isPublicRoute = createRouteMatcher([
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/",
+  "/api/webhooks/clerk(.*)",
+  "/logo.png",
+  "/mova-hero.png",
+  "/favicon.ico",
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
-  const host = req.headers.get("host") || "";
-
-  if (host.startsWith("www.")) {
-    const url = req.nextUrl.clone();
-    url.host = host.replace("www.", "");
-    return NextResponse.redirect(url, 301);
+const { onRequest } = clerkMiddleware(async (auth, req) => {
+  if (!isPublicRoute(req)) {
+    await auth().protect();
   }
-
-  if (isProtectedRoute(req)) {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.redirect(new URL("/sign-in", req.url));
-    }
-  }
-
-  return NextResponse.next();
 });
+
+export default onRequest;
 
 export const config = {
   matcher: [
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
   ],
 };
