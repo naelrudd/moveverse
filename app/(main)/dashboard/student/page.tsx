@@ -94,12 +94,18 @@ export default function StudentDashboard() {
       <div className="relative rounded-[2.5rem] p-8 shadow-pop border-4 border-white animate-pop-in overflow-hidden glass-card" style={{ background: 'linear-gradient(135deg, oklch(0.92 0.12 230), oklch(0.95 0.1 60), oklch(0.93 0.12 310))' }}>
         <ConfettiBurst />
 
+        {/* Floating cloud decorations */}
+        <svg className="absolute top-2 left-4 w-20 h-10 animate-float-cloud pointer-events-none opacity-60" viewBox="0 0 100 50" fill="white"><ellipse cx="50" cy="30" rx="40" ry="18" /><ellipse cx="30" cy="25" rx="25" ry="15" /><ellipse cx="70" cy="28" rx="28" ry="14" /></svg>
+        <svg className="absolute bottom-4 right-8 w-16 h-8 animate-float-cloud-reverse pointer-events-none opacity-50" viewBox="0 0 100 50" fill="white"><ellipse cx="50" cy="30" rx="40" ry="18" /><ellipse cx="30" cy="25" rx="25" ry="15" /><ellipse cx="70" cy="28" rx="28" ry="14" /></svg>
+
         {/* Sparkles around MOVA */}
         <Sparkle className="top-4 left-8 text-lg" delay={0} />
         <Sparkle className="top-12 left-24 text-xs" delay={0.4} />
         <Sparkle className="bottom-8 left-16 text-base" delay={0.8} />
         <Sparkle className="top-6 right-20 text-sm" delay={1.2} />
         <Sparkle className="bottom-4 right-12 text-lg" delay={0.6} />
+        <span className="absolute top-8 left-1/3 text-xs animate-sparkle-particle text-yellow-400 pointer-events-none" style={{ animationDelay: '0.3s' }}>✦</span>
+        <span className="absolute bottom-12 right-1/4 text-sm animate-sparkle-particle text-amber-400 pointer-events-none" style={{ animationDelay: '1.1s' }}>✦</span>
 
         <div className="flex items-center gap-6 relative z-10">
           {/* MOVA — 2x bigger, stronger dance */}
@@ -485,7 +491,15 @@ export default function StudentDashboard() {
           <div className="grid sm:grid-cols-2 gap-3">
             {(sideQuests ?? []).length === 0 ? (
               <div className="sm:col-span-2 p-8 text-center bg-muted/30 rounded-2xl border-2 border-dashed border-muted-foreground/20">
-                <div className="text-3xl mb-2 animate-float">📋</div>
+                <svg className="w-24 h-24 mx-auto mb-3 animate-mascot-float opacity-70" viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="50" fill="#FEF3C7" stroke="#F59E0B" strokeWidth="2" />
+                  <text x="60" y="55" textAnchor="middle" fontSize="32" className="animate-wobble">📋</text>
+                  <text x="60" y="85" textAnchor="middle" fontSize="11" fontWeight="bold" fill="#92400E">Tugas Seru</text>
+                  {/* Sparkle decorations */}
+                  <text x="25" y="30" fontSize="10" fill="#FBBF24" className="animate-sparkle">✦</text>
+                  <text x="95" y="25" fontSize="12" fill="#F59E0B" className="animate-sparkle" style={{ animationDelay: '0.5s' }}>✦</text>
+                  <text x="20" y="80" fontSize="8" fill="#FCD34D" className="animate-sparkle" style={{ animationDelay: '1s' }}>✦</text>
+                </svg>
                 <div className="text-xs font-bold text-muted-foreground">Belum ada side quest dari orang tua</div>
                 <div className="text-[10px] text-muted-foreground/60 mt-1">Nanti orang tua bisa kasih tugas tambahan lho!</div>
               </div>

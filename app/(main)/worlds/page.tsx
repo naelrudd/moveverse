@@ -14,13 +14,20 @@ export default function WorldsPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-10">
-      <div className="text-center mb-6 sm:mb-8 animate-pop-in">
-        <div className="w-14 h-14 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden mx-auto mb-3 animate-float">
+      {/* Cloud decorations */}
+      <svg className="fixed top-16 left-4 w-24 h-12 animate-float-cloud pointer-events-none opacity-30" viewBox="0 0 100 50" fill="white"><ellipse cx="50" cy="30" rx="45" ry="20" /><ellipse cx="30" cy="25" rx="25" ry="15" /><ellipse cx="72" cy="28" rx="28" ry="14" /></svg>
+      <svg className="fixed top-32 right-8 w-20 h-10 animate-float-cloud-reverse pointer-events-none opacity-25" viewBox="0 0 100 50" fill="white"><ellipse cx="50" cy="30" rx="40" ry="18" /><ellipse cx="30" cy="25" rx="25" ry="15" /><ellipse cx="70" cy="28" rx="28" ry="14" /></svg>
+
+      <div className="text-center mb-6 sm:mb-8 animate-pop-in relative">
+        <div className="w-14 h-14 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-1 shadow-soft overflow-hidden mx-auto mb-3 animate-mascot-float">
           <Image src="/mova-hero.png" alt="MOVA" fill className="object-contain" />
         </div>
-        <div className="inline-block bg-white/80 px-4 py-1 rounded-full text-sm font-bold mb-3">Peta Petualangan</div>
+        <div className="inline-block bg-white/80 px-4 py-1 rounded-full text-sm font-bold mb-3">🗺️ Peta Petualangan</div>
         <h1 className="text-4xl md:text-6xl font-extrabold">Dunia Gerak</h1>
         <p className="text-muted-foreground mt-2">Pilih dunia dan kumpulkan semua badge!</p>
+        {/* Star decorations */}
+        <span className="absolute -top-2 left-1/4 text-lg animate-twinkle text-yellow-500 pointer-events-none">⭐</span>
+        <span className="absolute top-2 right-1/4 text-sm animate-twinkle text-amber-400 pointer-events-none" style={{ animationDelay: '0.7s' }}>✨</span>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">

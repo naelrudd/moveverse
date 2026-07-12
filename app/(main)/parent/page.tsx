@@ -251,7 +251,11 @@ export default function ParentDashboard() {
         />
         <div className="absolute inset-0 bg-white/30" />
 
-        <ConfettiBurst />
+                {/* Floating cloud decorations */}
+                <svg className="absolute top-3 left-6 w-20 h-10 animate-float-cloud pointer-events-none opacity-40" viewBox="0 0 100 50" fill="white"><ellipse cx="50" cy="30" rx="40" ry="18" /><ellipse cx="30" cy="25" rx="25" ry="15" /><ellipse cx="70" cy="28" rx="28" ry="14" /></svg>
+                <svg className="absolute bottom-4 right-10 w-16 h-8 animate-float-cloud-reverse pointer-events-none opacity-30" viewBox="0 0 100 50" fill="white"><ellipse cx="50" cy="30" rx="40" ry="18" /><ellipse cx="30" cy="25" rx="25" ry="15" /><ellipse cx="70" cy="28" rx="28" ry="14" /></svg>
+
+                <ConfettiBurst />
 
         {/* Sparkle dots */}
         {[15, 30, 50, 70, 88].map((left, i) => (

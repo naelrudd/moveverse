@@ -361,6 +361,10 @@ function AssessmentContent() {
       {/* ── Page chrome (hidden in fullscreen) ── */}
       {!coach.isFullScreen && (
         <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-10 relative">
+          {/* Cloud decorations */}
+          <svg className="fixed top-20 left-6 w-24 h-12 animate-float-cloud pointer-events-none opacity-20" viewBox="0 0 100 50" fill="white"><ellipse cx="50" cy="30" rx="45" ry="20" /><ellipse cx="30" cy="25" rx="25" ry="15" /><ellipse cx="72" cy="28" rx="28" ry="14" /></svg>
+          <svg className="fixed top-40 right-10 w-20 h-10 animate-float-cloud-reverse pointer-events-none opacity-15" viewBox="0 0 100 50" fill="white"><ellipse cx="50" cy="30" rx="40" ry="18" /><ellipse cx="30" cy="25" rx="25" ry="15" /><ellipse cx="70" cy="28" rx="28" ry="14" /></svg>
+
           <ConfettiBurst />
           <SparkleDots count={18} />
 
