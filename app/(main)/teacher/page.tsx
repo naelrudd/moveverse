@@ -295,7 +295,7 @@ export default function TeacherDashboard() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-muted-foreground border-b text-xs font-extrabold uppercase">
-                      <th className="p-2">Nama</th><th>ID</th><th>Level</th><th>XP</th><th>Badge</th><th>Detail</th>
+                      <th className="p-2">Nama</th><th>Kode</th><th>Level</th><th>XP</th><th>Badge</th><th>Detail</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -325,7 +325,10 @@ export default function TeacherDashboard() {
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-extrabold text-lg">👤 Profil: {selectedStudent.name}</h3>
             <div className="flex items-center gap-3">
-              <span className="text-[10px] font-mono font-bold text-muted-foreground bg-muted px-2 py-1 rounded-full">ID: {selectedStudent._id}</span>
+              <span className="text-[10px] font-mono font-bold text-muted-foreground bg-muted px-2 py-1 rounded-full">Kode: {selectedStudent._id.slice(-6)}</span>
+              {selectedStudent.nis && (
+                <span className="text-[10px] font-mono font-bold text-muted-foreground bg-muted px-2 py-1 rounded-full">NIS: {selectedStudent.nis}</span>
+              )}
               <button onClick={() => setSelectedStudentId(null)} className="text-sm font-extrabold px-3 py-1 rounded-full bg-muted hover:scale-105 transition-all">Tutup</button>
             </div>
           </div>
