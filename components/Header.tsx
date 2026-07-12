@@ -56,6 +56,10 @@ export function Header() {
   );
   const role = userData?.role ?? null;
   const navItems = role ? (navByRole[role] ?? navByRole.student) : [];
+  // Only highlight the longest-matching nav item
+  const activeHref = navItems
+    .filter((item) => pathname === item.href || pathname.startsWith(item.href + "/"))
+    .sort((a, b) => b.href.length - a.href.length)[0]?.href;
   const badge = role ? ROLE_BADGES[role] : null;
 
   return (
@@ -79,13 +83,12 @@ export function Header() {
         {/* Nav */}
         <nav className="flex-1 py-3 flex items-center gap-1 overflow-x-auto no-scrollbar">
           {navItems.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={`flex items-center gap-1.5 whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all ${
-                  isActive
+                  item.href === activeHref
                     ? "bg-primary text-primary-foreground shadow-soft"
                     : "text-foreground/60 hover:bg-primary/10 hover:text-primary"
                 }`}
