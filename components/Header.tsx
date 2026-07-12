@@ -84,7 +84,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-1 whitespace-nowrap px-3 py-1.5 rounded-full text-sm font-bold transition-all ${
+                className={`flex items-center gap-1.5 whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all ${
                   isActive
                     ? "bg-primary text-primary-foreground shadow-soft"
                     : "text-foreground/60 hover:bg-primary/10 hover:text-primary"

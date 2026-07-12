@@ -6,7 +6,7 @@ import { useAuth } from '@clerk/nextjs';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { type Id } from '@/convex/_generated/dataModel';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const dummyLeaderboard: { _id?: string; rank: number; name: string; avatar: string; level: number; xp: number; badges?: string[]; trend?: string }[] = [
   { rank: 1, name: 'Mira', avatar: '👧', level: 4, xp: 4200, trend: 'up' },
@@ -25,6 +25,13 @@ export default function TeacherLeaderboardPage() {
   const classes = useQuery(api.classes.getClassesBySchool, userData?.schoolId ? { schoolId: userData.schoolId } : 'skip');
   const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'xp' | 'level'>('xp');
+
+  // Auto-select first class when classes load
+  useEffect(() => {
+    if (classes && classes.length > 0 && !selectedClassId) {
+      setSelectedClassId(classes[0]._id);
+    }
+  }, [classes, selectedClassId]);
 
   const leaderboard = useQuery(
     api.users.getLeaderboardByClass,
