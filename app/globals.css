@@ -480,43 +480,8 @@ h4 {
 
 .bg-theme-forest {
   background:
-    radial-gradient(
-      circle 80px at 8% 12%,
-      oklch(0.82 0.2 120 / 0.25) 0%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle 120px at 72% 18%,
-      oklch(0.78 0.18 145 / 0.2) 0%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle 60px at 45% 85%,
-      oklch(0.75 0.2 130 / 0.18) 0%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle 90px at 90% 55%,
-      oklch(0.7 0.15 160 / 0.15) 0%,
-      transparent 100%
-    ),
-    radial-gradient(
-      circle 4px at 20% 30%, oklch(0.7 0.2 150 / 0.3) 0%, transparent 100%
-    ),
-    radial-gradient(
-      circle 3px at 55% 15%, oklch(0.65 0.25 140 / 0.25) 0%, transparent 100%
-    ),
-    radial-gradient(
-      circle 5px at 80% 70%, oklch(0.7 0.2 120 / 0.2) 0%, transparent 100%
-    ),
-    radial-gradient(
-      circle 3px at 35% 65%, oklch(0.6 0.2 160 / 0.2) 0%, transparent 100%
-    ),
-    radial-gradient(
-      circle 4px at 65% 45%, oklch(0.75 0.18 130 / 0.25) 0%, transparent 100%
-    ),
-    linear-gradient(180deg, oklch(0.92 0.06 130), oklch(0.96 0.03 145));
-  background-attachment: fixed;
+    linear-gradient(180deg, oklch(1 0 0 / 0.78), oklch(1 0 0 / 0.85)),
+    url('/bg-forest.jpg') center / cover no-repeat fixed;
 }
 
 .bg-theme-sunset {
