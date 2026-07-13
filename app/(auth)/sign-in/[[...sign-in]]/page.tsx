@@ -4,7 +4,7 @@ import { SignIn } from "@clerk/nextjs";
 
 export default function SignInPage() {
   return (
-    <div className="flex flex-col sm:flex-row min-h-screen">
+    <div className="flex flex-col sm:flex-row min-h-screen items-center justify-center">
       {/* LEFT — branding with MOVA (hidden on mobile) */}
       <div
         className="hidden sm:flex flex-1 flex-col items-center justify-center p-12 relative overflow-hidden"
@@ -92,7 +92,7 @@ export default function SignInPage() {
       </div>
 
       {/* RIGHT — Clerk sign-in */}
-      <div className="flex-1 sm:w-120 bg-slate-50 flex flex-col items-center justify-center p-8 relative">
+      <div className="flex-1 sm:w-120 bg-slate-50 flex flex-col items-center justify-center p-5 relative min-h-screen">
         {/* Top MOVA peek */}
         <div className="absolute top-6 left-6 flex items-center gap-2">
           <div className="w-10 h-10 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft overflow-hidden animate-float">
@@ -131,6 +131,10 @@ export default function SignInPage() {
             }}
           />
         </div>
+
+        <p className="p-4 text-xs text-muted-foreground italic">
+          &quot;Ayo bergerak, setiap langkah itu seru!&quot; — MOVA 🦊
+        </p>
 
         {/* Bottom links */}
         <div className="absolute bottom-6 left-0 right-0 text-center space-y-2 px-4">
