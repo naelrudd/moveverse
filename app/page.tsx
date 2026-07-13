@@ -2,8 +2,22 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function LandingPage() {
+  const { isLoaded, isSignedIn } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      router.push('/dashboard');
+    }
+  }, [isLoaded, isSignedIn, router]);
+
+  if (!isLoaded || isSignedIn) return null;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 via-violet-500 to-orange-400 relative overflow-hidden">
       {/* Floating blobs */}
