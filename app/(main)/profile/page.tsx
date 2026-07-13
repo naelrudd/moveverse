@@ -51,6 +51,10 @@ export default function ProfilePage() {
   const [classCode, setClassCode] = useState('');
   const [joinError, setJoinError] = useState('');
   const [joinSuccess, setJoinSuccess] = useState('');
+  const linkChildMut = useMutation(api.users.linkChild);
+  const [nisInput, setNisInput] = useState('');
+  const [linkError, setLinkError] = useState('');
+  const [extraChildren, setExtraChildren] = useState<any[]>([]);
 
   // Hydrate edit fields when userData loads
   if (userData && editSchoolId === '' && userData.schoolId) {
@@ -72,6 +76,26 @@ export default function ProfilePage() {
 
   const badges = userData.badges ?? [];
 
+
+  const linkChild = async () => {
+    if (!nisInput.trim() || !userData?._id) return;
+    setLinkError('');
+    const child = await linkChildMut({
+      parentId: userData._id,
+      childNis: nisInput.trim(),
+    });
+    if (child) {
+      const alreadyInList = [...(children ?? []), ...extraChildren].some(
+        (c) => c && c._id === child._id,
+      );
+      if (!alreadyInList) {
+        setExtraChildren((prev) => [child, ...prev]);
+      }
+      setNisInput('');
+    } else {
+      setLinkError('NIS tidak ditemukan. Pastikan NIS sudah terdaftar.');
+    }
+  };
 
   const handleSaveProfile = async () => {
     setSaving(true);
@@ -176,7 +200,7 @@ export default function ProfilePage() {
           {role === 'parent' && (
             <div className="bg-muted/50 rounded-2xl p-4">
               <div className="text-xs font-bold text-muted-foreground uppercase">Anak Tertaut</div>
-              <div className="font-extrabold text-lg">{children?.length ?? 0} anak</div>
+              <div className="font-extrabold text-lg">{(children?.length ?? 0) + extraChildren.length} anak</div>
               {children && children.length > 0 && (
                 <div className="mt-2 space-y-1.5">
                   {children.map((c) => {
@@ -191,8 +215,39 @@ export default function ProfilePage() {
                   })}
                 </div>
               )}
-              {children && children.length === 0 && (
-                <p className="text-xs text-muted-foreground mt-1">Hubungkan akun anak melalui kode unik</p>
+              {extraChildren.length > 0 && (
+                <div className="mt-2 space-y-1.5">
+                  {extraChildren.map((c) => (
+                    <div key={c._id} className="flex items-center gap-2 text-sm">
+                      <span className="text-lg">{c.avatar}</span>
+                      <span className="font-bold">{c.name}</span>
+                      <span className="text-xs text-muted-foreground">Lv.{c.level}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add child input */}
+              <div className="mt-3 flex gap-2 items-center">
+                <input
+                  value={nisInput}
+                  onChange={(e) => { setNisInput(e.target.value); setLinkError(''); }}
+                  onKeyDown={(e) => e.key === 'Enter' && linkChild()}
+                  placeholder="Masukkan NIS anak..."
+                  className="flex-1 px-3 py-2 rounded-xl border-2 border-border bg-white font-bold text-sm focus:border-primary outline-none"
+                />
+                <button
+                  onClick={linkChild}
+                  disabled={!nisInput.trim()}
+                  className="px-4 py-2 rounded-full font-bold gradient-sky text-white text-sm disabled:opacity-40"
+                >
+                  Tambah ✨
+                </button>
+              </div>
+              {linkError && <div className="mt-2 text-xs font-bold text-red-500">⚠️ {linkError}</div>}
+
+              {children && children.length === 0 && extraChildren.length === 0 && (
+                <p className="text-xs text-muted-foreground mt-1">Masukkan NIS anak untuk menghubungkan akun</p>
               )}
             </div>
           )}
