@@ -85,7 +85,7 @@ export default function LandingPage() {
             Masuk 🚀
           </Link>
           <Link
-            href="/sign-in"
+            href="/sign-up"
             className="flex-1 bg-white/20 text-white font-extrabold py-3 px-6 rounded-full border-2 border-white/40 hover:bg-white/30 transition-all text-center"
           >
             Daftar ✨

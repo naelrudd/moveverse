@@ -127,25 +127,23 @@ export default function SignInPage() {
                   "bg-gradient-to-r from-cyan-400 to-blue-500 hover:opacity-90 transition-opacity rounded-full font-bold py-3",
                 socialButtonsBlockButton:
                   "rounded-full border-2 border-gray-200 font-bold",
+                footerAction: "text-center",
                 footerActionLink: "text-purple-600 font-bold hover:underline",
               },
             }}
           />
         </div>
 
-        <p className="p-4 text-xs text-gray-400 italic text-center">
+        <p className="px-4 pb-2 text-xs text-gray-400 italic text-center">
           &quot;Ayo bergerak, setiap langkah itu seru!&quot; — MOVA 🦊
         </p>
 
-        {/* Bottom links */}
-        <div className="absolute bottom-6 left-0 right-0 text-center space-y-2 px-4">
-          <a
-            href="mailto:natanaelrudyhadinata@gmail.com?subject=Daftar Sekolah di Moveverse&body=Halo, saya ingin mendaftarkan sekolah saya:%0A%0ANama Sekolah: %0ANPSN: %0A%0ATerima kasih."
-            className="inline-block text-xs text-purple-600 font-bold hover:underline"
-          >
-            📧 Belum punya akun sekolah? Hubungi Admin
-          </a>
-        </div>
+        <a
+          href="mailto:natanaelrudyhadinata@gmail.com?subject=Daftar Sekolah di Moveverse&body=Halo, saya ingin mendaftarkan sekolah saya:%0A%0ANama Sekolah: %0ANPSN: %0A%0ATerima kasih."
+          className="inline-block text-xs text-purple-600 font-bold hover:underline"
+        >
+          📧 Belum punya akun sekolah? Hubungi Admin
+        </a>
       </div>
     </div>
   );
