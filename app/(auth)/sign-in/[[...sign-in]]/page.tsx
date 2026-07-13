@@ -4,13 +4,13 @@ import { SignIn } from "@clerk/nextjs";
 
 export default function SignInPage() {
   return (
-    <div className="flex flex-col sm:flex-row min-h-screen items-center justify-center">
+    <div className="flex flex-col sm:flex-row min-h-screen">
       {/* LEFT — branding with MOVA (hidden on mobile) */}
       <div
         className="hidden sm:flex flex-1 flex-col items-center justify-center p-12 relative overflow-hidden"
         style={{
           background:
-            "linear-gradient(145deg, oklch(0.85 0.15 280), oklch(0.75 0.18 320), oklch(0.80 0.12 240))",
+            "linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #06b6d4 100%)",
         }}
       >
         {/* Animated blobs */}
@@ -92,7 +92,7 @@ export default function SignInPage() {
       </div>
 
       {/* RIGHT — Clerk sign-in */}
-      <div className="flex-1 sm:w-120 bg-slate-50 flex flex-col items-center justify-center p-5 relative min-h-screen">
+      <div className="flex-1 sm:w-120 bg-white flex flex-col items-center justify-center p-5 relative min-h-screen">
         {/* Top MOVA peek */}
         <div className="absolute top-6 left-6 flex items-center gap-2">
           <div className="w-10 h-10 relative rounded-full bg-linear-to-br from-amber-400 to-orange-500 p-0.5 shadow-soft overflow-hidden animate-float">
@@ -103,7 +103,7 @@ export default function SignInPage() {
               className="object-contain"
             />
           </div>
-          <span className="text-xs font-bold text-muted-foreground">
+          <span className="text-xs font-bold text-gray-500">
             MOVA menyapa! 👋
           </span>
         </div>
@@ -112,7 +112,7 @@ export default function SignInPage() {
           <h2 className="text-2xl font-extrabold text-center mb-1">
             Selamat Datang! 👋
           </h2>
-          <p className="text-sm text-muted-foreground text-center mb-8">
+          <p className="text-sm text-gray-500 text-center mb-8">
             Masuk untuk mulai petualangan
           </p>
 
@@ -120,30 +120,28 @@ export default function SignInPage() {
             appearance={{
               elements: {
                 rootBox: "w-full",
-                card: "shadow-none bg-transparent border-0 p-0 w-full",
+                card: "shadow-lg bg-white rounded-2xl p-6 border border-gray-100",
                 headerTitle: "text-xl font-bold",
+                headerSubtitle: "text-gray-500",
                 formButtonPrimary:
-                  "gradient-sky hover:opacity-90 transition-opacity rounded-full font-bold py-3",
+                  "bg-gradient-to-r from-cyan-400 to-blue-500 hover:opacity-90 transition-opacity rounded-full font-bold py-3",
                 socialButtonsBlockButton:
-                  "rounded-full border-2 border-border font-bold",
-                footerActionLink: "text-primary font-bold hover:underline",
+                  "rounded-full border-2 border-gray-200 font-bold",
+                footerActionLink: "text-purple-600 font-bold hover:underline",
               },
             }}
           />
         </div>
 
-        <p className="p-4 text-xs text-muted-foreground italic">
+        <p className="p-4 text-xs text-gray-400 italic text-center">
           &quot;Ayo bergerak, setiap langkah itu seru!&quot; — MOVA 🦊
         </p>
 
         {/* Bottom links */}
         <div className="absolute bottom-6 left-0 right-0 text-center space-y-2 px-4">
-          <p className="text-xs text-muted-foreground italic">
-            &quot;Ayo bergerak, setiap langkah itu seru!&quot; — MOVA 🦊
-          </p>
           <a
             href="mailto:natanaelrudyhadinata@gmail.com?subject=Daftar Sekolah di Moveverse&body=Halo, saya ingin mendaftarkan sekolah saya:%0A%0ANama Sekolah: %0ANPSN: %0A%0ATerima kasih."
-            className="inline-block text-xs text-primary font-bold hover:underline"
+            className="inline-block text-xs text-purple-600 font-bold hover:underline"
           >
             📧 Belum punya akun sekolah? Hubungi Admin
           </a>
