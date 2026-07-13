@@ -349,45 +349,6 @@ export default function ParentDashboard() {
             </div>
           )}
 
-          {/* NIS Input — Candy Card */}
-          <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-4 shadow-soft border-2 border-white max-w-xl mx-auto md:mx-0">
-            <div className="flex gap-2 items-center">
-              <span className="text-sm font-bold text-foreground/80 whitespace-nowrap">
-                🧒 Tambah Anak:
-              </span>
-              <input
-                value={nisInput}
-                onChange={(e) => {
-                  setNisInput(e.target.value);
-                  setLinkError(null);
-                }}
-                onKeyDown={(e) => e.key === "Enter" && linkChild()}
-                placeholder="Masukkan NIS anak..."
-                className="flex-1 p-2.5 rounded-xl border-2 border-purple-200 bg-white font-bold text-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
-              />
-              <button
-                onClick={linkChild}
-                className="px-5 py-2.5 rounded-full font-bold gradient-grass text-white text-sm shadow-soft hover:shadow-pop hover:scale-105 transition-all"
-              >
-                Tambah ✨
-              </button>
-            </div>
-            {linkError && (
-              <div className="mt-2 text-xs font-bold text-red-500 flex items-center gap-1">
-                ⚠️ {linkError}
-              </div>
-            )}
-          </div>
-
-          {/* Floating MovaTip */}
-          <div className="mt-4 flex justify-center">
-            <div className="bg-yellow-50 border-2 border-yellow-200 rounded-2xl px-5 py-2.5 shadow-soft inline-flex items-center gap-2 animate-wobble">
-              <span className="text-lg">💡</span>
-              <span className="text-xs font-bold text-yellow-700">
-                Masukkan NIS anak untuk menghubungkan akun!
-              </span>
-            </div>
-          </div>
         </div>
       </section>
 
