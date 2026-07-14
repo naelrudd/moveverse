@@ -110,7 +110,7 @@ export default function ParentDashboard() {
 
   const childList = [
     ...(children ?? []).filter((c): c is NonNullable<typeof c> => c !== null),
-    ...extraChildren,
+    ...extraChildren.filter((ec) => !(children ?? []).some((c) => c?._id === ec._id)),
   ] as ChildItem[];
   const activeChildId = selectedChildId || childList[0]?._id || null;
   const activeChild = childList.find((c) => c && c._id === activeChildId);
