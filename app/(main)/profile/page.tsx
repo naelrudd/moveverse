@@ -52,6 +52,7 @@ export default function ProfilePage() {
   const [joinError, setJoinError] = useState('');
   const [joinSuccess, setJoinSuccess] = useState('');
   const linkChildMut = useMutation(api.users.linkChild);
+  const unlinkChildMut = useMutation(api.users.unlinkChild);
   const [nisInput, setNisInput] = useState('');
   const [linkError, setLinkError] = useState('');
   const [extraChildren, setExtraChildren] = useState<any[]>([]);
@@ -94,6 +95,17 @@ export default function ProfilePage() {
       setNisInput('');
     } else {
       setLinkError('NIS tidak ditemukan. Pastikan NIS sudah terdaftar.');
+    }
+  };
+
+  const unlinkChild = async (childId: string) => {
+    if (!userData?._id) return;
+    const result = await unlinkChildMut({
+      parentId: userData._id,
+      childId: childId as Id<'users'>,
+    });
+    if (result) {
+      setExtraChildren((prev) => prev.filter((c) => c._id !== childId));
     }
   };
 
@@ -208,8 +220,15 @@ export default function ProfilePage() {
                     return (
                     <div key={c._id} className="flex items-center gap-2 text-sm">
                       <span className="text-lg">{c.avatar}</span>
-                      <span className="font-bold">{c.name}</span>
+                      <span className="font-bold flex-1">{c.name}</span>
                       <span className="text-xs text-muted-foreground">Lv.{c.level}</span>
+                      <button
+                        onClick={() => unlinkChild(c._id)}
+                        className="text-red-400 hover:text-red-600 text-xs font-bold px-2 py-1 rounded-lg hover:bg-red-50 transition-colors"
+                        title="Hapus anak ini"
+                      >
+                        ✕
+                      </button>
                     </div>
                     );
                   })}
@@ -220,8 +239,15 @@ export default function ProfilePage() {
                   {extraChildren.map((c) => (
                     <div key={c._id} className="flex items-center gap-2 text-sm">
                       <span className="text-lg">{c.avatar}</span>
-                      <span className="font-bold">{c.name}</span>
+                      <span className="font-bold flex-1">{c.name}</span>
                       <span className="text-xs text-muted-foreground">Lv.{c.level}</span>
+                      <button
+                        onClick={() => unlinkChild(c._id)}
+                        className="text-red-400 hover:text-red-600 text-xs font-bold px-2 py-1 rounded-lg hover:bg-red-50 transition-colors"
+                        title="Hapus anak ini"
+                      >
+                        ✕
+                      </button>
                     </div>
                   ))}
                 </div>

@@ -89,6 +89,32 @@ export const linkChild = mutation({
   },
 });
 
+export const unlinkChild = mutation({
+  args: {
+    parentId: v.id("users"),
+    childId: v.id("users"),
+  },
+  handler: async (ctx, { parentId, childId }) => {
+    const parent = await ctx.db.get(parentId);
+    if (!parent) return null;
+    const currentChildren = parent.childIds ?? [];
+    if (!currentChildren.includes(childId)) return null;
+    await ctx.db.patch(parentId, {
+      childIds: currentChildren.filter((id) => id !== childId),
+      updatedAt: Date.now(),
+    });
+    const child = await ctx.db.get(childId);
+    if (child) {
+      const currentParents = child.parentIds ?? [];
+      await ctx.db.patch(childId, {
+        parentIds: currentParents.filter((id) => id !== parentId),
+        updatedAt: Date.now(),
+      });
+    }
+    return { success: true };
+  },
+});
+
 export const getUsersByClass = query({
   args: { classId: v.id("classes") },
   handler: async (ctx, { classId }) => {
