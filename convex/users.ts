@@ -52,7 +52,13 @@ export const getChildren = query({
     const parent = await ctx.db.get(parentId);
     if (!parent?.childIds?.length) return [];
     const children = await Promise.all(parent.childIds.map((id) => ctx.db.get(id)));
-    return children.filter(Boolean);
+    const LEVEL_TABLE = [100, 250, 450, 700];
+    return children.filter(Boolean).map((c) => {
+      const xp = c!.xp ?? 0;
+      let level = 1;
+      while (level < 5 && xp >= LEVEL_TABLE[level - 1]) level++;
+      return { ...c!, level };
+    });
   },
 });
 

@@ -529,15 +529,9 @@ export default function StudentDashboard() {
                     </div>
                   </div>
                   {!q.completed && (
-                    <button
-                      onClick={async () => {
-                        if (userData?._id) await markQuestComplete({ questId: q._id, childId: userData._id });
-                      }}
-                      className="px-4 py-1.5 text-xs font-extrabold rounded-full text-white shadow-soft hover:shadow-pop hover:scale-105 active:scale-95 transition-all"
-                      style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
-                    >
-                      Selesai ✅
-                    </button>
+                    <span className="text-xs font-bold text-orange-400 bg-orange-50 px-3 py-1 rounded-full">
+                      Menunggu Ortu ✓
+                    </span>
                   )}
                 </div>
               ))

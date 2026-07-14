@@ -269,3 +269,63 @@ export const getLeaderboard = query({
       .map((entry, i) => ({ ...entry, rank: i + 1 }));
   },
 });
+
+/** Get motorik development stats for a child (for parent view) */
+export const getMotorikStats = query({
+  args: { childId: v.id("users") },
+  handler: async (ctx, { childId }) => {
+    const movements = await ctx.db
+      .query("movements")
+      .withIndex("by_userId", (q) => q.eq("userId", childId))
+      .order("desc")
+      .take(50);
+
+    // Map each movement to physical literacy skills
+    const mapping: Record<string, { balance: number; coordination: number; agility: number; flexibility: number; strength: number; count: number }> = {};
+
+    for (const m of movements) {
+      const act = m.activityId.split("_")[0]; // "menekuk_L2" → "menekuk"
+      const score = m.score;
+
+      // Simple scoring: higher score = better skill
+      if (!mapping[act]) mapping[act] = { balance: 0, coordination: 0, agility: 0, flexibility: 0, strength: 0, count: 0 };
+      mapping[act].count++;
+
+      const delta = Math.round(score * 0.03);
+      const skills: Record<string, string[]> = {
+        menekuk: ["coordination", "agility", "strength"],
+        meliuk: ["coordination", "flexibility"],
+        memutar: ["balance", "coordination", "agility"],
+        keseimbangan: ["balance", "coordination", "strength"],
+      };
+      for (const skill of skills[act] ?? []) {
+        mapping[act][skill as keyof typeof mapping[typeof act]] += delta;
+      }
+    }
+
+    // Aggregate into 5 motorik skills
+    const result = {
+      Keseimbangan: 0,
+      Koordinasi: 0,
+      Kelincahan: 0,
+      Kekuatan: 0,
+      Fleksibilitas: 0,
+    };
+
+    for (const act of Object.values(mapping)) {
+      result.Keseimbangan += act.balance;
+      result.Koordinasi += act.coordination;
+      result.Kelincahan += act.agility;
+      result.Fleksibilitas += act.flexibility;
+      result.Kekuatan += act.strength;
+    }
+
+    // Normalize to 0-100 range (cap at 100)
+    const maxVal = Math.max(...Object.values(result), 1);
+    for (const key of Object.keys(result) as (keyof typeof result)[]) {
+      result[key] = Math.min(100, Math.round((result[key] / Math.max(maxVal, 10)) * 100));
+    }
+
+    return result;
+  },
+});
